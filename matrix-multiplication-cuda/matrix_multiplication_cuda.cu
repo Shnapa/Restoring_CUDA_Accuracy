@@ -14,7 +14,7 @@ __global__ void matrixMultiplicationKernel(double *A, double *B, double *C, int 
         }
     }
 
-    C[COL * m + n] = currentSum;
+    C[ROW * m + COL] = currentSum;
 }
 
 void matrixMultiplication(double *A, double *B, double *C, int n, int k, int m) {
@@ -26,18 +26,21 @@ void matrixMultiplication(double *A, double *B, double *C, int n, int k, int m) 
 }
 
 int main() {
-    int n = 10;
-    int k = 5;
-    int m = 8;
+    int n = 2;
+    int k = 2;
+    int m = 2;
 
-    std::vector<double> h_A(n * k), h_B(k * m), h_C(n * m, 0.0);
+//    std::vector<double> h_A(n * k), h_B(k * m), h_C(n * m, 0.0);
+    std::vector<double> h_A = {1, 1, 1, 1};
+    std::vector<double> h_B = {2, 2, 2, 2};
+    std::vector<double> h_C(n * m, 0.0);
 
     for (int i = 0; i < n * k; i++) h_A[i] = rand() % 10;
     for (int i = 0; i < k * m; i++) h_B[i] = rand() % 10;
 
     double *d_A, *d_B, *d_C;
     cudaMalloc(&d_A, sizeof(double) * n * k);
-    cudaMalloc(&d_B, sizeof(double) * n * m);
+    cudaMalloc(&d_B, sizeof(double) * k * m);
     cudaMalloc(&d_C, sizeof(double) * n * m);
 
     cudaMemcpy(d_A, h_A.data(), sizeof(double) * n * k, cudaMemcpyHostToDevice);
