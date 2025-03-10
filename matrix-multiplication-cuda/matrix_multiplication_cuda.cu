@@ -3,14 +3,14 @@
 #include <cuda_runtime.h>
 
 __global__ void matrixMultiplicationKernel(double *A, double *B, double *C, int n, int k, int m) {
-    int ROW = blockIdx.x * blockDim.x + threadIdx.x;
-    int COL = blockIdx.y * blockDim.x + threadIdx.x;
+    int ROW = blockIdx.y * blockDim.y + threadIdx.y;
+    int COL = blockIdx.x * blockDim.x + threadIdx.x;
 
     double currentSum = 0.0;
 
     if (ROW < m && COL < n) {
         for (size_t i = 0; i < k; i++) {
-            currentSum += A[ROW * k + i] * B[COL * m + i];
+            currentSum += A[ROW * k + i] * B[i * m + COL];
         }
     }
 
@@ -47,8 +47,8 @@ int main() {
 
     cudaMemcpy(h_C.data(), d_C, n * m * sizeof(double), cudaMemcpyDeviceToHost);
 
-    std::cout << "Result matrix C (first 5 elements):\n";
-    for (int i = 0; i < std::min(5, n * m); i++) {
+    std::cout << "Result matrix C:\n";
+    for (int i = 0; i < n * m; i++) {
         std::cout << h_C[i] << " ";
     }
     std::cout << std::endl;
