@@ -35,8 +35,8 @@ int main() {
     std::vector<double> h_B = {2, 2, 2, 2};
     std::vector<double> h_C(n * m, 0.0);
 
-    for (int i = 0; i < n * k; i++) h_A[i] = rand() % 10;
-    for (int i = 0; i < k * m; i++) h_B[i] = rand() % 10;
+//    for (int i = 0; i < n * k; i++) h_A[i] = rand() % 10;
+//    for (int i = 0; i < k * m; i++) h_B[i] = rand() % 10;
 
     double *d_A, *d_B, *d_C;
     cudaMalloc(&d_A, sizeof(double) * n * k);
