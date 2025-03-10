@@ -13,6 +13,7 @@ fi
 
 # Compile the CUDA program
 echo "Compiling $SRC_FILE..."
+nvcc -O2 -arch=sm_50 -o $OUTPUT_FILE $SRC_FILE
 
 # Check if compilation was successful
 if [ $? -ne 0 ]; then
@@ -22,6 +23,6 @@ fi
 
 echo "Compilation successful!"
 
-## Run the program
-#echo "Running the CUDA matrix multiplication..."
-#./$OUTPUT_FILE
+# Run the program
+echo "Running the CUDA matrix multiplication..."
+./$OUTPUT_FILE
