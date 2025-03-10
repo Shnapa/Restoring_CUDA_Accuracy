@@ -26,17 +26,17 @@ void matrixMultiplication(double *A, double *B, double *C, int n, int k, int m) 
 }
 
 int main() {
-    int n = 2;
-    int k = 2;
-    int m = 2;
+    int n = 100;
+    int k = 100;
+    int m = 100;
 
-//    std::vector<double> h_A(n * k), h_B(k * m), h_C(n * m, 0.0);
-    std::vector<double> h_A = {1, 1, 1, 1};
-    std::vector<double> h_B = {2, 2, 2, 2};
-    std::vector<double> h_C(n * m, 0.0);
+    std::vector<double> h_A(n * k), h_B(k * m), h_C(n * m, 0.0);
+//    std::vector<double> h_A = {1, 1, 1, 1};
+//    std::vector<double> h_B = {2, 2, 2, 2};
+//    std::vector<double> h_C(n * m, 0.0);
 
-//    for (int i = 0; i < n * k; i++) h_A[i] = rand() % 10;
-//    for (int i = 0; i < k * m; i++) h_B[i] = rand() % 10;
+    for (int i = 0; i < n * k; i++) h_A[i] = rand() % 10;
+    for (int i = 0; i < k * m; i++) h_B[i] = rand() % 10;
 
     double *d_A, *d_B, *d_C;
     cudaMalloc(&d_A, sizeof(double) * n * k);
