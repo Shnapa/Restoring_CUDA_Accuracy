@@ -40,8 +40,8 @@ int main() {
     cudaMalloc(&d_B, sizeof(double) * n * m);
     cudaMalloc(&d_C, sizeof(double) * n * m);
 
-    memcpy(d_A, h_A.data(), sizeof(double) * n * k, cudaMemcpyHostToDevice);
-    memcpy(d_B, h_B.data(), sizeof(double) * n * m, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_A, h_A.data(), sizeof(double) * n * k, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B.data(), sizeof(double) * k * m, cudaMemcpyHostToDevice);
 
     matrixMultiplication(d_A, d_B, d_C, n, k, m);
 
