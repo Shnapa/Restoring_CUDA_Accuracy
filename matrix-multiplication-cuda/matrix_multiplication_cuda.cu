@@ -17,7 +17,7 @@ __global__ void matrixMultiplicationKernel(double *A, double *B, double *C, int 
     C[COL * m + n] = currentSum;
 }
 
-void matrixMultiplication(float *A, float *B, float *C, int n, int k, int m) {
+void matrixMultiplication(double *A, double *B, double *C, int n, int k, int m) {
     dim3 threadsPerBlock(16, 16);
     dim3 blocksPerGrid((m + threadsPerBlock.x - 1) / threadsPerBlock.x,
                        (n + threadsPerBlock.y - 1) / threadsPerBlock.y);
