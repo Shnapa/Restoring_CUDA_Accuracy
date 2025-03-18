@@ -3,98 +3,87 @@
 #include <random>
 #include <immintrin.h>
 #include <iomanip>
+#include <omp.h>
 
-std::vector<std::vector<float>> padMatrix(const std::vector<std::vector<float>>& matrix, int simdWidth = 8) {
-    int originalRows = matrix.size();
-    int originalCols = matrix[0].size();
-    int paddedRows = (originalRows + simdWidth - 1) / simdWidth * simdWidth;
-    int paddedCols = (originalCols + simdWidth - 1) / simdWidth * simdWidth;
-    std::vector<std::vector<float>> paddedMatrix(paddedRows, std::vector<float>(paddedCols, 0.0f));
-    for (int i = 0; i < originalRows; i++) {
-        for (int j = 0; j < originalCols; j++) {
-            paddedMatrix[i][j] = matrix[i][j];
+#define BLOCK_SIZE 64
+
+void generateRandomMatrix(float* matrix, int size) {
+    int totalElements = size * size;
+
+    #pragma omp parallel
+    {
+        std::mt19937 gen(42 + omp_get_thread_num());
+        std::uniform_real_distribution<float> dist(1.0f, 10.0f);
+
+        #pragma omp for
+        for (int i = 0; i < totalElements; i++) {
+            matrix[i] = dist(gen);
         }
     }
-    return paddedMatrix;
 }
 
-std::vector<std::vector<float>> removePadding(const std::vector<std::vector<float>>& paddedMatrix, int originalRows, int originalCols) {
-    std::vector<std::vector<float>> originalMatrix(originalRows, std::vector<float>(originalCols, 0.0f));
-    for (int i = 0; i < originalRows; i++) {
-        for (int j = 0; j < originalCols; j++) {
-            originalMatrix[i][j] = paddedMatrix[i][j];
-        }
-    }
-    return originalMatrix;
-}
 
-std::vector<std::vector<float>> simdMatrixMultiply(const std::vector<std::vector<float>>& A, const std::vector<std::vector<float>>& B) {
-    std::vector<std::vector<float>> paddedA = padMatrix(A);
-    std::vector<std::vector<float>> paddedB = padMatrix(B);
-    int N = paddedA.size();
-    int M = paddedB.size();
-    int P = paddedB[0].size();
-    std::vector<std::vector<float>> C(N, std::vector<float>(P, 0.0f));
+void simdMatrixMultiply(const float* A, const float* B, float* C, int size) {
+    #pragma omp parallel for collapse(2)
+    for (int i = 0; i < size; i += BLOCK_SIZE) {
+        for (int j = 0; j < size; j += BLOCK_SIZE) {
+            for (int k = 0; k < size; k += BLOCK_SIZE) {
 
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < P; j += 8) {
-            __m256 sum = _mm256_setzero_ps();
-            for (int k = 0; k < M; k++) {
-                __m256 a = _mm256_set1_ps(paddedA[i][k]);
-                __m256 b = _mm256_loadu_ps(paddedB[k].data() + j);
-                sum = _mm256_fmadd_ps(a, b, sum);
+                for (int ii = i; ii < i + BLOCK_SIZE && ii < size; ii++) {
+                    for (int jj = j; jj < j + BLOCK_SIZE && jj < size; jj += 8) {
+                        __m256 sum = _mm256_setzero_ps();
+
+                        for (int kk = k; kk < k + BLOCK_SIZE && kk < size; kk++) {
+                            __m256 a = _mm256_set1_ps(A[ii * size + kk]);
+                            __m256 b = _mm256_loadu_ps(&B[kk * size + jj]);
+                            sum = _mm256_fmadd_ps(a, b, sum);
+                        }
+
+                        _mm256_storeu_ps(&C[ii * size + jj], sum);
+                    }
+
+                    for (int jj = (j + BLOCK_SIZE) / 8 * 8; jj < j + BLOCK_SIZE && jj < size; jj++) {
+                        float sum = 0.0f;
+                        for (int kk = k; kk < k + BLOCK_SIZE && kk < size; kk++) {
+                            sum += A[ii * size + kk] * B[kk * size + jj];
+                        }
+                        C[ii * size + jj] = sum;
+                    }
+                }
             }
-            _mm256_storeu_ps(C[i].data() + j, sum);
         }
     }
-
-    return removePadding(C, A.size(), B[0].size());
 }
 
-std::vector<std::vector<float>> generateRandomMatrix(int size) {
-    std::vector<std::vector<float>> matrix(size, std::vector<float>(size));
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> dist(1.0f, 10.0f); // Random values between 1 and 10
-
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            matrix[i][j] = dist(gen);
+void printMatrix(const float* matrix, int size, int maxPrint = 10) {
+    for (int i = 0; i < std::min(size, maxPrint); i++) {
+        for (int j = 0; j < std::min(size, maxPrint); j++) {
+            std::cout << std::setw(6) << std::fixed << std::setprecision(2) << matrix[i * size + j] << " ";
         }
-    }
-    return matrix;
-}
-
-void printMatrix(const std::vector<std::vector<float>>& matrix, int maxPrint = 10) {
-    int rows = matrix.size();
-    int cols = matrix[0].size();
-
-    for (int i = 0; i < std::min(rows, maxPrint); i++) {
-        for (int j = 0; j < std::min(cols, maxPrint); j++) {
-            std::cout << std::setw(6) << std::fixed << std::setprecision(2) << matrix[i][j] << " ";
-        }
-        if (cols > maxPrint) std::cout << "...";
+        if (size > maxPrint) std::cout << "...";
         std::cout << std::endl;
     }
-    if (rows > maxPrint) std::cout << "... (remaining rows hidden) ..." << std::endl;
+    if (size > maxPrint) std::cout << "... (hidden remain rows) ..." << std::endl;
 }
 
 int main() {
-    const int size = 1000;
+    const int size = 10000;
 
-    std::vector<std::vector<float>> A = generateRandomMatrix(size);
-    std::vector<std::vector<float>> B = generateRandomMatrix(size);
+    float* A = new float[size * size];
+    float* B = new float[size * size];
+    float* C = new float[size * size]();
 
-    std::cout << "Matrix A (First 10x10 elements):\n";
-    printMatrix(A);
+    generateRandomMatrix(A, size);
+    generateRandomMatrix(B, size);
 
-    std::cout << "\nMatrix B (First 10x10 elements):\n";
-    printMatrix(B);
+    simdMatrixMultiply(A, B, C, size);
 
-    std::vector<std::vector<float>> C = simdMatrixMultiply(A, B);
+    std::cout << "\nMatrix C\n";
+    printMatrix(C, size);
 
-    std::cout << "\nResult Matrix C (First 10x10 elements):\n";
-    printMatrix(C);
+    delete[] A;
+    delete[] B;
+    delete[] C;
 
     return 0;
 }
