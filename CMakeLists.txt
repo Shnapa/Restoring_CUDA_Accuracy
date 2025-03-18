@@ -8,3 +8,4 @@ set(CMAKE_CUDA_ARCHITECTURES 89)
 
 add_subdirectory(matrix-multiplication)
 add_subdirectory(integral)
+add_subdirectory(mm_cuda_optimized)
