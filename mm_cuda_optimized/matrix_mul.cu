@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #include <iostream>
 
-#define TILE_SIZE 32  // Розмір тайлу для розбиття обчислень
+#define TILE_SIZE 32
 
 __global__ void matrixMultiplyTiled(float *A, float *B, float *C, int N) {
     // Спільна пам’ять для тайлів
@@ -66,7 +66,7 @@ void multiplyMatrices(float *h_A, float *h_B, float *h_C, int N) {
 }
 
 int main() {
-    int N = 1024;  // Розмір матриці NxN
+    int N = 1024;
     size_t size = N * N * sizeof(float);
 
     float *h_A = (float*)malloc(size);
@@ -80,7 +80,6 @@ int main() {
 
     multiplyMatrices(h_A, h_B, h_C, N);
 
-    // Виведення частини результату
     std::cout << "C[0][0] = " << h_C[0] << std::endl;
 
     free(h_A);
