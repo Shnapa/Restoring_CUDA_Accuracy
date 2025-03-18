@@ -1,7 +1,7 @@
-add_executable(MatrixMultiplication
+add_executable(MM
         main.cpp
         matrix_multiplication.cpp
         matrix_multiplication.h)
 
-target_include_directories(MatrixMultiplication PRIVATE ${CMAKE_SOURCE_DIR})
+target_include_directories(MM PRIVATE ${CMAKE_SOURCE_DIR})
 

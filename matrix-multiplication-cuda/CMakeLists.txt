@@ -1,5 +1,5 @@
-add_executable(MatrixMultiplicationCuda
+add_executable(MMCUDA
         matrix_multiplication_cuda.cu)
 
-target_include_directories(MatrixMultiplicationCuda PRIVATE ${CMAKE_SOURCE_DIR})
+target_include_directories(MMCUDA PRIVATE ${CMAKE_SOURCE_DIR})
 

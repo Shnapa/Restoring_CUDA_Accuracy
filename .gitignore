@@ -1,9 +1,9 @@
-
 matrix-multiplication/cmake-build-debug
 matrix-multiplication/.idea
 
 .idea
 .PVS-Studio
+cmake-build-debug
 
 integral/integral
 
