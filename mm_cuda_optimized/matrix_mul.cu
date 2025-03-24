@@ -1,5 +1,7 @@
 #include <cuda_runtime.h>
 #include <iostream>
+#include <fstream>
+#include <chrono>
 
 #define TILE_SIZE 32
 
@@ -65,26 +67,51 @@ void multiplyMatrices(float *h_A, float *h_B, float *h_C, int N) {
     cudaFree(d_C);
 }
 
-int main() {
-    int N = 1024;
-    size_t size = N * N * sizeof(float);
+void writeExecutionTimeToFile(double executionTime, int N, const std::string& filename) {
+    std::ofstream file(filename, std::ios::app);
 
-    float *h_A = (float*)malloc(size);
-    float *h_B = (float*)malloc(size);
-    float *h_C = (float*)malloc(size);
-
-    for (int i = 0; i < N * N; i++) {
-        h_A[i] = 1.0f;
-        h_B[i] = 1.0f;
+    if (file.is_open()) {
+        if (file.tellp() == 0) {
+            file << "Size, Execution Time (seconds)\n";
+        }
+        file << N << ", " << executionTime << "\n";
+        file.close();
+    } else {
+        std::cerr << "Error opening file for writing execution time!" << std::endl;
     }
+}
 
-    multiplyMatrices(h_A, h_B, h_C, N);
+int main() {
+    int sizes[] = {10, 100, 1000, 10000};
+    size_t size;
 
-    std::cout << "C[0][0] = " << h_C[0] << std::endl;
+    for (int i = 0; i < 3; i++) {
+        int N = sizes[i];
+        size = N * N * sizeof(float);
 
-    free(h_A);
-    free(h_B);
-    free(h_C);
+        float *h_A = (float*)malloc(size);
+        float *h_B = (float*)malloc(size);
+        float *h_C = (float*)malloc(size);
+
+        for (int j = 0; j < N * N; j++) {
+            h_A[j] = 1.0f;
+            h_B[j] = 1.0f;
+        }
+
+        auto start = std::chrono::high_resolution_clock::now();
+        multiplyMatrices(h_A, h_B, h_C, N);
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::chrono::duration<double> duration = end - start;
+        writeExecutionTimeToFile(duration.count(), N, "execution_time.txt");
+
+        std::cout << "C[0][0] = " << h_C[0] << std::endl;
+
+        free(h_A);
+        free(h_B);
+        free(h_C);
+    }
 
     return 0;
 }
+

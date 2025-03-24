@@ -4,6 +4,8 @@
 #include <immintrin.h>
 #include <iomanip>
 #include <omp.h>
+#include <chrono>
+#include <fstream>
 
 #define BLOCK_SIZE 64
 
@@ -21,7 +23,6 @@ void generateRandomMatrix(float* matrix, int size) {
         }
     }
 }
-
 
 void simdMatrixMultiply(const float* A, const float* B, float* C, int size) {
     #pragma omp parallel for collapse(2)
@@ -63,27 +64,55 @@ void printMatrix(const float* matrix, int size, int maxPrint = 10) {
         if (size > maxPrint) std::cout << "...";
         std::cout << std::endl;
     }
-    if (size > maxPrint) std::cout << "... (hidden remain rows) ..." << std::endl;
+    if (size > maxPrint) std::cout << "... (hidden remaining rows) ..." << std::endl;
 }
 
+void writeExecutionTimeToFile(double executionTime, int N, const std::string& filename) {
+    std::ofstream file(filename, std::ios::app);
+
+    if (file.is_open()) {
+        if (file.tellp() == 0) {
+            file << "Size, Execution Time (seconds)\n";
+        }
+        file << N << ", " << executionTime << "\n";
+        file.close();
+    } else {
+        std::cerr << "Error opening file for writing execution time!" << std::endl;
+    }
+}
+
+
 int main() {
-    const int size = 10000;
+    int sizes[] = {10, 100, 1000, 10000};
+    size_t size;
 
-    float* A = new float[size * size];
-    float* B = new float[size * size];
-    float* C = new float[size * size]();
+    for (int i = 0; i < 4; i++) {
+        int N = sizes[i];
+        size = N * N * sizeof(float);
 
-    generateRandomMatrix(A, size);
-    generateRandomMatrix(B, size);
+        float* A = new float[size];
+        float* B = new float[size];
+        float* C = new float[size]();
 
-    simdMatrixMultiply(A, B, C, size);
+        generateRandomMatrix(A, N);
+        generateRandomMatrix(B, N);
 
-    std::cout << "\nMatrix C\n";
-    printMatrix(C, size);
+        auto start = std::chrono::high_resolution_clock::now();
 
-    delete[] A;
-    delete[] B;
-    delete[] C;
+        simdMatrixMultiply(A, B, C, N);
+
+        auto end = std::chrono::high_resolution_clock::now();
+
+        std::cout << "\nMatrix C (First 10x10 elements for size " << N << "):\n";
+        printMatrix(C, N);
+
+        std::chrono::duration<double> duration = end - start;
+        writeExecutionTimeToFile(duration.count(), N, "execution_time_simd_parallel.txt");
+
+        delete[] A;
+        delete[] B;
+        delete[] C;
+    }
 
     return 0;
 }
