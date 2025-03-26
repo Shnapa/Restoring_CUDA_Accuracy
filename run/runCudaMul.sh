@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Set the source and output file names
-SRC_FILE="matrix_multiplication_cuda.cu"
-OUTPUT_FILE="matrix_mul"
+SRC_FILE="../src/cudaMul.cu -Idata"
+OUTPUT_FILE="cudaMul"
 
 # Check if NVCC is installed
 if ! command -v nvcc &> /dev/null

@@ -3,23 +3,21 @@
 #include <cuda_runtime.h>
 #include <iostream>
 #include <random>
+#include "timeMeasurement.h"
 
 int main(){
-
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> dist(0.0f, 1001.0f); // Generates numbers in [0.0, 1.0)
-
+    std::uniform_real_distribution<float> dist(1.0f, 10000.0f);
 
     cublasHandle_t handle;
     cublasStatus_t status = cublasCreate(&handle);
     const int m = 1000, n = 1000, k = 1000;
-    // __half h_A[m * k] = {__float2half(1.0f), __float2half(2.0f), __float2half(3.0f), __float2half(4.0f)};
-    // __half h_B[k * n] = {__float2half(5.0f), __float2half(6.0f), __float2half(7.0f), __float2half(8.0f)};
 
-    __half h_A[m * k];
-    __half h_B[k * n];
-    float h_C[m * n]; // accumulator / result
+    __half* h_A = static_cast<__half*>(malloc(m * k * sizeof(__half)));
+    __half* h_B = static_cast<__half*>(malloc(k * n * sizeof(__half)));
+    float*  h_C = static_cast<float*>(malloc(m * n * sizeof(float)));
+
     for (int i = 0; i < m*k; i++) {
         h_A[i] = __half2float(dist(gen));
         h_B[i] = __half2float(dist(gen));
@@ -38,14 +36,6 @@ int main(){
 
     const float alpha = 1.0f;
     const float beta = 0.0f;
-
-
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-
-    // Record the start event
-    cudaEventRecord(start);
 
     // C = α × (A × B) + β × C
     status = cublasGemmEx(handle,
@@ -69,23 +59,8 @@ int main(){
         return -1;
     }
 
-    cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-
-    float milliseconds = 0;
-    cudaEventElapsedTime(&milliseconds, start, stop);
-    printf("cuBLAS matrix multiplication took: %f ms\n", milliseconds);
-
     cudaMemcpy(h_C, d_C, m * n * sizeof(float), cudaMemcpyDeviceToHost);
 
-    // printf("Result matrix C:\n");
-    // for (int i = 0; i < m * n; i++) {
-    //     printf("%.2f ", h_C[i]);
-    //     if ((i + 1) % n == 0) printf("\n");
-    // }
-
-    cudaEventDestroy(start);
-    cudaEventDestroy(stop);
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);

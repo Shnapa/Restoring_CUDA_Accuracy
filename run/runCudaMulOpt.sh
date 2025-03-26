@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ім'я вихідного коду та виконуваного файлу
-SRC_FILE="matrix_mul.cu"
+SRC_FILE="cudaMulOpt.cu"
 OUTPUT_FILE="matrix_mul"
 
 # Перевірка наявності CUDA-компілятора nvcc
