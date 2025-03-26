@@ -12,7 +12,7 @@ configs = [
     (10000, 5000, 8000)
 ]
 
-num_runs = 1
+num_runs = 5
 
 executables = [
     "cublasMul",
@@ -57,5 +57,5 @@ def run_benchmarks():
 
         print(f"Benchmark results saved to {output_file}")
 
-print(f"Benchmark results saved to {output_file}")
+
 run_benchmarks()

@@ -5,7 +5,7 @@
 #include <random>
 #include <fstream>
 
-std::vector<std::vector<float>> loadMatrixFromFile(const std::string& filename) {
+inline std::vector<std::vector<float>> loadMatrixFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Could not open file: " + filename);
@@ -26,7 +26,7 @@ std::vector<std::vector<float>> loadMatrixFromFile(const std::string& filename) 
     return matrix;
 }
 
-float* loadMatrixFromFileToArray(const std::string& filename, int& rows, int& cols) {
+inline float* loadMatrixFromFileToArray(const std::string& filename, int& rows, int& cols) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Could not open file: " << filename << std::endl;

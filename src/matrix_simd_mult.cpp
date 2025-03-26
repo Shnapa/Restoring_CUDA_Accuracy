@@ -75,7 +75,7 @@ int main(int argc, char* argv[]) {
     std::vector<std::vector<float>> C = simdMatrixMultiply(A, B);
     auto end = get_current_time_fenced();
 
-    std::cout << "Execution time: " << to_ms(end-start) << " seconds" << std::endl;
+    std::cout << "Execution time: " << to_ms(end-start) << " ms" << std::endl;
 
     return 0;
 }

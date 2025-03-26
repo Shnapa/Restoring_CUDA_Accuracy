@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
     simdMatrixMultiply(A_flat, B_flat, C_flat, m, n, k);
     auto end = get_current_time_fenced();
 
-    std::cout << "Execution time: " << to_ms(end-start) << " seconds" << std::endl;
+    std::cout << "Execution time: " << to_ms(end-start) << " ms" << std::endl;
 
     delete[] A_flat;
     delete[] B_flat;

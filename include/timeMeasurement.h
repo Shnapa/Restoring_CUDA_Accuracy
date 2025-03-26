@@ -9,9 +9,9 @@
 #include <atomic>
 
 template<class D>
-inline long long to_ms(const D& d)
+inline double to_ms(const D& d)
 {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(d).count();
+    return std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(d).count();
 }
 
 inline std::chrono::high_resolution_clock::time_point get_current_time_fenced()
