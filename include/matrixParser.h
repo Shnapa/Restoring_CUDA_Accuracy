@@ -31,43 +31,24 @@ inline std::vector<std::vector<float>> loadMatrixFromFile(const std::string& fil
 
 inline float* loadMatrixFromFileToArray(const std::string& filename, int& rows, int& cols) {
     std::ifstream file(filename);
+
     if (!file.is_open()) {
         std::cerr << "Could not open file: " << filename << std::endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
-    std::vector<float> matrix_data;
-    std::string line;
-
-    if (std::getline(file, line)) {
-        std::stringstream ss(line);
-        float value;
-        while (ss >> value) {
-            matrix_data.push_back(value);
-        }
-        cols = matrix_data.size();
+    std::vector<float> data;
+    float value;
+    while (file >> value) {
+        data.push_back(value);
     }
-
-    while (std::getline(file, line)) {
-        std::stringstream ss(line);
-        float value;
-        while (ss >> value) {
-            matrix_data.push_back(value);
-        }
-    }
-
     file.close();
 
-    rows = matrix_data.size() / cols;
-    if (matrix_data.size() % cols != 0) {
-        std::cerr << "Matrix dimensions are inconsistent with the number of elements." << std::endl;
-        exit(1);
-    }
+    rows = 1;
+    cols = data.size();
 
-    float* matrix_array = new float[matrix_data.size()];
-    std::copy(matrix_data.begin(), matrix_data.end(), matrix_array);
-
-    return matrix_array;
+    float* array = new float[data.size()];
+    std::copy(data.begin(), data.end(), array);
+    return array;
 }
-
 #endif

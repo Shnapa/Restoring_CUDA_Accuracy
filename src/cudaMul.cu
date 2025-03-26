@@ -34,8 +34,8 @@ __global__ void matrixMultiplyTiled(float *A, float *B, float *C, int m, int n, 
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <A_matrix_path> <B_matrix_path> <output_matrix_path>" << std::endl;
+    if (argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " <A_matrix_path> <B_matrix_path>" << std::endl;
         return 1;
     }
 

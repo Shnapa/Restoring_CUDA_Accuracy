@@ -1,13 +1,9 @@
-
-
 #include "matrixParser.h"
 #include <cuda_runtime.h>
 #include <iostream>
 #include <vector>
-#include <cstdlib>
 #include <random>
 #include <fstream>
-#include <sstream>
 #include "timeMeasurement.h"
 
 #define TILE_SIZE 32

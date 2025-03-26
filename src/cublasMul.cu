@@ -7,8 +7,8 @@
 #include "matrixParser.h"
 
 int main(int argc, char* argv[]) {
-    if (argc != 4) {
-        std::cerr << "Usage: " << argv[0] << " <A_matrix_path> <B_matrix_path> <output_matrix_path>" << std::endl;
+    if (argc != 3) {
+        std::cerr << "Usage: " << argv[0] << " <A_matrix_path> <B_matrix_path> "<< std::endl;
         return 1;
     }
 
@@ -37,7 +37,6 @@ int main(int argc, char* argv[]) {
     size_t sizeA = m * n * sizeof(__half);
     size_t sizeB = n * k * sizeof(__half);
     size_t sizeC = m * k * sizeof(float);
-
     cudaMalloc(&d_A, sizeA);
     cudaMalloc(&d_B, sizeB);
     cudaMalloc(&d_C, sizeC);
@@ -52,10 +51,7 @@ int main(int argc, char* argv[]) {
     cublasHandle_t handle;
     cublasCreate(&handle);
 
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-    cudaEventRecord(start, 0);
+    auto start  = get_current_time_fenced();
 
     cublasStatus_t status = cublasGemmEx(
         handle,
@@ -74,12 +70,8 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    cudaEventRecord(stop, 0);
-    cudaEventSynchronize(stop);
-
-    float elapsed_ms = 0.0f;
-    cudaEventElapsedTime(&elapsed_ms, start, stop);
-    std::cout << "Elapsed time: " << elapsed_ms << " ms" << std::endl;
+    auto end  = get_current_time_fenced();
+    std::cout << "Elapsed time: " << to_ms(end-start) << " ms" << std::endl;
 
     cudaMemcpy(h_C, d_C, sizeC, cudaMemcpyDeviceToHost);
 
