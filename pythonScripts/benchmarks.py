@@ -1,82 +1,61 @@
-import os
-import glob
 import subprocess
 import csv
 
-def parse_filename(filename):
-    base = os.path.basename(filename)
-    name, ext = os.path.splitext(base)
-    parts = name.split('_')
-    if len(parts) < 2:
-        raise ValueError("Filename format incorrect")
-    matrix_type = parts[0]
-    dims = parts[1]
-    try:
-        d1, d2 = dims.split('x')
-        d1 = int(d1)
-        d2 = int(d2)
-    except Exception as e:
-        raise ValueError(f"Error parsing dimensions in {filename}: {e}")
-    return matrix_type, d1, d2
+# Matrix configurations
+configs = [
+    (100, 50, 100),
+    (200, 100, 150),
+    (500, 250, 300),
+    (1000, 500, 800),
+    (2000, 1000, 1500),
+    (5000, 2500, 3000),
+    (10000, 5000, 8000)
+]
 
-def main():
-    dataset_dir = "data/matrix_dataset"
-    executable = "cmake-build-debug/cudaMulOpt"
-    csv_filename = "benchmark_results_opt.csv"
-    results = []
+num_runs = 1
 
-    a_files = glob.glob(os.path.join(dataset_dir, "A_*.txt"))
-    for a_file in a_files:
+executables = [
+    "cublasMul",
+    "cudaMul",
+    "cudaMulOpt",
+    "simdMul",
+    "simdMulOpt",
+]
+# executable = "simdMulOpt"
+
+def run_benchmark(executable, matrix_file_A, matrix_file_B):
+    times = []
+    for _ in range(num_runs):
+        result = subprocess.run(
+            [f"../build/{executable}", matrix_file_A, matrix_file_B],
+            capture_output=True, text=True
+        )
+        output = result.stdout.strip()
         try:
-            matrix_type, n, k = parse_filename(a_file)
-        except Exception as e:
-            print(f"Skipping {a_file}: {e}")
-            continue
+            elapsed_time = float(output.split()[-2])
+            times.append(elapsed_time)
+        except ValueError:
+            print(f"Error parsing time for {executable} with matrices {matrix_file_A} and {matrix_file_B}: {output}")
 
-        b_pattern = os.path.join(dataset_dir, f"B_{k}x*.txt")
-        b_files = glob.glob(b_pattern)
-        if not b_files:
-            print(f"No matching B file for {a_file}")
-            continue
-        b_file = b_files[0]
-        try:
-            matrix_type_b, k_b, m = parse_filename(b_file)
-            if k_b != k:
-                print(f"Dimension mismatch for {a_file} and {b_file}")
-                continue
-        except Exception as e:
-            print(f"Error parsing {b_file}: {e}")
-            continue
+    avg_time = float(sum(times) / len(times))
+    return avg_time
 
-        cmd = [executable, a_file, b_file]
-        print("\nRunning:", " ".join(cmd))
-        proc = subprocess.run(cmd, capture_output=True, text=True)
-        output = proc.stdout.strip()
-        print("Output:", output)
-        match = output.split()[2]
-        if match:
-            time_sec = float(match)
-        else:
-            print(f"Failed to parse time from output: {output}")
-            continue
-        a_size = f"{n}x{k}"
-        b_size = f"{k}x{m}"
-        results.append({
-            "A_matrix": a_size,
-            "B_matrix": b_size,
-            "n": n,
-            "k": k,
-            "m": m,
-            "time_ms": f"{time_sec:.6f}"
-        })
+def run_benchmarks():
+    for executable in executables:
+        output_file = f"benchmark_results_{executable}.csv"
+        with open(output_file, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Executable", "m", "n", "k", "average_time_ms"])
 
-    with open(csv_filename, "w", newline="") as csvfile:
-        fieldnames = ["A_matrix", "B_matrix", "n", "k", "m", "time_ms"]
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in results:
-            writer.writerow(row)
-    print(f"Results saved to {csv_filename}")
+            for m, n, k in configs:
+                matrix_A_filename = f"matrix_A_{m}x{n}.txt"
+                matrix_B_filename = f"matrix_B_{n}x{k}.txt"
+                print(f"Running benchmark for {executable} with matrices {matrix_A_filename} and {matrix_B_filename}")
+                avg_time = run_benchmark(executable, matrix_A_filename, matrix_B_filename)
+                writer.writerow([executable, m, n, k, avg_time])
+                print(f"Benchmark completed for {executable} with matrices {m}x{n} and {n}x{k} with average time: {avg_time:.4f} ms")
 
-if __name__ == "__main__":
-    main()
+        print(f"Benchmark results saved to {output_file}")
+
+print(f"Benchmark results saved to {output_file}")
+run_benchmarks()
