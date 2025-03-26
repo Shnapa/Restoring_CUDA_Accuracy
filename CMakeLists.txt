@@ -23,12 +23,12 @@ add_executable(generateData data/generate_matrices.cpp)
 
 add_executable(simdMul src/matrix_simd_mult.cpp ${SOURCES})
 
+add_executable(matrixMul matrix-multiplication/main.cpp ${SOURCES})
+
 target_include_directories(simdMul PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_include_directories(cudaMul PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_include_directories(cudaMulOpt PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_include_directories(cublasMul PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
+target_include_directories(matrixMul PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_link_libraries(cublasMul cublas)
-
-add_subdirectory(matrix-multiplication)
 include_directories(src data)
-
