@@ -1,9 +1,12 @@
 #ifndef MATRIX_PARSER_HPP
 #define MATRIX_PARSER_HPP
 
+#include <iostream>
 #include <vector>
 #include <random>
 #include <fstream>
+#include <sstream>
+
 
 inline std::vector<std::vector<float>> loadMatrixFromFile(const std::string& filename) {
     std::ifstream file(filename);
