@@ -58,7 +58,7 @@ int main() {
 
     for (int i = 0; i < M_TOTAL * K_TOTAL; i++) A[i] = __float2half(1.0f);
     for (int i = 0; i < K_TOTAL * N_TOTAL; i++) B[i] = __float2half(1.0f);
-    for (int i = 0; i < M_TOTAL * N_TOTAL; i++) C[i] = 1.0f;
+    for (int i = 0; i < M_TOTAL * N_TOTAL; i++) C[i] = 0.0f;
 
     dim3 blockDim(32 * 4);
     dim3 gridDim(N_TILES, M_TILES);
@@ -66,7 +66,7 @@ int main() {
     matmul_wmma<<<gridDim, blockDim>>>(A, B, C, D);
     cudaDeviceSynchronize();
 
-    printf("Result matrix D (перші 10x10 елементів):\n");
+    printf("Result matrix D (first 10x10 elements):\n");
     for (int i = 0; i < 10; i++) {
         for (int j = 0; j < 10; j++) {
             printf("%.1f ", D[i * N_TOTAL + j]);
