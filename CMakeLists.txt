@@ -24,7 +24,7 @@ add_executable(simdMulOpt src/matrix_simd_parallel_mult.cpp ${SOURCES} )
 
 add_executable(matrixMul matrix-multiplication/main.cpp ${SOURCES})
 
-add_executable(wmma matrix-multiplication/wmma.cu ${SOURCES})
+add_executable(wmma src/wmma.cu ${SOURCES})
 
 target_include_directories(matrixMul PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 

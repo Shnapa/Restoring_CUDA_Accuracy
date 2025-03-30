@@ -1,5 +1,7 @@
 #include <cuda_fp16.h>
 #include <mma.h>
+#include <cstdio>
+
 using namespace nvcuda;
 
 #define M 16
