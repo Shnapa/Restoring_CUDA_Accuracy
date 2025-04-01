@@ -1,54 +1,43 @@
 #ifndef MATRIX_PARSER_HPP
 #define MATRIX_PARSER_HPP
 
+#include <array>
 #include <iostream>
 #include <vector>
 #include <random>
 #include <fstream>
 #include <sstream>
 
+inline std::vector<std::tuple<size_t, size_t, size_t>> matrix_sizes = {
+    {1000, 500, 800},
+    {2000, 1000, 1500},
+    {5000, 2500, 3000},
+    {10000, 5000, 8000},
+    {10000, 10000, 10000},
+    {50000, 10000, 40000},
+};
 
-inline std::vector<std::vector<float>> loadMatrixFromFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        throw std::runtime_error("Could not open file: " + filename);
-    }
+inline std::vector<std::string> filePaths{
+    "../data/matrix_1000_500_800.txt",
+    "../data/matrix_2000_1000_1500.txt",
+    "../data/matrix_5000_2500_3000.txt",
+    "../data/matrix_10000_5000_8000.txt",
+    "../data/matrix_10000_10000_10000.txt",
+    "../data/matrix_50000_10000_40000.txt"
+};
 
-    std::vector<std::vector<float>> matrix;
-    std::string line;
-    while (std::getline(file, line)) {
-        std::stringstream ss(line);
-        std::vector<float> row;
-        float value;
-        while (ss >> value) {
-            row.push_back(value);
-        }
-        matrix.push_back(row);
-    }
-    file.close();
-    return matrix;
-}
+int loadMatrixFromFile(const std::string& filename, std::vector<std::vector<float>>& matrix);
 
-inline float* loadMatrixFromFileToArray(const std::string& filename, int& rows, int& cols) {
-    std::ifstream file(filename);
+int loadMatricesFromFileArray(  const std::string &filePath,
+                                float* A,
+                                size_t A_elements,
+                                float* B,
+                                size_t B_elements);
 
-    if (!file.is_open()) {
-        std::cerr << "Could not open file: " << filename << std::endl;
-        exit(EXIT_FAILURE);
-    }
 
-    std::vector<float> data;
-    float value;
-    while (file >> value) {
-        data.push_back(value);
-    }
-    file.close();
+void parseDimensions(   const std::string& filePath,
+                        size_t &m,
+                        size_t &n,
+                        size_t &k);
 
-    rows = 1;
-    cols = data.size();
-
-    float* array = new float[data.size()];
-    std::copy(data.begin(), data.end(), array);
-    return array;
-}
 #endif

@@ -2,88 +2,120 @@
 #include <cuda_fp16.h>
 #include <cuda_runtime.h>
 #include <iostream>
-#include <random>
-#include "timeMeasurement.h"
 #include "matrixParser.h"
+#include <benchmark/benchmark.h>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
 
-int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <A_matrix_path> <B_matrix_path> "<< std::endl;
-        return 1;
+int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
+    std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Error: could not open file " << filePath << std::endl;
+        return -1;
     }
-
-    std::string A_matrix_path = argv[1];
-    std::string B_matrix_path = argv[2];
-
-    int m, n, k;
-
-    float* A = loadMatrixFromFileToArray(A_matrix_path, m, n);
-    float* B = loadMatrixFromFileToArray(B_matrix_path, n, k);
-
-    __half* h_A = static_cast<__half*>(malloc(m * n * sizeof(__half)));
-    __half* h_B = static_cast<__half*>(malloc(n * k * sizeof(__half)));
-    float* h_C = static_cast<float*>(malloc(m * k * sizeof(float)));
-
-    for (int i = 0; i < m * n; i++) {
-        h_A[i] = __float2half(A[i]);
+    std::string line;
+    if (!std::getline(file, line)) {
+        std::cerr << "Error: could not read the first line from " << filePath << std::endl;
+        return -1;
     }
+    std::istringstream issA(line);
+    size_t countA = 0;
+    float value;
+    while (issA >> value) {
+        if (countA < A_elements) {
+            A[countA++] = __float2half(value);
+        } else {
+            break;
+        }
+    }
+    if (countA != A_elements) {
+        std::cerr << "Error: Expected " << A_elements << " elements for Matrix A, but found " << countA << std::endl;
+        return -1;
+    }
+    if (!std::getline(file, line)) {
+        std::cerr << "Error: could not read the second line from " << filePath << std::endl;
+        return -1;
+    }
+    std::istringstream issB(line);
+    size_t countB = 0;
+    while (issB >> value) {
+        if (countB < B_elements) {
+            B[countB++] = __float2half(value);
+        } else {
+            break;
+        }
+    }
+    if (countB != B_elements) {
+        std::cerr << "Error: Expected " << B_elements << " elements for Matrix B, but found " << countB << std::endl;
+        return -1;
+    }
+    return 0;
+}
 
-    for (int i = 0; i < n * k; i++) {
-        h_B[i] = __float2half(B[i]);
+static void BM_RunCublasMultiplication(benchmark::State& state, const std::string &filePath) {
+    size_t m, n, k;
+    parseDimensions(filePath, m, n, k);
+    size_t A_elements = m * n;
+    size_t B_elements = n * k;
+    size_t C_elements = m * k;
+    auto* h_A = static_cast<__half*>(malloc(A_elements * sizeof(__half)));
+    auto* h_B = static_cast<__half*>(malloc(B_elements * sizeof(__half)));
+    auto* h_C = static_cast<float*>(malloc(C_elements * sizeof(float)));
+
+    if (loadHalfMatricesFromFileArray(filePath, h_A, A_elements, h_B, B_elements) != 0) {
+        state.SkipWithError("Error loading matrices");
+        return;
     }
 
     __half *d_A, *d_B;
     float *d_C;
-    size_t sizeA = m * n * sizeof(__half);
-    size_t sizeB = n * k * sizeof(__half);
-    size_t sizeC = m * k * sizeof(float);
-    cudaMalloc(&d_A, sizeA);
-    cudaMalloc(&d_B, sizeB);
-    cudaMalloc(&d_C, sizeC);
 
-    cudaMemcpy(d_A, h_A, sizeA, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_C, h_C, sizeC, cudaMemcpyHostToDevice);
+    cudaMalloc(&d_A, A_elements * sizeof(__half));
+    cudaMalloc(&d_B, B_elements * sizeof(__half));
+    cudaMalloc(&d_C, C_elements * sizeof(float));
 
-    const float alpha = 1.0f;
-    const float beta = 0.0f;
+    cudaMemcpy(d_A, h_A, A_elements * sizeof(__half), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, B_elements * sizeof(__half), cudaMemcpyHostToDevice);
 
     cublasHandle_t handle;
     cublasCreate(&handle);
 
-    auto start  = get_current_time_fenced();
+    const float alpha = 1.0f;
+    const float beta = 0.0f;
 
-    cublasStatus_t status = cublasGemmEx(
-        handle,
-        CUBLAS_OP_N, CUBLAS_OP_N,
-        m, k, n,
-        &alpha,
-        d_A, CUDA_R_16F, m,
-        d_B, CUDA_R_16F, n,
-        &beta,
-        d_C, CUDA_R_32F, m,
-        CUDA_R_32F, CUBLAS_GEMM_DEFAULT
-    );
-
-    if (status != CUBLAS_STATUS_SUCCESS) {
-        std::cerr << "CUBLAS gemm failed!" << std::endl;
-        return -1;
+    for (auto _ : state) {
+        cudaMemset(d_C, 0, C_elements * sizeof(float));
+        cublasGemmEx(handle,
+            CUBLAS_OP_N, CUBLAS_OP_N,
+            m, k, n,
+            &alpha,
+            d_A, CUDA_R_16F, m,
+            d_B, CUDA_R_16F, n,
+            &beta,
+            d_C, CUDA_R_32F, m,
+            CUDA_R_32F,
+            CUBLAS_GEMM_DEFAULT);
+        cudaDeviceSynchronize();
     }
 
-    auto end  = get_current_time_fenced();
-    std::cout << "Elapsed time: " << to_ms(end-start) << " ms" << std::endl;
-
-    cudaMemcpy(h_C, d_C, sizeC, cudaMemcpyDeviceToHost);
-
     cublasDestroy(handle);
-
-    free(h_A);
-    free(h_B);
-    free(h_C);
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
-
-    return 0;
+    free(h_A);
+    free(h_B);
+    free(h_C);
 }
 
+int main(int argc, char** argv) {
+    for (const auto &filepath : filePaths) {
+        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
+            BM_RunCublasMultiplication(state, filepath);
+        });
+    }
+    benchmark::Initialize(&argc, argv);
+    benchmark::RunSpecifiedBenchmarks();
+    return 0;
+}

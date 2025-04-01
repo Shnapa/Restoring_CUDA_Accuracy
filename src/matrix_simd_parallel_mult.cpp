@@ -1,88 +1,70 @@
-#include <iostream>
 #include <vector>
-#include <random>
 #include <immintrin.h>
-#include <iomanip>
-#include <chrono>
+#include <cstring>
+#include <cstdlib>
 #include "matrixParser.h"
-#include "timeMeasurement.h"
+#include <benchmark/benchmark.h>
 
 #define BLOCK_SIZE 64
 
-void simdMatrixMultiply(const float* A, const float* B, float* C, int m, int n, int k) {
-    #pragma omp parallel for collapse(2)
-    for (int i = 0; i < m; i += BLOCK_SIZE) {
-        for (int j = 0; j < k; j += BLOCK_SIZE) {
-            for (int kk = 0; kk < n; kk += BLOCK_SIZE) {
-
-                for (int ii = i; ii < i + BLOCK_SIZE && ii < m; ii++) {
-                    for (int jj = j; jj < j + BLOCK_SIZE && jj < k; jj += 8) {
-                        __m256 sum = _mm256_setzero_ps();
-
-                        for (int kk_iter = kk; kk_iter < kk + BLOCK_SIZE && kk_iter < n; kk_iter++) {
-                            __m256 a = _mm256_set1_ps(A[ii * n + kk_iter]);
-                            __m256 b = _mm256_loadu_ps(&B[kk_iter * k + jj]);
-                            sum = _mm256_fmadd_ps(a, b, sum);
+void simdMatrixMultiply(const float* A, const float* B, float* C,
+                                  const size_t m, const size_t n, const size_t k) {
+#pragma omp parallel for collapse(2)
+    for (size_t i = 0; i < m; i += BLOCK_SIZE)
+        for (size_t j = 0; j < k; j += BLOCK_SIZE)
+            for (size_t kk = 0; kk < n; kk += BLOCK_SIZE)
+                for (size_t ii = i; ii < std::min(i + BLOCK_SIZE, m); ii++) {
+                    for (size_t j_block = j; j_block < std::min(j + BLOCK_SIZE, k); ) {
+                        if (j_block + 8 <= std::min(j + BLOCK_SIZE, k)) {
+                            __m256 sum = _mm256_setzero_ps();
+                            for (size_t kk_iter = kk; kk_iter < std::min(kk + BLOCK_SIZE, n); kk_iter++) {
+                                __m256 a = _mm256_set1_ps(A[ii * n + kk_iter]);
+                                __m256 b = _mm256_loadu_ps(&B[kk_iter * k + j_block]);
+                                sum = _mm256_fmadd_ps(a, b, sum);
+                            }
+                            const __m256 c_val = _mm256_loadu_ps(&C[ii * k + j_block]);
+                            _mm256_storeu_ps(&C[ii * k + j_block], _mm256_add_ps(c_val, sum));
+                            j_block += 8;
+                        } else {
+                            for (; j_block < std::min(j + BLOCK_SIZE, k); j_block++) {
+                                float sum = 0.0f;
+                                for (size_t kk_iter = kk; kk_iter < std::min(kk + BLOCK_SIZE, n); kk_iter++) {
+                                    sum += A[ii * n + kk_iter] * B[kk_iter * k + j_block];
+                                }
+                                C[ii * k + j_block] += sum;
+                            }
                         }
-
-                        _mm256_storeu_ps(&C[ii * k + jj], sum);
-                    }
-
-                    for (int jj = (j + BLOCK_SIZE) / 8 * 8; jj < j + BLOCK_SIZE && jj < k; jj++) {
-                        float sum = 0.0f;
-                        for (int kk_iter = kk; kk_iter < kk + BLOCK_SIZE && kk_iter < n; kk_iter++) {
-                            sum += A[ii * n + kk_iter] * B[kk_iter * k + jj];
-                        }
-                        C[ii * k + jj] = sum;
                     }
                 }
-            }
-        }
-    }
 }
 
-int main(int argc, char* argv[])
-{
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <A_matrix_path> <B_matrix_path>" << std::endl;
-        return 1;
+static void BM_RunSimdMultiplication(benchmark::State &state, const std::string &filePath) {
+    size_t m, n, k;
+    parseDimensions(filePath, m, n, k);
+    const size_t A_elements = m * n;
+    const size_t B_elements = n * k;
+    const size_t C_elements = m * k;
+    auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
+    auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
+    auto* C = static_cast<float*>(malloc(C_elements * sizeof(float)));
+    loadMatricesFromFileArray(filePath, A, A_elements, B, B_elements);
+    for (auto _ : state) {
+        memset(C, 0, C_elements * sizeof(float));
+        simdMatrixMultiply(A, B, C, m, n, k);
+        benchmark::ClobberMemory();
     }
+    free(A);
+    free(B);
+    free(C);
+}
 
-    std::string A_matrix_path = argv[1];
-    std::string B_matrix_path = argv[2];
-
-    std::vector<std::vector<float>> A = loadMatrixFromFile(A_matrix_path);
-    std::vector<std::vector<float>> B = loadMatrixFromFile(B_matrix_path);
-
-    int m = A.size();
-    int n = A[0].size();
-    int k = B[0].size();
-
-    float* A_flat = new float[m * n];
-    float* B_flat = new float[n * k];
-    float* C_flat = new float[m * k]();
-
-    for (int i = 0; i < m; ++i) {
-        for (int j = 0; j < n; ++j) {
-            A_flat[i * n + j] = A[i][j];
-        }
+int main(int argc, char** argv) {
+    for (const auto &filepath : filePaths) {
+        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
+            BM_RunSimdMultiplication(state, filepath);
+        });
     }
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < k; ++j) {
-            B_flat[i * k + j] = B[i][j];
-        }
-    }
-
-    auto start = get_current_time_fenced();
-    simdMatrixMultiply(A_flat, B_flat, C_flat, m, n, k);
-    auto end = get_current_time_fenced();
-
-    std::cout << "Execution time: " << to_ms(end-start) << " ms" << std::endl;
-
-    delete[] A_flat;
-    delete[] B_flat;
-    delete[] C_flat;
+    benchmark::Initialize(&argc, argv);
+    benchmark::RunSpecifiedBenchmarks();
     return 0;
 }
-
