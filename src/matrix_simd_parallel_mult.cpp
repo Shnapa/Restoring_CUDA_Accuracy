@@ -1,9 +1,5 @@
-#include <vector>
-#include <immintrin.h>
-#include <cstring>
-#include <cstdlib>
-#include "matrixParser.h"
-#include <benchmark/benchmark.h>
+#include "matrix_simd_parallel_mult.h"
+
 
 #define BLOCK_SIZE 64
 
