@@ -1,9 +1,5 @@
-#include <vector>
-#include <immintrin.h>
-#include <cstring>
-#include <cstdlib>
-#include "matrixParser.h"
-#include <benchmark/benchmark.h>
+#include "matrix_simd_mult.h"
+
 
 std::vector<float> padMatrix(const float* matrix, size_t rows, size_t cols, int simdWidth, size_t &paddedRows, size_t &paddedCols) {
     paddedRows = ((rows + simdWidth - 1) / simdWidth) * simdWidth;
