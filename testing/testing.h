@@ -11,8 +11,9 @@
 #include <sstream>
 #include <cstdlib>
 
-bool compareMatrices(const std::vector<std::vector<int>>& A, const std::vector<std::vector<int>>& B);
-void printMatrix(const std::vector<std::vector<int>>& matrix);
-std::vector<std::vector<int>> generateMatrix(int rows, int cols, int minVal = 0, int maxVal = 10);
-std::vector<std::vector<int>> multiplyMatrices(const std::vector<std::vector<int>>& mat1, const std::vector<std::vector<int>>& mat2);
+using Matrix = std::vector<int>;
+
+bool compareMatrices(Matrix a, Matrix b, Matrix c);
+Matrix multiplication(const Matrix& A, size_t m1, size_t n1, const Matrix& B, size_t m2, size_t n2);
+
 #endif //TESTING_HPP
