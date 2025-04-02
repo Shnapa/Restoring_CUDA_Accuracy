@@ -1,18 +1,18 @@
-#include <cuda_runtime.h>
-#include <vector>
+#include <iostream>
 #include <cstdlib>
 #include "matrixParser.h"
-#include <benchmark/benchmark.h>
+#include <cuda_runtime.h>
 
-#define TILE_SIZE 32
+#define TILE_SIZE 16
 
-__global__ void matrixMultiplyTiled(const float *A, const float *B, float *C, const size_t m, const size_t n, const size_t k) {
+__global__ void cudaMulOpt(const float* A, const float* B, float* C, size_t m, size_t n, size_t k) {
     __shared__ float tileA[TILE_SIZE][TILE_SIZE];
     __shared__ float tileB[TILE_SIZE][TILE_SIZE];
-    const size_t row = blockIdx.y * TILE_SIZE + threadIdx.y;
-    const size_t col = blockIdx.x * TILE_SIZE + threadIdx.x;
+
+    size_t row = blockIdx.y * TILE_SIZE + threadIdx.y;
+    size_t col = blockIdx.x * TILE_SIZE + threadIdx.x;
     float sum = 0.0f;
-    for (int t = 0; t < (n + TILE_SIZE - 1) / TILE_SIZE; t++) {
+    for (size_t t = 0; t < (n + TILE_SIZE - 1) / TILE_SIZE; t++) {
         if (row < m && t * TILE_SIZE + threadIdx.x < n)
             tileA[threadIdx.y][threadIdx.x] = A[row * n + t * TILE_SIZE + threadIdx.x];
         else
@@ -22,59 +22,55 @@ __global__ void matrixMultiplyTiled(const float *A, const float *B, float *C, co
         else
             tileB[threadIdx.y][threadIdx.x] = 0.0f;
         __syncthreads();
-        for (int i = 0; i < TILE_SIZE; i++)
+        for (int i = 0; i < TILE_SIZE; i++) {
             sum += tileA[threadIdx.y][i] * tileB[i][threadIdx.x];
+        }
         __syncthreads();
     }
     if (row < m && col < k)
         C[row * k + col] = sum;
 }
 
-static void BM_RunMultiplication(benchmark::State& state, const std::string &filePath) {
+int main(const int argc, char** argv) {
+    if(argc < 2) {
+       std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
+       return 1;
+    }
+    const std::string filePath = argv[1];
+
     size_t m, n, k;
     parseDimensions(filePath, m, n, k);
+    const size_t A_elements = m * n, B_elements = n * k, C_elements = m * k;
 
-    const size_t sizeA = m * n * sizeof(float);
-    const size_t sizeB = n * k * sizeof(float);
-    const size_t sizeC = m * k * sizeof(float);
-
-    auto *h_A = static_cast<float*>(malloc(sizeA));
-    auto *h_B = static_cast<float*>(malloc(sizeB));
-
-    loadMatricesFromFileArray(filePath, h_A, m * n, h_B, n * k);
+    auto* h_A = static_cast<float*>(malloc(A_elements * sizeof(float)));
+    auto* h_B = static_cast<float*>(malloc(B_elements * sizeof(float)));
+    loadMatricesFromFileArray(filePath, h_A, A_elements, h_B, B_elements);
 
     float *d_A, *d_B, *d_C;
-    cudaMalloc(&d_A, sizeA);
-    cudaMalloc(&d_B, sizeB);
-    cudaMalloc(&d_C, sizeC);
+    cudaMalloc(&d_A, A_elements * sizeof(float));
+    cudaMalloc(&d_B, B_elements * sizeof(float));
+    cudaMalloc(&d_C, C_elements * sizeof(float));
 
-    cudaMemcpy(d_A, h_A, sizeA, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_A, h_A, A_elements * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, B_elements * sizeof(float), cudaMemcpyHostToDevice);
 
-    dim3 threadsPerBlock(TILE_SIZE, TILE_SIZE);
-    dim3 blocksPerGrid((k + TILE_SIZE - 1) / TILE_SIZE, (m + TILE_SIZE - 1) / TILE_SIZE);
+    dim3 threads(TILE_SIZE, TILE_SIZE);
+    dim3 blocks((k + TILE_SIZE - 1) / TILE_SIZE, (m + TILE_SIZE - 1) / TILE_SIZE);
 
-    for (auto _ : state) {
-        cudaMemset(d_C, 0, sizeC);
-        matrixMultiplyTiled<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
-        cudaDeviceSynchronize();
-        benchmark::ClobberMemory();
-    }
+    cudaMulOpt<<<blocks, threads>>>(d_A, d_B, d_C, m, n, k);
+    cudaDeviceSynchronize();
+
+    auto* h_C = static_cast<float*>(malloc(C_elements * sizeof(float)));
+    cudaMemcpy(h_C, d_C, C_elements * sizeof(float), cudaMemcpyDeviceToHost);
+
+    std::cout << "Optimized CUDA multiplication complete." << std::endl;
+    std::cout << "First element of result: " << h_C[0] << std::endl;
 
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
     free(h_A);
     free(h_B);
-}
-
-int main(int argc, char** argv) {
-    for (const auto &filepath : filePaths) {
-        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
-            BM_RunMultiplication(state, filepath);
-        });
-    }
-    benchmark::Initialize(&argc, argv);
-    benchmark::RunSpecifiedBenchmarks();
+    free(h_C);
     return 0;
 }

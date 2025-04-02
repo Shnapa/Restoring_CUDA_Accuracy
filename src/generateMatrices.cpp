@@ -1,21 +1,17 @@
-//
-// Created by gllek-pc on 3/30/25.
-//
 #include <iostream>
 #include <fstream>
 #include <random>
 #include <thread>
 #include <tuple>
 #include <vector>
-#include <sstream>
+#include <string>
 #include "matrixParser.h"
 
-void generate_and_write_matrices(size_t m, size_t n, size_t p) {
-    std::ostringstream filename;
-    filename << "../data/" << "matrix_" << m << "_" << n << "_" << p << ".txt";
-    std::ofstream outfile(filename.str());
-    if (!outfile.is_open()) {
-        std::cerr << "Error opening file: " << filename.str() << std::endl;
+void generate_and_write_matrices(size_t m, size_t n, size_t k) {
+    std::string filename = "../data/matrix_" + std::to_string(m) + "_" + std::to_string(n) + "_" + std::to_string(k) + ".txt";
+    std::ofstream outfile(filename);
+    if (!outfile) {
+        std::cerr << "Error opening file: " << filename << "\n";
         return;
     }
 
@@ -24,43 +20,37 @@ void generate_and_write_matrices(size_t m, size_t n, size_t p) {
     std::uniform_real_distribution<double> dist(1.0, 10000.0);
 
     size_t totalA = m * n;
-    for (size_t k = 0; k < totalA; ++k) {
+    for (size_t i = 0; i < totalA; ++i) {
         outfile << dist(gen);
-        if (k < totalA - 1) {
-            outfile << " ";
-        }
+        if (i + 1 < totalA)
+            outfile << ' ';
     }
-    outfile << "\n";
+    outfile << '\n';
 
-    size_t totalB = n * p;
-    for (size_t k = 0; k < totalB; ++k) {
+    size_t totalB = n * k;
+    for (size_t i = 0; i < totalB; ++i) {
         outfile << dist(gen);
-        if (k < totalB - 1) {
-            outfile << " ";
-        }
+        if (i + 1 < totalB)
+            outfile << ' ';
     }
-    outfile << "\n";
+    outfile << '\n';
 
     outfile.close();
-    std::cout << "Finished generating matrices for sizes ("
-              << m << ", " << n << ", " << p << ") in file: "
-              << filename.str() << "\n";
+    std::cout << "Finished generating matrices for (" << m << ", " << n << ", " << k << ") in file: " << filename << "\n";
 }
 
 int main() {
     std::vector<std::thread> threads;
     for (const auto &sizes : matrix_sizes) {
-        size_t m, n, p;
-        std::tie(m, n, p) = sizes;
-        threads.emplace_back(generate_and_write_matrices, m, n, p);
+        size_t m, n, k;
+        std::tie(m, n, k) = sizes;
+        threads.emplace_back(generate_and_write_matrices, m, n, k);
     }
-
     for (auto &t : threads) {
         if (t.joinable()) {
             t.join();
         }
     }
-
     std::cout << "All matrices generated.\n";
     return 0;
 }

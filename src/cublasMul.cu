@@ -1,13 +1,8 @@
-#include <cublas_v2.h>
-#include <cuda_fp16.h>
-#include <cuda_runtime.h>
 #include <iostream>
+#include <cstdlib>
 #include "matrixParser.h"
-#include <benchmark/benchmark.h>
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <string>
+#include <cuda_runtime.h>
+#include <cublas_v2.h>
 
 int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
     std::ifstream file(filePath);
@@ -54,51 +49,49 @@ int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t
     return 0;
 }
 
-static void BM_RunCublasMultiplication(benchmark::State& state, const std::string &filePath) {
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
+        return 1;
+    }
+    const std::string filePath = argv[1];
+
     size_t m, n, k;
     parseDimensions(filePath, m, n, k);
-    size_t A_elements = m * n;
-    size_t B_elements = n * k;
-    size_t C_elements = m * k;
-    auto* h_A = static_cast<__half*>(malloc(A_elements * sizeof(__half)));
-    auto* h_B = static_cast<__half*>(malloc(B_elements * sizeof(__half)));
-    auto* h_C = static_cast<float*>(malloc(C_elements * sizeof(float)));
+    const size_t A_elements = m * n;
+    const size_t B_elements = n * k;
+    const size_t C_elements = m * k;
 
-    if (loadHalfMatricesFromFileArray(filePath, h_A, A_elements, h_B, B_elements) != 0) {
-        state.SkipWithError("Error loading matrices");
-        return;
-    }
+    auto* h_A = static_cast<float*>(malloc(A_elements * sizeof(float)));
+    auto* h_B = static_cast<float*>(malloc(B_elements * sizeof(float)));
+    loadMatricesFromFileArray(filePath, h_A, A_elements, h_B, B_elements);
 
-    __half *d_A, *d_B;
-    float *d_C;
-
-    cudaMalloc(&d_A, A_elements * sizeof(__half));
-    cudaMalloc(&d_B, B_elements * sizeof(__half));
+    float *d_A, *d_B, *d_C;
+    cudaMalloc(&d_A, A_elements * sizeof(float));
+    cudaMalloc(&d_B, B_elements * sizeof(float));
     cudaMalloc(&d_C, C_elements * sizeof(float));
 
-    cudaMemcpy(d_A, h_A, A_elements * sizeof(__half), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B, B_elements * sizeof(__half), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_A, h_A, A_elements * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B, B_elements * sizeof(float), cudaMemcpyHostToDevice);
 
     cublasHandle_t handle;
     cublasCreate(&handle);
+    constexpr float alpha = 1.0f, beta = 0.0f;
+    cublasSgemm(handle,
+                CUBLAS_OP_N, CUBLAS_OP_N,
+                m, k, n,
+                &alpha,
+                d_A, m,
+                d_B, n,
+                &beta,
+                d_C, m);
+    cudaDeviceSynchronize();
 
-    const float alpha = 1.0f;
-    const float beta = 0.0f;
+    auto* h_C = static_cast<float*>(malloc(C_elements * sizeof(float)));
+    cudaMemcpy(h_C, d_C, C_elements * sizeof(float), cudaMemcpyDeviceToHost);
 
-    for (auto _ : state) {
-        cudaMemset(d_C, 0, C_elements * sizeof(float));
-        cublasGemmEx(handle,
-            CUBLAS_OP_N, CUBLAS_OP_N,
-            m, k, n,
-            &alpha,
-            d_A, CUDA_R_16F, m,
-            d_B, CUDA_R_16F, n,
-            &beta,
-            d_C, CUDA_R_32F, m,
-            CUDA_R_32F,
-            CUBLAS_GEMM_DEFAULT);
-        cudaDeviceSynchronize();
-    }
+    std::cout << "CUBLAS multiplication complete." << std::endl;
+    std::cout << "First element of result: " << h_C[0] << std::endl;
 
     cublasDestroy(handle);
     cudaFree(d_A);
@@ -107,15 +100,5 @@ static void BM_RunCublasMultiplication(benchmark::State& state, const std::strin
     free(h_A);
     free(h_B);
     free(h_C);
-}
-
-int main(int argc, char** argv) {
-    for (const auto &filepath : filePaths) {
-        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
-            BM_RunCublasMultiplication(state, filepath);
-        });
-    }
-    benchmark::Initialize(&argc, argv);
-    benchmark::RunSpecifiedBenchmarks();
     return 0;
 }

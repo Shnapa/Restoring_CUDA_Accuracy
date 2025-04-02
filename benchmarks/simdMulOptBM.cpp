@@ -3,10 +3,11 @@
 #include <cstring>
 #include <cstdlib>
 #include "matrixParser.h"
+#include <benchmark/benchmark.h>
 
 #define BLOCK_SIZE 64
 
-void simdMulOpt(const float* A, const float* B, float* C,
+void simdMatrixMultiply(const float* A, const float* B, float* C,
                                   const size_t m, const size_t n, const size_t k) {
 #pragma omp parallel for collapse(2)
     for (size_t i = 0; i < m; i += BLOCK_SIZE)
@@ -37,13 +38,7 @@ void simdMulOpt(const float* A, const float* B, float* C,
                 }
 }
 
-int main(int argc, char** argv) {
-    if(argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
-        return 1;
-    }
-    const std::string filePath = argv[1];
-
+static void BM_simdMulOpt(benchmark::State &state, const std::string &filePath) {
     size_t m, n, k;
     parseDimensions(filePath, m, n, k);
     const size_t A_elements = m * n;
@@ -53,11 +48,24 @@ int main(int argc, char** argv) {
     auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
     auto* C = static_cast<float*>(malloc(C_elements * sizeof(float)));
     loadMatricesFromFileArray(filePath, A, A_elements, B, B_elements);
-
-    simdMulOpt(A, B, C, m, n, k);
-
+    for (auto _ : state) {
+        memset(C, 0, C_elements * sizeof(float));
+        simdMatrixMultiply(A, B, C, m, n, k);
+        benchmark::ClobberMemory();
+    }
     free(A);
     free(B);
     free(C);
+}
+
+int main(int argc, char** argv) {
+    for (size_t i = 0; i < filePaths.size()-2; i++) {
+        const std::string& filepath = filePaths[i];
+        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
+            BM_simdMulOpt(state, filepath);
+        });
+    }
+    benchmark::Initialize(&argc, argv);
+    benchmark::RunSpecifiedBenchmarks();
     return 0;
 }

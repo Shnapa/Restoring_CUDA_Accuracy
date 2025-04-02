@@ -3,6 +3,7 @@
 #include <cstring>
 #include <cstdlib>
 #include "matrixParser.h"
+#include <benchmark/benchmark.h>
 
 std::vector<float> padMatrix(const float* matrix, size_t rows, size_t cols, int simdWidth, size_t &paddedRows, size_t &paddedCols) {
     paddedRows = ((rows + simdWidth - 1) / simdWidth) * simdWidth;
@@ -14,7 +15,7 @@ std::vector<float> padMatrix(const float* matrix, size_t rows, size_t cols, int 
     return padded;
 }
 
-std::vector<float> simdMul(const float* A, const float* B, size_t A_rows, size_t A_cols, size_t B_cols) {
+std::vector<float> simdMatrixMultiply(const float* A, const float* B, size_t A_rows, size_t A_cols, size_t B_cols) {
     std::vector<float> C(A_rows * B_cols, 0.0f);
     for (size_t i = 0; i < A_rows; i++) {
         for (size_t j = 0; j < B_cols; j += 8) {
@@ -30,13 +31,7 @@ std::vector<float> simdMul(const float* A, const float* B, size_t A_rows, size_t
     return C;
 }
 
-int main(int argc, char** argv) {
-    if(argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
-        return 1;
-    }
-    const std::string filePath = argv[1];
-
+static void BM_simdMul(benchmark::State &state, const std::string &filePath) {
     size_t m, n, k;
     parseDimensions(filePath, m, n, k);
     const size_t A_elements = m * n;
@@ -52,6 +47,21 @@ int main(int argc, char** argv) {
 
     free(A_raw);
     free(B_raw);
-    simdMul(paddedA.data(), paddedB.data(), paddedRowsA, paddedColsA, paddedColsB);
+
+    for (auto _ : state) {
+        auto C = simdMatrixMultiply(paddedA.data(), paddedB.data(), paddedRowsA, paddedColsA, paddedColsB);
+        benchmark::ClobberMemory();
+    }
+}
+
+int main(int argc, char** argv) {
+    for (size_t i = 0; i < filePaths.size()-2; i++) {
+        const std::string& filepath = filePaths[i];
+        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
+            BM_simdMul(state, filepath);
+        });
+    }
+    benchmark::Initialize(&argc, argv);
+    benchmark::RunSpecifiedBenchmarks();
     return 0;
 }
