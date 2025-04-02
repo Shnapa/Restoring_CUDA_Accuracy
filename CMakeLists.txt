@@ -15,14 +15,25 @@ find_package(Threads REQUIRED)
 find_package(benchmark REQUIRED)
 set(SOURCE_DIRECTORIES include src data)
 
-add_executable(cublasMul        src/cublasMul.cu                    ${SOURCES})
+add_executable(cublasMul        src/cublasMul.cu                    ${SOURCES}
+        src/matrix_simd_mult.h
+        matrix-multiplication/multBrut.h
+        matrix-multiplication/multBrut_main.cpp
+        matrix-multiplication/multBrut_main.cpp)
 add_executable(cudaMul          src/cudaMul.cu                      ${SOURCES})
 add_executable(cudaMulOpt       src/cudaMulOpt.cu                   ${SOURCES})
-add_executable(simdMul          src/matrix_simd_mult.cpp            ${SOURCES})
-add_executable(simdMulOpt       src/matrix_simd_parallel_mult.cpp   ${SOURCES})
+add_executable(simdMul          src/matrix_simd_mult.cpp            ${SOURCES}
+        src/matrix_simd_mult.h)
+add_executable(simdMulOpt       src/matrix_simd_parallel_mult.cpp   ${SOURCES}
+        src/matrix_simd_parallel_mult.h)
 add_executable(matrixMul        matrix-multiplication/main.cpp      ${SOURCES})
 add_executable(generateMatrices src/generateMatrices.cpp            ${SOURCES})
 add_executable(wmma src/wmma.cu ${SOURCES})
+add_executable(multBrut
+        matrix-multiplication/multBrut.h
+        matrix-multiplication/multBrut_main.cpp)
+
+
 
 target_include_directories(matrixMul        PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_include_directories(simdMul          PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
