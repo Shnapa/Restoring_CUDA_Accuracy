@@ -1,3 +1,0 @@
-C:/Users/Admin/Desktop/2.2/aks/matrix-testing/cmake-build-debug/CMakeFiles/matrix_testing.dir
-C:/Users/Admin/Desktop/2.2/aks/matrix-testing/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Admin/Desktop/2.2/aks/matrix-testing/cmake-build-debug/CMakeFiles/rebuild_cache.dir

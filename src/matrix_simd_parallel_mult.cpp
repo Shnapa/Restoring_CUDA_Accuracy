@@ -3,7 +3,6 @@
 #include <cstring>
 #include <cstdlib>
 #include "matrixParser.h"
-#include "matrix_simd_mult.h"
 
 #define BLOCK_SIZE 64
 

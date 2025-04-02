@@ -10,9 +10,7 @@ set(SOURCES
         include/matrixParser.h
         src/matrixParser.cpp
         include/timeMeasurement.h
-        matrix-multiplication/multBrut.h
-        matrix-multiplication/multBrut_main.cpp
-        matrix-multiplication/multBrut_main.cpp)
+        matrix-multiplication/multBrut.h)
 include_directories(src data)
 
 find_package(Threads REQUIRED)

@@ -4,13 +4,37 @@
 #include <vector>
 #include <cstdlib>
 #include "matrixParser.h"
-#include <benchmark/benchmark.h>
 
 using namespace nvcuda;
 
 #define M 16
 #define N 16
 #define K 16
+
+inline int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
+    std::ifstream file(filePath);
+    std::string line;
+    std::istringstream issA(line);
+    size_t countA = 0;
+    float value;
+    while (issA >> value) {
+        if (countA < A_elements) {
+            A[countA++] = __float2half(value);
+        } else {
+            break;
+        }
+    }
+    std::istringstream issB(line);
+    size_t countB = 0;
+    while (issB >> value) {
+        if (countB < B_elements) {
+            B[countB++] = __float2half(value);
+        } else {
+            break;
+        }
+    }
+    return 0;
+}
 
 __global__ void matrixMultiplyWMMA(const half *A, const half *B, float *C, size_t m, size_t n, size_t k) {
     int warpM = (blockIdx.y * blockDim.y + threadIdx.y) * M;
@@ -33,18 +57,23 @@ __global__ void matrixMultiplyWMMA(const half *A, const half *B, float *C, size_
     wmma::store_matrix_sync(C + warpM * n + warpN, acc_frag, n, wmma::mem_row_major);
 }
 
-static void BM_RunMultiplicationWMMA(benchmark::State &state, const std::string &filePath) {
+int main(int argc, char** argv) {
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
+        return 1;
+    }
+    const std::string filePath = argv[1];
     size_t m, n, k;
-    parseDimensions(filePath, m, k, n);
+    parseDimensions(filePath, m, n, k);
 
-    const size_t sizeA = m * k * sizeof(half);
-    const size_t sizeB = k * n * sizeof(half);
-    const size_t sizeC = m * n * sizeof(float);
+    const size_t sizeA = m * n * sizeof(half);
+    const size_t sizeB = n * k * sizeof(half);
+    const size_t sizeC = m * k * sizeof(float);
 
     auto *h_A = static_cast<half*>(malloc(sizeA));
     auto *h_B = static_cast<half*>(malloc(sizeB));
 
-    loadMatricesFromFileArrayHalf(filePath, h_A, m * k, h_B, k * n);
+    loadHalfMatricesFromFileArray(filePath, h_A, m * k, h_B, k * n);
 
     half *d_A, *d_B;
     float *d_C;
@@ -59,27 +88,11 @@ static void BM_RunMultiplicationWMMA(benchmark::State &state, const std::string 
     dim3 blocksPerGrid((n + N * threadsPerBlock.x - 1) / (N * threadsPerBlock.x),
                        (m + M * threadsPerBlock.y - 1) / (M * threadsPerBlock.y));
 
-    for (auto _ : state) {
-        cudaMemset(d_C, 0, sizeC);
-        matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
-        cudaDeviceSynchronize();
-        benchmark::ClobberMemory();
-    }
-
+    matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
     free(h_A);
     free(h_B);
-}
-
-int main(int argc, char** argv) {
-    for (const auto &filepath : filePaths) {
-        benchmark::RegisterBenchmark(filepath.c_str(), [filepath](benchmark::State &state) {
-            BM_RunMultiplicationWMMA(state, filepath);
-        });
-    }
-    benchmark::Initialize(&argc, argv);
-    benchmark::RunSpecifiedBenchmarks();
     return 0;
 }
