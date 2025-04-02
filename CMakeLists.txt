@@ -27,11 +27,9 @@ add_executable(cudaMul          src/cudaMul.cu                      ${SOURCES})
 add_executable(cudaMulOpt       src/cudaMulOpt.cu                   ${SOURCES})
 add_executable(simdMul          src/matrix_simd_mult.cpp            ${SOURCES})
 add_executable(simdMulOpt       src/matrix_simd_parallel_mult.cpp   ${SOURCES})
-add_executable(matrixMul        matrix-multiplication/main.cpp      ${SOURCES})
 add_executable(generateMatrices src/generateMatrices.cpp            ${SOURCES})
 add_executable(wmma             src/wmma.cu                         ${SOURCES})
 
-target_include_directories(matrixMul        PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_include_directories(simdMul          PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_include_directories(simdMulOpt       PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 target_include_directories(cudaMul          PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
@@ -51,7 +49,6 @@ target_compile_options(simdMulOpt   PRIVATE -mavx -mfma -march=native)
 ##############################################
 ###                 BM run                 ###
 ##############################################
-
 
 add_executable(cublasTest           benchmarks/cublasMulBM.cu   ${SOURCES})
 add_executable(cudaMulTest          benchmarks/cudaMulBM.cu     ${SOURCES})
@@ -136,4 +133,15 @@ add_test(
         --benchmark_report_aggregates_only
         --benchmark_out_format=json
         --benchmark_out=../benchmark_results/results_SimdMul.json
+)
+
+add_test(
+        NAME Benchmark_wmmaMul
+        COMMAND $<TARGET_FILE:wmmaTest>
+        --benchmark_repetitions=5
+        --benchmark_color=auto
+        --benchmark_time_unit=ms
+        --benchmark_report_aggregates_only
+        --benchmark_out_format=json
+        --benchmark_out=../benchmark_results/results_wmmaMul.json
 )
