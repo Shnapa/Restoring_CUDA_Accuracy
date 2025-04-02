@@ -23,7 +23,6 @@ std::tuple<Matrix, size_t, size_t> readMatrixFromFile(const std::string& filenam
     return {C, m, n};
 }
 
-
 bool compareMatrices(const Matrix& A, size_t m1, size_t n1,
                      const Matrix& B, size_t m2, size_t n2,
                      const std::tuple<Matrix, size_t, size_t>& C_tuple) {

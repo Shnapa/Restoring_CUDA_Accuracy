@@ -101,7 +101,7 @@ add_test(
 add_test(
         NAME Benchmark_CublasMul
         COMMAND $<TARGET_FILE:cublasTest>
-        --benchmark_repetitions=10
+        --benchmark_repetitions=5
         --benchmark_color=auto
         --benchmark_time_unit=ms
         --benchmark_report_aggregates_only

@@ -37,8 +37,8 @@ inline int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A,
 }
 
 __global__ void matrixMultiplyWMMA(const half *A, const half *B, float *C, size_t m, size_t n, size_t k) {
-    int warpM = (blockIdx.y * blockDim.y + threadIdx.y) * M;
-    int warpN = (blockIdx.x * blockDim.x + threadIdx.x) * N;
+    const size_t warpM = (blockIdx.y * blockDim.y + threadIdx.y) * M;
+    const size_t warpN = (blockIdx.x * blockDim.x + threadIdx.x) * N;
 
     if (warpM >= m || warpN >= n) return;
 
