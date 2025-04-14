@@ -11,24 +11,18 @@
 int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
     std::ifstream file(filePath);
     std::string line;
+    std::getline(file, line);
     std::istringstream issA(line);
     size_t countA = 0;
     float value;
-    while (issA >> value) {
-        if (countA < A_elements) {
-            A[countA++] = __float2half(value);
-        } else {
-            break;
-        }
+    while (issA >> value && countA < A_elements) {
+        A[countA++] = __float2half(value);
     }
+    std::getline(file, line);
     std::istringstream issB(line);
     size_t countB = 0;
-    while (issB >> value) {
-        if (countB < B_elements) {
-            B[countB++] = __float2half(value);
-        } else {
-            break;
-        }
+    while (issB >> value && countB < B_elements) {
+        B[countB++] = __float2half(value);
     }
     return 0;
 }
@@ -65,7 +59,7 @@ static void BM_cublasMul(benchmark::State& state, const std::string &filePath) {
     constexpr float beta = 0.0f;
 
     for (auto _ : state) {
-        // cudaMemset(d_C, 0, C_elements * sizeof(float));
+        cudaMemset(d_C, 0, C_elements * sizeof(float));
         cublasGemmEx(handle,
             CUBLAS_OP_N, CUBLAS_OP_N,
             m, k, n,
@@ -77,6 +71,10 @@ static void BM_cublasMul(benchmark::State& state, const std::string &filePath) {
             CUDA_R_32F,
             CUBLAS_GEMM_DEFAULT);
         cudaDeviceSynchronize();
+        cudaMemcpy(h_C, d_C, C_elements * sizeof(float), cudaMemcpyDeviceToHost);
+        for (size_t i = 0; i < 10; i++) {
+            std::cout << "C[" << i << "]: " << h_C[i] << "| ";
+        }
     }
 
     cublasDestroy(handle);

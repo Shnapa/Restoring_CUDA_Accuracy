@@ -7,45 +7,19 @@
 
 int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
     std::ifstream file(filePath);
-    if (!file.is_open()) {
-        std::cerr << "Error: could not open file " << filePath << std::endl;
-        return -1;
-    }
     std::string line;
-    if (!std::getline(file, line)) {
-        std::cerr << "Error: could not read the first line from " << filePath << std::endl;
-        return -1;
-    }
+    std::getline(file, line);
     std::istringstream issA(line);
     size_t countA = 0;
     float value;
-    while (issA >> value) {
-        if (countA < A_elements) {
-            A[countA++] = __float2half(value);
-        } else {
-            break;
-        }
+    while (issA >> value && countA < A_elements) {
+        A[countA++] = __float2half(value);
     }
-    if (countA != A_elements) {
-        std::cerr << "Error: Expected " << A_elements << " elements for Matrix A, but found " << countA << std::endl;
-        return -1;
-    }
-    if (!std::getline(file, line)) {
-        std::cerr << "Error: could not read the second line from " << filePath << std::endl;
-        return -1;
-    }
+    std::getline(file, line);
     std::istringstream issB(line);
     size_t countB = 0;
-    while (issB >> value) {
-        if (countB < B_elements) {
-            B[countB++] = __float2half(value);
-        } else {
-            break;
-        }
-    }
-    if (countB != B_elements) {
-        std::cerr << "Error: Expected " << B_elements << " elements for Matrix B, but found " << countB << std::endl;
-        return -1;
+    while (issB >> value && countB < B_elements) {
+        B[countB++] = __float2half(value);
     }
     return 0;
 }
@@ -87,21 +61,22 @@ int main(int argc, char** argv) {
     constexpr float alpha = 1.0f;
     constexpr float beta = 0.0f;
 
+
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
     cudaEventRecord(start, 0);
-
-    cublasGemmEx(handle,
-        CUBLAS_OP_N, CUBLAS_OP_N,
-        m, k, n,
-        &alpha,
-        d_A, CUDA_R_32F, m,
-        d_B, CUDA_R_32F, n,
-        &beta,
-        d_C, CUDA_R_32F, m,
-        CUDA_R_32F,
-        CUBLAS_GEMM_DEFAULT);
+    cudaMemset(d_C, 0, C_elements * sizeof(float));
+    cublasGemmEx(   handle,
+                CUBLAS_OP_N, CUBLAS_OP_N,
+                    m, k, n,
+                    &alpha,
+                    d_A, CUDA_R_32F, m,
+                    d_B, CUDA_R_32F, n,
+                    &beta,
+                    d_C, CUDA_R_32F, m,
+                    CUDA_R_32F,
+                    CUBLAS_GEMM_DEFAULT);
     cudaDeviceSynchronize();
 
     cudaEventRecord(stop, 0);
@@ -110,6 +85,7 @@ int main(int argc, char** argv) {
     cudaEventElapsedTime(&elapsedTime, start, stop);
     std::cout << "Time elapsed (ms): " << elapsedTime << std::endl;
 
+    cudaMemcpy(h_C, d_C, C_elements * sizeof(float), cudaMemcpyDeviceToHost);
     cublasDestroy(handle);
     cudaFree(d_A);
     cudaFree(d_B);

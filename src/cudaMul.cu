@@ -40,6 +40,9 @@ int main(const int argc, char** argv) {
     cudaMemcpy(d_A, h_A, A_elements * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, B_elements * sizeof(float), cudaMemcpyHostToDevice);
 
+    free(h_A);
+    free(h_B);
+
     dim3 threadsPerBlock(TILE_SIZE, TILE_SIZE);
     dim3 blocksPerGrid((k + TILE_SIZE - 1) / TILE_SIZE, (m + TILE_SIZE - 1) / TILE_SIZE);
 
@@ -55,8 +58,6 @@ int main(const int argc, char** argv) {
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
-    free(h_A);
-    free(h_B);
     free(h_C);
     return 0;
 }
