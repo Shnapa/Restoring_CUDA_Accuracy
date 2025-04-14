@@ -11,41 +11,35 @@ using namespace nvcuda;
 #define M 16
 #define N 16
 #define K 16
-#define WMMA_N 2
+#define WMMA_N 32
 
-inline int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
+int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
     std::ifstream file(filePath);
     std::string line;
+    std::getline(file, line);
     std::istringstream issA(line);
     size_t countA = 0;
     float value;
-    while (issA >> value) {
-        if (countA < A_elements) {
-            A[countA++] = __float2half(value);
-        } else {
-            break;
-        }
+    while (issA >> value && countA < A_elements) {
+        A[countA++] = __float2half(value);
     }
+    std::getline(file, line);
     std::istringstream issB(line);
     size_t countB = 0;
-    while (issB >> value) {
-        if (countB < B_elements) {
-            B[countB++] = __float2half(value);
-        } else {
-            break;
-        }
+    while (issB >> value && countB < B_elements) {
+        B[countB++] = __float2half(value);
     }
     return 0;
 }
 
-__global__ void matrixMultiplyWMMA(const half *A, const half *B, float *C, size_t m, size_t n, size_t k) {
+__global__ void matrixMultiplyWMMA(const __half *A, const __half *B, float *C, size_t m, size_t n, size_t k) {
     const size_t warpM = (blockIdx.y * blockDim.y + threadIdx.y) * M;
     const size_t warpN = (blockIdx.x * blockDim.x + threadIdx.x) * N;
 
     if (warpM >= m || warpN >= n) return;
 
-    wmma::fragment<wmma::matrix_a, M, N, K, half, wmma::row_major> a_frag;
-    wmma::fragment<wmma::matrix_b, M, N, K, half, wmma::row_major> b_frag;
+    wmma::fragment<wmma::matrix_a, M, N, K, __half, wmma::row_major> a_frag;
+    wmma::fragment<wmma::matrix_b, M, N, K, __half, wmma::row_major> b_frag;
     wmma::fragment<wmma::accumulator, M, N, K, float> acc_frag;
 
     wmma::fill_fragment(acc_frag, 0.0f);
@@ -63,8 +57,8 @@ static void BM_RunMultiplicationWMMA(benchmark::State &state, const std::string 
     size_t m, n, k;
     parseDimensions(filePath, m, n, k);
 
-    const size_t sizeA = m * k * sizeof(half);
-    const size_t sizeB = k * n * sizeof(half);
+    const size_t sizeA = m * k * sizeof(__half);
+    const size_t sizeB = k * n * sizeof(__half);
     const size_t sizeC = m * n * sizeof(float);
 
     auto *h_A = static_cast<half*>(malloc(sizeA));

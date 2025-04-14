@@ -8,3 +8,4 @@ cmake-build-debug
 integral/integral
 
 helloGpu/helloGPU
+/cmake-build-release/

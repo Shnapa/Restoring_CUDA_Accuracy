@@ -47,7 +47,9 @@ static void BM_simdMulOpt(benchmark::State &state, const std::string &filePath) 
     auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
     auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
     auto* C = static_cast<float*>(malloc(C_elements * sizeof(float)));
+
     loadMatricesFromFileArray(filePath, A, A_elements, B, B_elements);
+
     for (auto _ : state) {
         memset(C, 0, C_elements * sizeof(float));
         simdMatrixMultiply(A, B, C, m, n, k);
@@ -59,8 +61,7 @@ static void BM_simdMulOpt(benchmark::State &state, const std::string &filePath) 
 }
 
 int main(int argc, char** argv) {
-    for (size_t i = 0; i < filePaths.size()-2; i++) {
-        const std::string& filepath = filePaths[i];
+    for (const auto & filepath : filePaths) {
         benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
             BM_simdMulOpt(state, filepath);
         });

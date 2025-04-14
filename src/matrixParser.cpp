@@ -3,50 +3,25 @@
 //
 #include "matrixParser.h"
 
-int loadMatrixFromFile(const std::string& filename, std::vector<std::vector<float>>& matrix) {
-    std::ifstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open file: " << filename << std::endl;
-        return -1;
-    }
-
-    matrix.clear();
-    std::string line;
-    while (std::getline(file, line)) {
-        std::istringstream ss(line);
-        std::vector<float> row;
-        float value;
-        while (ss >> value) {
-            row.push_back(value);
-        }
-        matrix.push_back(row);
-    }
-
-    file.close();
-    return 0;
-}
-
 int loadMatricesFromFileArray(const std::string &filePath, float* A, size_t A_elements, float* B, size_t B_elements) {
     std::ifstream file(filePath);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file " << filePath << std::endl;
+        exit(EXIT_FAILURE);
+    }
     std::string line;
+    std::getline(file, line);
     std::istringstream issA(line);
     size_t countA = 0;
     float value;
-    while (issA >> value) {
-        if (countA < A_elements) {
-            A[countA++] = value;
-        } else {
-            break;
-        }
+    while (issA >> value && countA < A_elements) {
+        A[countA++] = value;
     }
+    std::getline(file, line);
     std::istringstream issB(line);
     size_t countB = 0;
-    while (issB >> value) {
-        if (countB < B_elements) {
-            B[countB++] = value;
-        } else {
-            break;
-        }
+    while (issB >> value && countB < B_elements) {
+        B[countB++] = value;
     }
     return 0;
 }
