@@ -7,6 +7,7 @@
 #include <random>
 #include <fstream>
 #include <sstream>
+
 inline std::vector<std::tuple<size_t, size_t, size_t>> matrix_sizes = {
     {250, 100, 80},
     {500, 250, 150},

@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CUDA_ARCHITECTURES 75 89)
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(PROJECT_NAME Restoring_Accuracy)
 project(${PROJECT_NAME} C CXX)
