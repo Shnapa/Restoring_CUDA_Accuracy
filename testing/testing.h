@@ -1,19 +1,18 @@
 //
-// Created by Admin on 25.03.2025.
+// Created by Admin on 02.04.2025.
 //
 
-#ifndef TESTING_HPP
-#define TESTING_HPP
+#ifndef TESTING_H
+#define TESTING_H
 
-#include <iostream>
-#include <fstream>
 #include <vector>
-#include <sstream>
-#include <cstdlib>
+#include <string>
+#include "src/matrixParser.cpp"
+#include "src/generateMatrices.cpp"
 
-using Matrix = std::vector<int>;
+void generate_matrices(size_t m, size_t n, float* A);
+bool compare_matrices(float* A, float* B, size_t m, size_t n, float epsilon = 1e-8);
+void write_matrices_to_file(const float* matrix1, const float* matrix2, size_t m, size_t n, const std::string& filename);
 
-bool compareMatrices(Matrix a, Matrix b, Matrix c);
-Matrix multiplication(const Matrix& A, size_t m1, size_t n1, const Matrix& B, size_t m2, size_t n2);
 
-#endif //TESTING_HPP
+#endif //TESTING_H
