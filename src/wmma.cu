@@ -10,10 +10,6 @@
 
 using namespace nvcuda;
 
-#define M 16
-#define N 16
-#define K 16
-
 void parseDimensionsFromFilename(const std::string& filename, size_t& m, size_t& k, size_t& n) {
     std::regex pattern(".*_(\\d+)x(\\d+)x(\\d+)\\.txt");
     std::smatch match;
@@ -54,25 +50,17 @@ int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t
     return 0;
 }
 
-__global__ void matrixMultiplyWMMA(const __half *A, const __half *B, float *C, size_t m, size_t n, size_t k) {
-    const size_t warpM = (blockIdx.y * blockDim.y + threadIdx.y) * M;
-    const size_t warpN = (blockIdx.x * blockDim.x + threadIdx.x) * N;
+__global__ void matrixMultiplyGeneral(const __half *A, const __half *B, float *C, size_t m, size_t n, size_t k) {
+    size_t row = blockIdx.y * blockDim.y + threadIdx.y;
+    size_t col = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if (warpM >= m || warpN >= n) return;
-
-    wmma::fragment<wmma::matrix_a, M, N, K, __half, wmma::row_major> a_frag;
-    wmma::fragment<wmma::matrix_b, M, N, K, __half, wmma::row_major> b_frag;
-    wmma::fragment<wmma::accumulator, M, N, K, float> acc_frag;
-
-    wmma::fill_fragment(acc_frag, 0.0f);
-
-    for (int i = 0; i < k; i += K) {
-        wmma::load_matrix_sync(a_frag, A + warpM * k + i, k);
-        wmma::load_matrix_sync(b_frag, B + i * n + warpN, n);
-        wmma::mma_sync(acc_frag, a_frag, b_frag, acc_frag);
+    if (row < m && col < n) {
+        float sum = 0.0f;
+        for (size_t i = 0; i < k; ++i) {
+            sum += __half2float(A[row * k + i]) * __half2float(B[i * n + col]);
+        }
+        C[row * n + col] = sum;
     }
-
-    wmma::store_matrix_sync(C + warpM * n + warpN, acc_frag, n, wmma::mem_row_major);
 }
 
 int main(int argc, char** argv) {
@@ -112,11 +100,11 @@ int main(int argc, char** argv) {
     cudaMemcpy(d_A, h_A, sizeA, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
 
-    dim3 threadsPerBlock(2, 2);
-    dim3 blocksPerGrid((n + N * threadsPerBlock.x - 1) / (N * threadsPerBlock.x),
-                       (m + M * threadsPerBlock.y - 1) / (M * threadsPerBlock.y));
+    dim3 threadsPerBlock(16, 16);
+    dim3 blocksPerGrid((n + threadsPerBlock.x - 1) / threadsPerBlock.x,
+                       (m + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
-    matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
+    matrixMultiplyGeneral<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
     cudaDeviceSynchronize();
 
     cudaMemcpy(h_C, d_C, sizeC, cudaMemcpyDeviceToHost);
