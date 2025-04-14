@@ -6,7 +6,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include "matrixParser.h"
+#include <regex>
 
 using namespace nvcuda;
 
@@ -14,7 +14,19 @@ using namespace nvcuda;
 #define N 16
 #define K 16
 
-inline int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
+void parseDimensionsFromFilename(const std::string& filename, size_t& m, size_t& k, size_t& n) {
+    std::regex pattern(".*_(\\d+)x(\\d+)x(\\d+)\\.txt");
+    std::smatch match;
+    if (std::regex_match(filename, match, pattern)) {
+        m = std::stoi(match[1]);
+        k = std::stoi(match[2]);
+        n = std::stoi(match[3]);
+    } else {
+        throw std::invalid_argument("Filename does not match expected format: " + filename);
+    }
+}
+
+int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
     std::ifstream file(filePath);
     if (!file.is_open()) return -1;
 
@@ -71,7 +83,12 @@ int main(int argc, char** argv) {
 
     const std::string filePath = argv[1];
     size_t m, k, n;
-    parseDimensions(filePath, m, k, n);
+    try {
+        parseDimensionsFromFilename(filePath, m, k, n);
+    } catch (const std::invalid_argument& e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
 
     const size_t sizeA = m * k * sizeof(__half);
     const size_t sizeB = k * n * sizeof(__half);
@@ -104,7 +121,6 @@ int main(int argc, char** argv) {
 
     cudaMemcpy(h_C, d_C, sizeC, cudaMemcpyDeviceToHost);
 
-    // Вивід матриці C
     std::cout << "Result matrix C (" << m << "x" << n << "):\n";
     for (size_t i = 0; i < m; ++i) {
         for (size_t j = 0; j < n; ++j) {
