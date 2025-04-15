@@ -52,10 +52,10 @@ void loadMatricesFromFile(const std::string& filename, std::vector<__half>& A, s
 }
 
 __global__ void WMMAKernel(half *A, half *B, float *C, float *D, int M_GLOBAL, int N_GLOBAL, int K_GLOBAL) {
-    int warpM = (blockIdx.x * blockDim.x + threadIdx.x) / WARP_SIZE;
-    int warpN = (blockIdx.y * blockDim.y + threadIdx.y);
+    int warpM = blockIdx.x;
+    int warpN = blockIdx.y;
 
-    if (warpM * TILE_DIM >= M_GLOBAL || warpN * TILE_DIM >= N_GLOBAL)
+    if ((warpM + 1) * TILE_DIM > M_GLOBAL || (warpN + 1) * TILE_DIM > N_GLOBAL)
         return;
 
     wmma::fragment<wmma::matrix_a, TILE_DIM, TILE_DIM, TILE_DIM, half, wmma::row_major> a_frag;
@@ -66,19 +66,23 @@ __global__ void WMMAKernel(half *A, half *B, float *C, float *D, int M_GLOBAL, i
     wmma::fill_fragment(acc_frag, 0.0f);
 
     for (int i = 0; i < K_GLOBAL; i += TILE_DIM) {
-        if (warpM * TILE_DIM < M_GLOBAL && i < K_GLOBAL && warpN * TILE_DIM < N_GLOBAL) {
-            wmma::load_matrix_sync(a_frag, A + warpM * TILE_DIM * K_GLOBAL + i, K_GLOBAL);
-            wmma::load_matrix_sync(b_frag, B + warpN * TILE_DIM + i * N_GLOBAL, N_GLOBAL);
+        if ((i + TILE_DIM) <= K_GLOBAL) {
+            const half *tileA = A + warpM * TILE_DIM * K_GLOBAL + i;
+            const half *tileB = B + i * N_GLOBAL + warpN * TILE_DIM;
+            wmma::load_matrix_sync(a_frag, tileA, K_GLOBAL);
+            wmma::load_matrix_sync(b_frag, tileB, N_GLOBAL);
             wmma::mma_sync(acc_frag, a_frag, b_frag, acc_frag);
         }
     }
 
-    wmma::load_matrix_sync(c_frag, C + warpM * TILE_DIM * N_GLOBAL + warpN * TILE_DIM, N_GLOBAL, wmma::mem_row_major);
+    float *tileC = C + warpM * TILE_DIM * N_GLOBAL + warpN * TILE_DIM;
+    wmma::load_matrix_sync(c_frag, tileC, N_GLOBAL, wmma::mem_row_major);
 
     for (int i = 0; i < acc_frag.num_elements; ++i)
         c_frag.x[i] += acc_frag.x[i];
 
-    wmma::store_matrix_sync(D + warpM * TILE_DIM * N_GLOBAL + warpN * TILE_DIM, c_frag, N_GLOBAL, wmma::mem_row_major);
+    float *tileD = D + warpM * TILE_DIM * N_GLOBAL + warpN * TILE_DIM;
+    wmma::store_matrix_sync(tileD, c_frag, N_GLOBAL, wmma::mem_row_major);
 }
 
 int main(int argc, char* argv[]) {
@@ -90,6 +94,11 @@ int main(int argc, char* argv[]) {
     std::string filename = argv[1];
     int M, K, N;
     parseDimensionsFromFilename(filename, M, K, N);
+
+    if (M < TILE_DIM || K < TILE_DIM || N < TILE_DIM) {
+        printf("Matrix dimensions must be at least 16x16x16 for WMMA\n");
+        return 0;
+    }
 
     size_t size_A = M * K;
     size_t size_B = K * N;
@@ -103,7 +112,6 @@ int main(int argc, char* argv[]) {
 
     half *d_A, *d_B;
     float *d_C, *d_D;
-
     cudaMalloc(&d_A, size_A * sizeof(half));
     cudaMalloc(&d_B, size_B * sizeof(half));
     cudaMalloc(&d_C, size_C * sizeof(float));
@@ -113,9 +121,8 @@ int main(int argc, char* argv[]) {
     cudaMemcpy(d_B, h_B.data(), size_B * sizeof(half), cudaMemcpyHostToDevice);
     cudaMemcpy(d_C, h_C.data(), size_C * sizeof(float), cudaMemcpyHostToDevice);
 
-    dim3 threads(32, 4);
-    dim3 blocks((M + TILE_DIM * (threads.x / WARP_SIZE) - 1) / (TILE_DIM * (threads.x / WARP_SIZE)),
-                (N + TILE_DIM * threads.y - 1) / (TILE_DIM * threads.y));
+    dim3 threads(WARP_SIZE, 1); // 1 warp per thread block
+    dim3 blocks(M / TILE_DIM, N / TILE_DIM);
 
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
@@ -129,12 +136,24 @@ int main(int argc, char* argv[]) {
 
     float ms = 0;
     cudaEventElapsedTime(&ms, start, stop);
-
     printf("GPU execution time: %.3f ms\n", ms);
     printf("TFLOPS: %.2f\n", ((double)M * N * K * 2) / (ms * 1e6));
+
+    // Copy result back to host and print
+    std::vector<float> h_D(size_C);
+    cudaMemcpy(h_D.data(), d_D, size_C * sizeof(float), cudaMemcpyDeviceToHost);
+
+    printf("Result matrix D = A*B + C (%dx%d):\n", M, N);
+    for (int i = 0; i < M; ++i) {
+        for (int j = 0; j < N; ++j) {
+            printf("%.3f ", h_D[i * N + j]);
+        }
+        printf("\n");
+    }
 
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
     cudaFree(d_D);
+    return 0;
 }
