@@ -55,8 +55,8 @@ void loadMatricesFromFile(const std::string& filename, std::vector<__half>& A, s
         B.push_back(__float2half(val));
     }
     for (int i = 0; i < total_C; i++) {
-        infile >> val;
-        C.push_back(val);
+        // infile >> val;
+        C.push_back(0);
     }
 }
 
@@ -72,6 +72,7 @@ __global__ void WMMAKernel(half *A, half *B, float *C, float *D, int M_GLOBAL, i
     wmma::fragment<wmma::accumulator, TILE_DIM, TILE_DIM, TILE_DIM, float> c_frag;
 
     wmma::fill_fragment(acc_frag, 0.0f);
+    wmma::fill_fragment(c_frag, 0.0f);
 
     for (int i = 0; i < padded_K; i += TILE_DIM) {
         const half *tileA = A + warpM * TILE_DIM * padded_K + i;
@@ -82,7 +83,7 @@ __global__ void WMMAKernel(half *A, half *B, float *C, float *D, int M_GLOBAL, i
     }
 
     float *tileC = C + warpM * TILE_DIM * padded_N + warpN * TILE_DIM;
-    wmma::load_matrix_sync(c_frag, tileC, padded_N, wmma::mem_row_major);
+    // wmma::load_matrix_sync(c_frag, tileC, padded_N, wmma::mem_row_major);
 
     for (int i = 0; i < acc_frag.num_elements; ++i)
         c_frag.x[i] += acc_frag.x[i];
