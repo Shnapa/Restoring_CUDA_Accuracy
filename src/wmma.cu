@@ -1,195 +1,140 @@
-#include <cuda_fp16.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <cuda.h>
 #include <mma.h>
-#include <cuda_runtime.h>
-#include <vector>
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <sstream>
 #include <regex>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
 
 using namespace nvcuda;
 
-#define WMMA_M 16
-#define WMMA_N 16
-#define WMMA_K 16
+#define WARP_SIZE 32
+#define TILE_DIM 16
 
-void parseDimensionsFromFilename(const std::string& filename, size_t& m, size_t& k, size_t& n) {
+void parseDimensionsFromFilename(const std::string& filename, int& M, int& K, int& N) {
     std::regex pattern(".*_(\\d+)x(\\d+)x(\\d+)\\.txt");
     std::smatch match;
     if (std::regex_match(filename, match, pattern)) {
-        m = std::stoi(match[1]);
-        k = std::stoi(match[2]);
-        n = std::stoi(match[3]);
+        M = std::stoi(match[1]);
+        K = std::stoi(match[2]);
+        N = std::stoi(match[3]);
     } else {
-        throw std::invalid_argument("Filename does not match expected format: " + filename);
+        throw std::runtime_error("Filename does not match expected format");
     }
 }
 
-int loadHalfMatricesFromFileArray(const std::string& filePath,
-                                  __half* A, size_t m, size_t k, size_t padded_k,
-                                  __half* B, size_t k_b, size_t n, size_t padded_n) {
-    std::ifstream file(filePath);
-    if (!file.is_open()) return -1;
+void loadMatricesFromFile(const std::string& filename, std::vector<__half>& A, std::vector<__half>& B, std::vector<float>& C, int M, int K, int N) {
+    std::ifstream infile(filename);
+    if (!infile.is_open()) throw std::runtime_error("Could not open file");
 
-    std::string line;
-    size_t row = 0;
+    float val;
+    int total_A = M * K;
+    int total_B = K * N;
+    int total_C = M * N;
 
-    // Load matrix A
-    while (row < m && std::getline(file, line)) {
-        std::istringstream iss(line);
-        float val;
-        size_t col = 0;
-        while (iss >> val && col < k) {
-            A[row * padded_k + col] = __float2half(val);
-            ++col;
-        }
-        for (; col < padded_k; ++col) {
-            A[row * padded_k + col] = __float2half(0.0f);
-        }
-        ++row;
+    for (int i = 0; i < total_A; i++) {
+        infile >> val;
+        A[i] = __float2half(val);
     }
-    for (; row < m; ++row) {
-        for (size_t col = 0; col < padded_k; ++col) {
-            A[row * padded_k + col] = __float2half(0.0f);
-        }
+    for (int i = 0; i < total_B; i++) {
+        infile >> val;
+        B[i] = __float2half(val);
     }
-
-    // Load matrix B
-    row = 0;
-    while (row < k_b && std::getline(file, line)) {
-        std::istringstream iss(line);
-        float val;
-        size_t col = 0;
-        while (iss >> val && col < n) {
-            B[row * padded_n + col] = __float2half(val);
-            ++col;
-        }
-        for (; col < padded_n; ++col) {
-            B[row * padded_n + col] = __float2half(0.0f);
-        }
-        ++row;
+    for (int i = 0; i < total_C; i++) {
+        infile >> val;
+        C[i] = val;
     }
-    for (; row < padded_k; ++row) {
-        for (size_t col = 0; col < padded_n; ++col) {
-            B[row * padded_n + col] = __float2half(0.0f);
-        }
-    }
-
-    return 0;
 }
 
-__global__ void matrixMultiplyAddWMMA(const __half* A, const __half* B, float* C, float* D,
-                                      int m, int n, int k, int orig_m, int orig_n) {
-    int warpM = blockIdx.y * blockDim.y + threadIdx.y;
-    int warpN = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void WMMAKernel(half *A, half *B, float *C, float *D, int M_GLOBAL, int N_GLOBAL, int K_GLOBAL) {
+    int warpM = (blockIdx.x * blockDim.x + threadIdx.x) / WARP_SIZE;
+    int warpN = (blockIdx.y * blockDim.y + threadIdx.y);
 
-    if ((warpM + 1) * WMMA_M > m || (warpN + 1) * WMMA_N > n) return;
+    if (warpM * TILE_DIM >= M_GLOBAL || warpN * TILE_DIM >= N_GLOBAL)
+        return;
 
-    wmma::fragment<wmma::accumulator, WMMA_M, WMMA_N, WMMA_K, float> acc_frag;
-    wmma::fragment<wmma::accumulator, WMMA_M, WMMA_N, WMMA_K, float> c_frag;
+    wmma::fragment<wmma::matrix_a, TILE_DIM, TILE_DIM, TILE_DIM, half, wmma::row_major> a_frag;
+    wmma::fragment<wmma::matrix_b, TILE_DIM, TILE_DIM, TILE_DIM, half, wmma::col_major> b_frag;
+    wmma::fragment<wmma::accumulator, TILE_DIM, TILE_DIM, TILE_DIM, float> acc_frag;
+    wmma::fragment<wmma::accumulator, TILE_DIM, TILE_DIM, TILE_DIM, float> c_frag;
+
     wmma::fill_fragment(acc_frag, 0.0f);
 
-    for (int i = 0; i < k; i += WMMA_K) {
-        if (i + WMMA_K <= k) {
-            wmma::fragment<wmma::matrix_a, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> a_frag;
-            wmma::fragment<wmma::matrix_b, WMMA_M, WMMA_N, WMMA_K, __half, wmma::col_major> b_frag;
-
-            const __half* tileA = A + (warpM * WMMA_M) * k + i;
-            const __half* tileB = B + i + (warpN * WMMA_N) * k;
-
-            wmma::load_matrix_sync(a_frag, tileA, k);
-            wmma::load_matrix_sync(b_frag, tileB, k);
+    for (int i = 0; i < K_GLOBAL; i += TILE_DIM) {
+        if (warpM * TILE_DIM < M_GLOBAL && i < K_GLOBAL && warpN * TILE_DIM < N_GLOBAL) {
+            wmma::load_matrix_sync(a_frag, A + warpM * TILE_DIM * K_GLOBAL + i, K_GLOBAL);
+            wmma::load_matrix_sync(b_frag, B + warpN * TILE_DIM + i * N_GLOBAL, N_GLOBAL);
             wmma::mma_sync(acc_frag, a_frag, b_frag, acc_frag);
         }
     }
 
-    int row = warpM * WMMA_M;
-    int col = warpN * WMMA_N;
-    if (row < orig_m && col < orig_n) {
-        wmma::load_matrix_sync(c_frag, C + row * orig_n + col, orig_n, wmma::mem_row_major);
-        for (int i = 0; i < c_frag.num_elements; ++i)
-            c_frag.x[i] += acc_frag.x[i];
+    wmma::load_matrix_sync(c_frag, C + warpM * TILE_DIM * N_GLOBAL + warpN * TILE_DIM, N_GLOBAL, wmma::mem_row_major);
 
-        wmma::store_matrix_sync(D + row * orig_n + col, c_frag, orig_n, wmma::mem_row_major);
-    }
+    for (int i = 0; i < acc_frag.num_elements; ++i)
+        c_frag.x[i] += acc_frag.x[i];
+
+    wmma::store_matrix_sync(D + warpM * TILE_DIM * N_GLOBAL + warpN * TILE_DIM, c_frag, N_GLOBAL, wmma::mem_row_major);
 }
 
-int main(int argc, char** argv) {
-    if (argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
+int main(int argc, char* argv[]) {
+    if (argc != 2) {
+        printf("Usage: ./main matrix_MxKxN.txt\n");
         return 1;
     }
 
-    const std::string filePath = argv[1];
-    size_t m, k, n;
-    try {
-        parseDimensionsFromFilename(filePath, m, k, n);
-    } catch (const std::invalid_argument& e) {
-        std::cerr << e.what() << std::endl;
-        return 1;
-    }
+    std::string filename = argv[1];
+    int M, K, N;
+    parseDimensionsFromFilename(filename, M, K, N);
 
-    size_t padded_m = ((m + WMMA_M - 1) / WMMA_M) * WMMA_M;
-    size_t padded_k = ((k + WMMA_K - 1) / WMMA_K) * WMMA_K;
-    size_t padded_n = ((n + WMMA_N - 1) / WMMA_N) * WMMA_N;
+    size_t size_A = M * K;
+    size_t size_B = K * N;
+    size_t size_C = M * N;
 
-    size_t sizeA = padded_m * padded_k * sizeof(__half);
-    size_t sizeB = padded_k * padded_n * sizeof(__half);
-    size_t sizeC = padded_m * padded_n * sizeof(float);
+    std::vector<__half> h_A(size_A);
+    std::vector<__half> h_B(size_B);
+    std::vector<float> h_C(size_C);
 
-    auto* h_A = static_cast<__half*>(calloc(padded_m * padded_k, sizeof(__half)));
-    auto* h_B = static_cast<__half*>(calloc(padded_k * padded_n, sizeof(__half)));
-    auto* h_C = static_cast<float*>(calloc(padded_m * padded_n, sizeof(float)));
-    auto* h_D = static_cast<float*>(calloc(padded_m * padded_n, sizeof(float)));
+    loadMatricesFromFile(filename, h_A, h_B, h_C, M, K, N);
 
-    if (loadHalfMatricesFromFileArray(filePath, h_A, m, k, padded_k, h_B, k, n, padded_n) != 0) {
-        std::cerr << "Failed to load matrices from file.\n";
-        return 2;
-    }
+    half *d_A, *d_B;
+    float *d_C, *d_D;
 
-    for (size_t i = 0; i < padded_m * padded_n; ++i)
-        h_C[i] = static_cast<float>(rand() % 1000) / 1000.0f;
+    cudaMalloc(&d_A, size_A * sizeof(half));
+    cudaMalloc(&d_B, size_B * sizeof(half));
+    cudaMalloc(&d_C, size_C * sizeof(float));
+    cudaMalloc(&d_D, size_C * sizeof(float));
 
-    __half* d_A;
-    __half* d_B;
-    float* d_C;
-    float* d_D;
-    cudaMalloc(&d_A, sizeA);
-    cudaMalloc(&d_B, sizeB);
-    cudaMalloc(&d_C, sizeC);
-    cudaMalloc(&d_D, sizeC);
+    cudaMemcpy(d_A, h_A.data(), size_A * sizeof(half), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B.data(), size_B * sizeof(half), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_C, h_C.data(), size_C * sizeof(float), cudaMemcpyHostToDevice);
 
-    cudaMemcpy(d_A, h_A, sizeA, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_C, h_C, sizeC, cudaMemcpyHostToDevice);
+    dim3 threads(32, 4);
+    dim3 blocks((M + TILE_DIM * (threads.x / WARP_SIZE) - 1) / (TILE_DIM * (threads.x / WARP_SIZE)),
+                (N + TILE_DIM * threads.y - 1) / (TILE_DIM * threads.y));
 
-    dim3 threadsPerBlock(2, 2);
-    dim3 blocksPerGrid((padded_n + WMMA_N * threadsPerBlock.x - 1) / (WMMA_N * threadsPerBlock.x),
-                       (padded_m + WMMA_M * threadsPerBlock.y - 1) / (WMMA_M * threadsPerBlock.y));
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+    cudaEventRecord(start);
 
-    matrixMultiplyAddWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, d_D,
-                                                               padded_m, padded_n, padded_k, m, n);
-    cudaDeviceSynchronize();
+    WMMAKernel<<<blocks, threads>>>(d_A, d_B, d_C, d_D, M, N, K);
 
-    cudaMemcpy(h_D, d_D, sizeC, cudaMemcpyDeviceToHost);
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
 
-    std::cout << "Result matrix D = A*B + C (" << m << "x" << n << "):\n";
-    for (size_t i = 0; i < m; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            std::cout << h_D[i * n + j] << " ";
-        }
-        std::cout << "\n";
-    }
+    float ms = 0;
+    cudaEventElapsedTime(&ms, start, stop);
+
+    printf("GPU execution time: %.3f ms\n", ms);
+    printf("TFLOPS: %.2f\n", ((double)M * N * K * 2) / (ms * 1e6));
 
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
     cudaFree(d_D);
-    free(h_A);
-    free(h_B);
-    free(h_C);
-    free(h_D);
-
-    return 0;
 }
