@@ -40,11 +40,11 @@ void compare(const float* h_C, size_t m, size_t n, size_t k, const std::string& 
         }
     }
 
-    // Compare CPU result with GPU result
+    // Compare CPU result with GPU result using epsilon for floating point comparison
     bool match = true;
     const float epsilon = 1e-5;
     for (size_t i = 0; i < m * k; ++i) {
-        if (fabs(C_cpu[i] - h_C[i]) > epsilon) {
+        if (!compareFloats(C_cpu[i], h_C[i], epsilon)) {
             std::cerr << "Mismatch at index " << i << ": CPU = " << C_cpu[i]
                       << ", GPU = " << h_C[i] << std::endl;
             match = false;
