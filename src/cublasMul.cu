@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
     cudaEventCreate(&stop);
     cudaEventRecord(start, 0);
     cudaMemset(d_C, 0, C_elements * sizeof(float));
-    cublasSgemm(   handle,
+    cublasGemmEx(   handle,
                 CUBLAS_OP_N, CUBLAS_OP_N,
                     m, k, n,
                     &alpha,
