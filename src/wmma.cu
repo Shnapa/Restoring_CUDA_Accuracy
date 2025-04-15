@@ -58,23 +58,32 @@ __global__ void matrixMultiplyWMMA(const __half *A, const __half *B, float *C, i
     int warpM = (blockIdx.y * blockDim.y + threadIdx.y);
     int warpN = (blockIdx.x * blockDim.x + threadIdx.x);
 
-    if ((warpM + 1) * WMMA_M > m || (warpN + 1) * WMMA_N > n) return;
+    if ((warpM * WMMA_M >= m) || (warpN * WMMA_N >= n)) return;
 
-    wmma::fragment<wmma::matrix_a, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> a_frag;
-    wmma::fragment<wmma::matrix_b, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> b_frag;
-    wmma::fragment<wmma::accumulator, WMMA_M, WMMA_N, WMMA_K, float> c_frag;
-
-    wmma::fill_fragment(c_frag, 0.0f);
+    wmma::fragment<wmma::accumulator, WMMA_M, WMMA_N, WMMA_K, float> acc_frag;
+    wmma::fill_fragment(acc_frag, 0.0f);
 
     for (int i = 0; i < k; i += WMMA_K) {
-        if (i + WMMA_K <= k) {
-            wmma::load_matrix_sync(a_frag, A + warpM * WMMA_M * k + i, k);
-            wmma::load_matrix_sync(b_frag, B + i * n + warpN * WMMA_N, n);
-            wmma::mma_sync(c_frag, a_frag, b_frag, c_frag);
+        if (i + WMMA_K <= k &&
+            (warpM * WMMA_M + WMMA_M <= m) &&
+            (warpN * WMMA_N + WMMA_N <= n)) {
+
+            wmma::fragment<wmma::matrix_a, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> a_frag;
+            wmma::fragment<wmma::matrix_b, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> b_frag;
+
+            const __half *tileA = A + (warpM * WMMA_M) * k + i;
+            const __half *tileB = B + i * n + (warpN * WMMA_N);
+
+            wmma::load_matrix_sync(a_frag, tileA, k);
+            wmma::load_matrix_sync(b_frag, tileB, n);
+
+            wmma::mma_sync(acc_frag, a_frag, b_frag, acc_frag);
         }
     }
 
-    wmma::store_matrix_sync(C + warpM * WMMA_M * n + warpN * WMMA_N, c_frag, n, wmma::mem_row_major);
+    if ((warpM * WMMA_M + WMMA_M <= m) && (warpN * WMMA_N + WMMA_N <= n)) {
+        wmma::store_matrix_sync(C + (warpM * WMMA_M) * n + (warpN * WMMA_N), acc_frag, n, wmma::mem_row_major);
+    }
 }
 
 int main(int argc, char** argv) {
@@ -92,18 +101,17 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    if (m % WMMA_M != 0 || k % WMMA_K != 0 || n % WMMA_N != 0) {
-        std::cerr << "Error: WMMA requires matrix sizes to be multiples of 16." << std::endl;
-        return 1;
-    }
+    size_t padded_m = ((m + WMMA_M - 1) / WMMA_M) * WMMA_M;
+    size_t padded_k = ((k + WMMA_K - 1) / WMMA_K) * WMMA_K;
+    size_t padded_n = ((n + WMMA_N - 1) / WMMA_N) * WMMA_N;
 
-    const size_t sizeA = m * k * sizeof(__half);
-    const size_t sizeB = k * n * sizeof(__half);
-    const size_t sizeC = m * n * sizeof(float);
+    const size_t sizeA = padded_m * padded_k * sizeof(__half);
+    const size_t sizeB = padded_k * padded_n * sizeof(__half);
+    const size_t sizeC = padded_m * padded_n * sizeof(float);
 
-    auto *h_A = static_cast<__half*>(malloc(sizeA));
-    auto *h_B = static_cast<__half*>(malloc(sizeB));
-    auto *h_C = static_cast<float*>(malloc(sizeC));
+    auto *h_A = static_cast<__half*>(calloc(padded_m * padded_k, sizeof(__half)));
+    auto *h_B = static_cast<__half*>(calloc(padded_k * padded_n, sizeof(__half)));
+    auto *h_C = static_cast<float*>(calloc(padded_m * padded_n, sizeof(float)));
 
     if (loadHalfMatricesFromFileArray(filePath, h_A, m * k, h_B, k * n) != 0) {
         std::cerr << "Failed to load matrices from file.\n";
@@ -120,9 +128,10 @@ int main(int argc, char** argv) {
     cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
 
     dim3 threadsPerBlock(2, 2);
-    dim3 blocksPerGrid(n / WMMA_N / threadsPerBlock.x, m / WMMA_M / threadsPerBlock.y);
+    dim3 blocksPerGrid((padded_n / WMMA_N + threadsPerBlock.x - 1) / threadsPerBlock.x,
+                       (padded_m / WMMA_M + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
-    matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
+    matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, padded_m, padded_n, padded_k);
     cudaDeviceSynchronize();
 
     cudaMemcpy(h_C, d_C, sizeC, cudaMemcpyDeviceToHost);
@@ -130,7 +139,7 @@ int main(int argc, char** argv) {
     std::cout << "Result matrix C (" << m << "x" << n << "):\n";
     for (size_t i = 0; i < m; ++i) {
         for (size_t j = 0; j < n; ++j) {
-            std::cout << h_C[i * n + j] << " ";
+            std::cout << h_C[i * padded_n + j] << " ";
         }
         std::cout << "\n";
     }
