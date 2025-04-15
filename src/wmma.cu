@@ -26,26 +26,54 @@ void parseDimensionsFromFilename(const std::string& filename, size_t& m, size_t&
     }
 }
 
-int loadHalfMatricesFromFileArray(const std::string& filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
+int loadHalfMatricesFromFileArray(const std::string& filePath,
+                                  __half* A, size_t m, size_t k, size_t padded_k,
+                                  __half* B, size_t k_b, size_t n, size_t padded_n) {
     std::ifstream file(filePath);
     if (!file.is_open()) return -1;
 
     std::string line;
-    size_t count = 0;
-    while (count < A_elements && std::getline(file, line)) {
+    size_t row = 0;
+
+    // Завантаження A (m × k), padding до m × padded_k
+    while (row < m && std::getline(file, line)) {
         std::istringstream iss(line);
         float val;
-        while (iss >> val && count < A_elements) {
-            A[count++] = __float2half(val);
+        size_t col = 0;
+        while (iss >> val && col < k) {
+            A[row * padded_k + col] = __float2half(val);
+            ++col;
+        }
+        for (; col < padded_k; ++col) {
+            A[row * padded_k + col] = __float2half(0.0f);
+        }
+        ++row;
+    }
+
+    for (; row < m; ++row) {
+        for (size_t col = 0; col < padded_k; ++col) {
+            A[row * padded_k + col] = __float2half(0.0f);
         }
     }
 
-    count = 0;
-    while (count < B_elements && std::getline(file, line)) {
+    // Завантаження B (k × n), padding до padded_k × padded_n
+    row = 0;
+    while (row < k_b && std::getline(file, line)) {
         std::istringstream iss(line);
         float val;
-        while (iss >> val && count < B_elements) {
-            B[count++] = __float2half(val);
+        size_t col = 0;
+        while (iss >> val && col < n) {
+            B[row * padded_n + col] = __float2half(val);
+            ++col;
+        }
+        for (; col < padded_n; ++col) {
+            B[row * padded_n + col] = __float2half(0.0f);
+        }
+        ++row;
+    }
+    for (; row < padded_k; ++row) {
+        for (size_t col = 0; col < padded_n; ++col) {
+            B[row * padded_n + col] = __float2half(0.0f);
         }
     }
 
@@ -110,7 +138,9 @@ int main(int argc, char** argv) {
     auto* h_B = static_cast<__half*>(calloc(padded_k * padded_n, sizeof(__half)));
     auto* h_C = static_cast<float*>(calloc(padded_m * padded_n, sizeof(float)));
 
-    if (loadHalfMatricesFromFileArray(filePath, h_A, m * k, h_B, k * n) != 0) {
+    if (loadHalfMatricesFromFileArray(filePath,
+                                   h_A, m, k, padded_k,
+                                   h_B, k, n, padded_n) != 0) {
         std::cerr << "Failed to load matrices from file.\n";
         return 2;
     }
