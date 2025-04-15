@@ -23,10 +23,9 @@ int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t
     }
     return 0;
 }
-inline bool compareFloats(float a, float b, float epsilon = 1e-2f) {
-    float diff = fabsf(a - b);
-    float maxVal = fmaxf(fabsf(a), fabsf(b));
-    return diff <= epsilon * maxVal;
+inline bool compareFloats(float a, float b, float epsilon = 1e-7) {
+    float res = std::abs((b - a)/a);
+    return res < epsilon;
 }
 void compare(const float* h_C, size_t m, size_t n, size_t k, const std::string& filePath) {
     size_t A_elements = m * n;
