@@ -23,7 +23,56 @@ int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t
     }
     return 0;
 }
+inline bool compareFloats(float a, float b, float epsilon = 1e-2f) {
+    float diff = fabsf(a - b);
+    float maxVal = fmaxf(fabsf(a), fabsf(b));
+    return diff <= epsilon * maxVal;
+}
+void compare(const float* h_C, size_t m, size_t n, size_t k, const std::string& filePath) {
+    size_t A_elements = m * n;
+    size_t B_elements = n * k;
 
+    // Allocate and reload host matrices A and B
+    auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
+    auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
+    loadMatricesFromFileArray(filePath, A, A_elements, B, B_elements);
+
+    // Allocate memory for CPU result
+    auto* C_cpu = static_cast<float*>(malloc(m * k * sizeof(float)));
+
+    // Brute-force matrix multiplication
+    for (size_t i = 0; i < m; ++i) {
+        for (size_t j = 0; j < k; ++j) {
+            float sum = 0.0f;
+            for (size_t l = 0; l < n; ++l) {
+                sum += A[i * n + l] * B[l * k + j];
+            }
+            C_cpu[i * k + j] = sum;
+        }
+    }
+
+    // Compare CPU result with GPU result using epsilon for floating point comparison
+    bool match = true;
+    const float epsilon = 1e-5;
+    for (size_t i = 0; i < m * k; ++i) {
+        if (!compareFloats(C_cpu[i], h_C[i], epsilon)) {
+            std::cerr << "Mismatch at index " << i << ": CPU = " << C_cpu[i]
+                      << ", GPU = " << h_C[i] << std::endl;
+            match = false;
+            break;
+        }
+    }
+
+    if (match) {
+        std::cout << "Verification passed: CPU and GPU results match." << std::endl;
+    } else {
+        std::cout << "Verification failed: CPU and GPU results do not match." << std::endl;
+    }
+
+    free(A);
+    free(B);
+    free(C_cpu);
+}
 int main(int argc, char** argv) {
     if(argc < 2) {
         std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
