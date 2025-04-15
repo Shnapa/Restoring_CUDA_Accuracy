@@ -135,6 +135,7 @@ int main(int argc, char** argv) {
     std::cout << "Time elapsed (ms): " << elapsedTime << std::endl;
 
     cudaMemcpy(h_C, d_C, C_elements * sizeof(float), cudaMemcpyDeviceToHost);
+    compare(h_C, m, n, k, filePath);
     cublasDestroy(handle);
     cudaFree(d_A);
     cudaFree(d_B);
