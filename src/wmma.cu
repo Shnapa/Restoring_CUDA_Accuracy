@@ -35,7 +35,7 @@ int loadHalfMatricesFromFileArray(const std::string& filePath,
     std::string line;
     size_t row = 0;
 
-    // Завантаження A (m × k), padding до m × padded_k
+    // Load matrix A
     while (row < m && std::getline(file, line)) {
         std::istringstream iss(line);
         float val;
@@ -49,14 +49,13 @@ int loadHalfMatricesFromFileArray(const std::string& filePath,
         }
         ++row;
     }
-
     for (; row < m; ++row) {
         for (size_t col = 0; col < padded_k; ++col) {
             A[row * padded_k + col] = __float2half(0.0f);
         }
     }
 
-    // Завантаження B (k × n), padding до padded_k × padded_n
+    // Load matrix B
     row = 0;
     while (row < k_b && std::getline(file, line)) {
         std::istringstream iss(line);
@@ -80,7 +79,7 @@ int loadHalfMatricesFromFileArray(const std::string& filePath,
     return 0;
 }
 
-__global__ void matrixMultiplyWMMA(const __half* A, const __half* B, float* C, int m, int n, int k) {
+__global__ void matrixMultiplyWMMA(const __half* A, const __half* B, float* C, int m, int n, int k, int orig_m, int orig_n) {
     int warpM = blockIdx.y * blockDim.y + threadIdx.y;
     int warpN = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -90,10 +89,7 @@ __global__ void matrixMultiplyWMMA(const __half* A, const __half* B, float* C, i
     wmma::fill_fragment(acc_frag, 0.0f);
 
     for (int i = 0; i < k; i += WMMA_K) {
-        if (i + WMMA_K <= k &&
-            (warpM * WMMA_M + WMMA_M <= m) &&
-            (warpN * WMMA_N + WMMA_N <= n)) {
-
+        if (i + WMMA_K <= k) {
             wmma::fragment<wmma::matrix_a, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> a_frag;
             wmma::fragment<wmma::matrix_b, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> b_frag;
 
@@ -106,8 +102,9 @@ __global__ void matrixMultiplyWMMA(const __half* A, const __half* B, float* C, i
         }
     }
 
-    if ((warpM * WMMA_M + WMMA_M <= m) && (warpN * WMMA_N + WMMA_N <= n)) {
-        wmma::store_matrix_sync(C + (warpM * WMMA_M) * n + (warpN * WMMA_N), acc_frag, n, wmma::mem_row_major);
+    // Store only if within original bounds
+    if (warpM * WMMA_M < orig_m && warpN * WMMA_N < orig_n) {
+        wmma::store_matrix_sync(C + (warpM * WMMA_M) * orig_n + (warpN * WMMA_N), acc_frag, orig_n, wmma::mem_row_major);
     }
 }
 
@@ -138,9 +135,7 @@ int main(int argc, char** argv) {
     auto* h_B = static_cast<__half*>(calloc(padded_k * padded_n, sizeof(__half)));
     auto* h_C = static_cast<float*>(calloc(padded_m * padded_n, sizeof(float)));
 
-    if (loadHalfMatricesFromFileArray(filePath,
-                                   h_A, m, k, padded_k,
-                                   h_B, k, n, padded_n) != 0) {
+    if (loadHalfMatricesFromFileArray(filePath, h_A, m, k, padded_k, h_B, k, n, padded_n) != 0) {
         std::cerr << "Failed to load matrices from file.\n";
         return 2;
     }
@@ -151,6 +146,7 @@ int main(int argc, char** argv) {
     cudaMalloc(&d_A, sizeA);
     cudaMalloc(&d_B, sizeB);
     cudaMalloc(&d_C, sizeC);
+    cudaMemset(d_C, 0, sizeC);
 
     cudaMemcpy(d_A, h_A, sizeA, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
@@ -159,7 +155,7 @@ int main(int argc, char** argv) {
     dim3 blocksPerGrid((padded_n + WMMA_N * threadsPerBlock.x - 1) / (WMMA_N * threadsPerBlock.x),
                        (padded_m + WMMA_M * threadsPerBlock.y - 1) / (WMMA_M * threadsPerBlock.y));
 
-    matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, padded_m, padded_n, padded_k);
+    matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, padded_m, padded_n, padded_k, m, n);
     cudaDeviceSynchronize();
 
     cudaMemcpy(h_C, d_C, sizeC, cudaMemcpyDeviceToHost);
@@ -167,7 +163,7 @@ int main(int argc, char** argv) {
     std::cout << "Result matrix C (" << m << "x" << n << "):\n";
     for (size_t i = 0; i < m; ++i) {
         for (size_t j = 0; j < n; ++j) {
-            std::cout << h_C[i * padded_n + j] << " ";
+            std::cout << h_C[i * n + j] << " ";
         }
         std::cout << "\n";
     }
