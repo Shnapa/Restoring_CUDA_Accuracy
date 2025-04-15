@@ -10,6 +10,10 @@
 
 using namespace nvcuda;
 
+#define WMMA_M 16
+#define WMMA_N 16
+#define WMMA_K 16
+
 void parseDimensionsFromFilename(const std::string& filename, size_t& m, size_t& k, size_t& n) {
     std::regex pattern(".*_(\\d+)x(\\d+)x(\\d+)\\.txt");
     std::smatch match;
@@ -50,17 +54,27 @@ int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t
     return 0;
 }
 
-__global__ void matrixMultiplyGeneral(const __half *A, const __half *B, float *C, size_t m, size_t n, size_t k) {
-    size_t row = blockIdx.y * blockDim.y + threadIdx.y;
-    size_t col = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void matrixMultiplyWMMA(const __half *A, const __half *B, float *C, int m, int n, int k) {
+    int warpM = (blockIdx.y * blockDim.y + threadIdx.y);
+    int warpN = (blockIdx.x * blockDim.x + threadIdx.x);
 
-    if (row < m && col < n) {
-        float sum = 0.0f;
-        for (size_t i = 0; i < k; ++i) {
-            sum += __half2float(A[row * k + i]) * __half2float(B[i * n + col]);
+    if ((warpM + 1) * WMMA_M > m || (warpN + 1) * WMMA_N > n) return;
+
+    wmma::fragment<wmma::matrix_a, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> a_frag;
+    wmma::fragment<wmma::matrix_b, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> b_frag;
+    wmma::fragment<wmma::accumulator, WMMA_M, WMMA_N, WMMA_K, float> c_frag;
+
+    wmma::fill_fragment(c_frag, 0.0f);
+
+    for (int i = 0; i < k; i += WMMA_K) {
+        if (i + WMMA_K <= k) {
+            wmma::load_matrix_sync(a_frag, A + warpM * WMMA_M * k + i, k);
+            wmma::load_matrix_sync(b_frag, B + i * n + warpN * WMMA_N, n);
+            wmma::mma_sync(c_frag, a_frag, b_frag, c_frag);
         }
-        C[row * n + col] = sum;
     }
+
+    wmma::store_matrix_sync(C + warpM * WMMA_M * n + warpN * WMMA_N, c_frag, n, wmma::mem_row_major);
 }
 
 int main(int argc, char** argv) {
@@ -75,6 +89,11 @@ int main(int argc, char** argv) {
         parseDimensionsFromFilename(filePath, m, k, n);
     } catch (const std::invalid_argument& e) {
         std::cerr << e.what() << std::endl;
+        return 1;
+    }
+
+    if (m % WMMA_M != 0 || k % WMMA_K != 0 || n % WMMA_N != 0) {
+        std::cerr << "Error: WMMA requires matrix sizes to be multiples of 16." << std::endl;
         return 1;
     }
 
@@ -100,11 +119,10 @@ int main(int argc, char** argv) {
     cudaMemcpy(d_A, h_A, sizeA, cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
 
-    dim3 threadsPerBlock(16, 16);
-    dim3 blocksPerGrid((n + threadsPerBlock.x - 1) / threadsPerBlock.x,
-                       (m + threadsPerBlock.y - 1) / threadsPerBlock.y);
+    dim3 threadsPerBlock(2, 2);
+    dim3 blocksPerGrid(n / WMMA_N / threadsPerBlock.x, m / WMMA_M / threadsPerBlock.y);
 
-    matrixMultiplyGeneral<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
+    matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
     cudaDeviceSynchronize();
 
     cudaMemcpy(h_C, d_C, sizeC, cudaMemcpyDeviceToHost);
