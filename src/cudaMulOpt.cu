@@ -115,7 +115,7 @@ int main(const int argc, char** argv) {
 
     auto* h_C = static_cast<float*>(malloc(C_elements * sizeof(float)));
     cudaMemcpy(h_C, d_C, C_elements * sizeof(float), cudaMemcpyDeviceToHost);
-
+    compare(h_C, m, n, k, filePath);
     std::cout << "Optimized CUDA multiplication complete." << std::endl;
     std::cout << "First element of result: " << h_C[0] << std::endl;
 
