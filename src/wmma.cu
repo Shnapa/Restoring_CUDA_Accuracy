@@ -107,7 +107,7 @@ __global__ void matrixMultiplyAddWMMA(const __half* A, const __half* B, float* C
     int row = warpM * WMMA_M;
     int col = warpN * WMMA_N;
     if (row < orig_m && col < orig_n) {
-        wmma::load_matrix_sync(c_frag, C + row * orig_n + col, orig_n);
+        wmma::load_matrix_sync(c_frag, C + row * orig_n + col, orig_n, wmma::mem_row_major);
         for (int i = 0; i < c_frag.num_elements; ++i)
             c_frag.x[i] += acc_frag.x[i];
 
