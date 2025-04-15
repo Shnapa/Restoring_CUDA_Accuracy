@@ -26,14 +26,12 @@ void parseDimensionsFromFilename(const std::string& filename, size_t& m, size_t&
     }
 }
 
-int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
+int loadHalfMatricesFromFileArray(const std::string& filePath, __half* A, size_t A_elements, __half* B, size_t B_elements) {
     std::ifstream file(filePath);
     if (!file.is_open()) return -1;
 
     std::string line;
     size_t count = 0;
-
-    // Read matrix A
     while (count < A_elements && std::getline(file, line)) {
         std::istringstream iss(line);
         float val;
@@ -54,11 +52,11 @@ int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t
     return 0;
 }
 
-__global__ void matrixMultiplyWMMA(const __half *A, const __half *B, float *C, int m, int n, int k) {
-    int warpM = (blockIdx.y * blockDim.y + threadIdx.y);
-    int warpN = (blockIdx.x * blockDim.x + threadIdx.x);
+__global__ void matrixMultiplyWMMA(const __half* A, const __half* B, float* C, int m, int n, int k) {
+    int warpM = blockIdx.y * blockDim.y + threadIdx.y;
+    int warpN = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if ((warpM * WMMA_M >= m) || (warpN * WMMA_N >= n)) return;
+    if ((warpM + 1) * WMMA_M > m || (warpN + 1) * WMMA_N > n) return;
 
     wmma::fragment<wmma::accumulator, WMMA_M, WMMA_N, WMMA_K, float> acc_frag;
     wmma::fill_fragment(acc_frag, 0.0f);
@@ -71,12 +69,11 @@ __global__ void matrixMultiplyWMMA(const __half *A, const __half *B, float *C, i
             wmma::fragment<wmma::matrix_a, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> a_frag;
             wmma::fragment<wmma::matrix_b, WMMA_M, WMMA_N, WMMA_K, __half, wmma::row_major> b_frag;
 
-            const __half *tileA = A + (warpM * WMMA_M) * k + i;
-            const __half *tileB = B + i * n + (warpN * WMMA_N);
+            const __half* tileA = A + (warpM * WMMA_M) * k + i;
+            const __half* tileB = B + i * n + (warpN * WMMA_N);
 
             wmma::load_matrix_sync(a_frag, tileA, k);
             wmma::load_matrix_sync(b_frag, tileB, n);
-
             wmma::mma_sync(acc_frag, a_frag, b_frag, acc_frag);
         }
     }
@@ -105,21 +102,22 @@ int main(int argc, char** argv) {
     size_t padded_k = ((k + WMMA_K - 1) / WMMA_K) * WMMA_K;
     size_t padded_n = ((n + WMMA_N - 1) / WMMA_N) * WMMA_N;
 
-    const size_t sizeA = padded_m * padded_k * sizeof(__half);
-    const size_t sizeB = padded_k * padded_n * sizeof(__half);
-    const size_t sizeC = padded_m * padded_n * sizeof(float);
+    size_t sizeA = padded_m * padded_k * sizeof(__half);
+    size_t sizeB = padded_k * padded_n * sizeof(__half);
+    size_t sizeC = padded_m * padded_n * sizeof(float);
 
-    auto *h_A = static_cast<__half*>(calloc(padded_m * padded_k, sizeof(__half)));
-    auto *h_B = static_cast<__half*>(calloc(padded_k * padded_n, sizeof(__half)));
-    auto *h_C = static_cast<float*>(calloc(padded_m * padded_n, sizeof(float)));
+    auto* h_A = static_cast<__half*>(calloc(padded_m * padded_k, sizeof(__half)));
+    auto* h_B = static_cast<__half*>(calloc(padded_k * padded_n, sizeof(__half)));
+    auto* h_C = static_cast<float*>(calloc(padded_m * padded_n, sizeof(float)));
 
     if (loadHalfMatricesFromFileArray(filePath, h_A, m * k, h_B, k * n) != 0) {
         std::cerr << "Failed to load matrices from file.\n";
         return 2;
     }
 
-    __half *d_A, *d_B;
-    float *d_C;
+    __half* d_A;
+    __half* d_B;
+    float* d_C;
     cudaMalloc(&d_A, sizeA);
     cudaMalloc(&d_B, sizeB);
     cudaMalloc(&d_C, sizeC);
@@ -128,8 +126,8 @@ int main(int argc, char** argv) {
     cudaMemcpy(d_B, h_B, sizeB, cudaMemcpyHostToDevice);
 
     dim3 threadsPerBlock(2, 2);
-    dim3 blocksPerGrid((padded_n / WMMA_N + threadsPerBlock.x - 1) / threadsPerBlock.x,
-                       (padded_m / WMMA_M + threadsPerBlock.y - 1) / threadsPerBlock.y);
+    dim3 blocksPerGrid((padded_n + WMMA_N * threadsPerBlock.x - 1) / (WMMA_N * threadsPerBlock.x),
+                       (padded_m + WMMA_M * threadsPerBlock.y - 1) / (WMMA_M * threadsPerBlock.y));
 
     matrixMultiplyWMMA<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, padded_m, padded_n, padded_k);
     cudaDeviceSynchronize();
