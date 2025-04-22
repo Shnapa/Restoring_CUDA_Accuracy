@@ -9,8 +9,9 @@
 #include <sstream>
 #include <tuple>
 inline std::vector<std::tuple<size_t, size_t, size_t>> matrix_sizes = {
-    {250, 100, 80},
-    {500, 250, 150},
+    {5, 2, 4}
+    // {250, 100, 80},
+    // {500, 250, 150},
     // {1000, 500, 800},
     // {2000, 1000, 1500},
     // {5000, 2500, 3000},
@@ -38,15 +39,21 @@ inline std::vector<std::string> filePaths{
     // "../data/matrix_42000_14000_24000.txt",
 };
 
-int loadMatricesFromFileArray(  const std::string &filePath,
-                                float* A,
-                                size_t A_elements,
-                                float* B,
-                                size_t B_elements );
+void loadMatrices_CC(const std::string &filePath,
+                    std::vector<float> &A,
+                    std::vector<float> &B);
+
+void loadMatrices_RR(const std::string &filePath,
+                    std::vector<float> &A,
+                    std::vector<float> &B);
+
+void loadMatrices_RC(const std::string &filePath,
+                    std::vector<float> &A,
+                    std::vector<float> &B);
 
 void parseDimensions(   const std::string& filePath,
                         size_t &m,
-                        size_t &n,
-                        size_t &k );
+                        size_t &k,
+                        size_t &n );
 
 #endif

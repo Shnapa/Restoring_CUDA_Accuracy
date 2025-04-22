@@ -2,52 +2,98 @@
 // Created by gllek-pc on 3/30/25.
 //
 #include "matrixParser.h"
+#include <regex>
 
-int loadMatricesFromFileArray(const std::string &filePath, float* A, size_t A_elements, float* B, size_t B_elements) {
-    std::ifstream file(filePath);
-    if (!file.is_open()) {
-        std::cerr << "Failed to open file " << filePath << std::endl;
-        exit(EXIT_FAILURE);
-    }
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
+#include <cstdlib>
+#include "matrixParser.h"
+
+void loadMatrices_RR(const std::string &filePath,
+                    std::vector<float> &A,
+                    std::vector<float> &B)
+{
+    size_t m, k, n;
+    parseDimensions(filePath, m, k, n);
+    std::ifstream fin(filePath);
+    if (!fin.is_open()) std::exit(EXIT_FAILURE);
     std::string line;
-    std::getline(file, line);
-    std::istringstream issA(line);
-    size_t countA = 0;
-    float value;
-    while (issA >> value && countA < A_elements) {
-        A[countA++] = value;
-    }
-    std::getline(file, line);
-    std::istringstream issB(line);
-    size_t countB = 0;
-    while (issB >> value && countB < B_elements) {
-        B[countB++] = value;
-    }
-    return 0;
+    std::getline(fin, line);
+    std::istringstream isa(line);
+    float v;
+    size_t i = 0;
+    while (isa >> v && i < A.size()) A[i++] = v;
+    std::getline(fin, line);
+    isa.clear();
+    isa.str(line);
+    i = 0;
+    while (isa >> v && i < B.size()) B[i++] = v;
+
 }
 
+void loadMatrices_RC(const std::string &filePath,
+                    std::vector<float> &A,
+                    std::vector<float> &B)
+{
+    size_t m,k,n;
+    parseDimensions(filePath, m, k, n);
+    std::ifstream fin(filePath);
+    if (!fin.is_open()) std::exit(EXIT_FAILURE);
+    std::string line;
 
-void parseDimensions(const std::string& filePath, size_t &m, size_t &n, size_t &k) {
-    size_t pos = filePath.find_last_of("/\\");
-    std::string base = pos == std::string::npos ? filePath : filePath.substr(pos + 1);
-    const std::string prefix = "matrix_";
-    const std::string suffix = ".txt";
+    std::getline(fin, line);
+    std::istringstream isa(line);
+    float v; size_t i=0;
+    while (isa >> v && i < A.size()) A[i++] = v;
 
-    if (base.compare(0, prefix.size(), prefix) != 0 ||
-        base.size() < prefix.size() + suffix.size() ||
-        base.substr(base.size() - suffix.size()) != suffix)
-    {
-        throw std::invalid_argument("Filename does not match expected format: " + base);
+    std::getline(fin, line);
+    isa.clear(); isa.str(line);
+    std::vector<float> tmp(B.size());
+    i=0;
+    while (isa >> v && i < tmp.size()) tmp[i++] = v;
+    for (size_t col=0; col<n; ++col)
+      for (size_t row=0; row<k; ++row)
+        B[col*k + row] = tmp[row*n + col];
+}
+
+void loadMatrices_CC(const std::string &filePath,
+                    std::vector<float> &A,
+                    std::vector<float> &B)
+{
+    size_t m,k,n;
+    parseDimensions(filePath, m, k, n);
+    std::ifstream fin(filePath);
+    if (!fin.is_open()) std::exit(EXIT_FAILURE);
+    std::string line;
+
+    std::getline(fin, line);
+    std::istringstream isa(line);
+    std::vector<float> tmpA(A.size());
+    float v; size_t i=0;
+    while (isa >> v && i < tmpA.size()) tmpA[i++] = v;
+    for (size_t col=0; col<k; ++col)
+      for (size_t row=0; row<m; ++row)
+        A[col*m + row] = tmpA[row*k + col];
+
+    std::getline(fin, line);
+    isa.clear(); isa.str(line);
+    std::vector<float> tmpB(B.size());
+    i=0;
+    while (isa >> v && i < tmpB.size()) tmpB[i++] = v;
+    for (size_t col=0; col<n; ++col)
+      for (size_t row=0; row<k; ++row)
+        B[col*k + row] = tmpB[row*n + col];
+}
+
+void parseDimensions(const std::string& filePath, size_t &m, size_t &k, size_t &n) {
+    const std::regex pattern(".*_(\\d+)_(\\d+)_(\\d+)\\.txt");
+    if (std::smatch match; std::regex_match(filePath, match, pattern)) {
+        m = std::stoi(match[1]);
+        k = std::stoi(match[2]);
+        n = std::stoi(match[3]);
+    } else {
+        throw std::runtime_error("Filename does not match expected format");
     }
-
-    std::string numbers = base.substr(prefix.size(), base.size() - prefix.size() - suffix.size());
-    size_t first = numbers.find('_');
-    size_t second = numbers.find('_', first + 1);
-    if (first == std::string::npos || second == std::string::npos) {
-        throw std::invalid_argument("Filename does not match expected format: " + base);
-    }
-
-    m = std::strtoul(numbers.substr(0, first).c_str(), nullptr, 10);
-    n = std::strtoul(numbers.substr(first + 1, second - first - 1).c_str(), nullptr, 10);
-    k = std::strtoul(numbers.substr(second + 1).c_str(), nullptr, 10);
 }
