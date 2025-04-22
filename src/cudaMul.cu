@@ -16,8 +16,9 @@ __global__ void cudaMul(const float* A, const float* B, float* C, size_t m, size
         C[row * k + col] = sum;
     }
 }
-inline bool compareFloats(float a, float b, float epsilon = 1e-8) {
-    return fabs(a - b) < epsilon;
+inline bool compareFloats(float a, float b, float epsilon = 1e-7) {
+    float res = std::abs((b - a)/a);
+    return res < epsilon;
 }
 void compare(const float* h_C, size_t m, size_t n, size_t k, const std::string& filePath) {
     size_t A_elements = m * n;
