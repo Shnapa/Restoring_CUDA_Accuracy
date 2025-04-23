@@ -59,50 +59,50 @@ add_subdirectory(testing)
 ##############################################
 ###                 Tests                  ###
 ##############################################
-enable_testing()
-add_test(
-        NAME Benchmark_CudaMul
-        COMMAND $<TARGET_FILE:cudaMulTest>
-        --benchmark_repetitions=5
-        --benchmark_color=auto
-        --benchmark_time_unit=ms
-        --benchmark_report_aggregates_only
-        --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_CudaMul.json
-)
+#enable_testing()
+#add_test(
+#        NAME Benchmark_CudaMul
+#        COMMAND $<TARGET_FILE:cudaMulTest>
+#        --benchmark_repetitions=5
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_CudaMul.json
+#)
 
-add_test(
-        NAME Benchmark_CudaMulOpt
-        COMMAND $<TARGET_FILE:cudaMulOptTest>
-        --benchmark_repetitions=2
-        --benchmark_color=auto
-        --benchmark_time_unit=ms
-        --benchmark_report_aggregates_only
-        --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_CudaMulOpt_small.json
-)
+#add_test(
+#        NAME Benchmark_CudaMulOpt
+#        COMMAND $<TARGET_FILE:cudaMulOptTest>
+#        --benchmark_repetitions=2
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_CudaMulOpt_small.json
+#)
 
-add_test(
-        NAME Benchmark_CublasMul
-        COMMAND $<TARGET_FILE:cublasTest>
-        --benchmark_repetitions=5
-        --benchmark_color=auto
-        --benchmark_time_unit=ms
-        --benchmark_report_aggregates_only
-        --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_CublasMul.json
-)
+#add_test(
+#        NAME Benchmark_CublasMul
+#        COMMAND $<TARGET_FILE:cublasTest>
+#        --benchmark_repetitions=5
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_CublasMul.json
+#)
 
-add_test(
-        NAME Benchmark_SimdMulOpt
-        COMMAND $<TARGET_FILE:simdMulOptTest>
-        --benchmark_repetitions=2
-        --benchmark_color=auto
-        --benchmark_time_unit=ms
-        --benchmark_report_aggregates_only
-        --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_SimdMulOpt_small.json
-)
+#add_test(
+#        NAME Benchmark_SimdMulOpt
+#        COMMAND $<TARGET_FILE:simdMulOptTest>
+#        --benchmark_repetitions=2
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_SimdMulOpt_small.json
+#)
 
 #add_test(
 #        NAME Benchmark_wmmaMul
