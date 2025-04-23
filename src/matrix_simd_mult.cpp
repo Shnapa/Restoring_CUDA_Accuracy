@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     const size_t B_elements = n * k;
     auto* A_raw = static_cast<float*>(malloc(A_elements * sizeof(float)));
     auto* B_raw = static_cast<float*>(malloc(B_elements * sizeof(float)));
-    loadMatricesFromFileArray(filePath, A_raw, A_elements, B_raw, B_elements);
+    loadMatrices_RR(filePath, matrix A, matrix B);
 
     size_t paddedRowsA, paddedColsA;
     const std::vector<float> paddedA = padMatrix(A_raw, m, n, 8, paddedRowsA, paddedColsA);
