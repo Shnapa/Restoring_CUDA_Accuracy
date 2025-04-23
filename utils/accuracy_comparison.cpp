@@ -6,7 +6,7 @@
 #include <cmath>
 #include <iostream>
 
-double frobeniusNorm(const std::vector<float>& mat) {
+double norm(const std::vector<float>& mat) {
     double sum = 0.0;
     for (float val : mat) {
         sum += static_cast<double>(val) * val;
@@ -24,20 +24,10 @@ double relativeResidual(const std::vector<float>& C_ref, const std::vector<float
         diff[i] = C_ref[i] - C_target[i];
     }
 
-    double norm_diff = frobeniusNorm(diff);
-    double norm_ref = frobeniusNorm(C_ref);
+    double norm_diff = norm(diff);
+    double norm_ref = norm(C_ref);
 
     if (norm_ref == 0.0) return 0.0;
 
     return norm_diff / norm_ref;
 }
-
-int main(int argc, char** argv) {
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " A.txt B.txt\n";
-        return 1;
-    }
-
-    return 0;
-}
-
