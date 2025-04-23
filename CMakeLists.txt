@@ -37,7 +37,7 @@ target_link_libraries(generateMatrices  Threads::Threads)
 target_compile_options(simdMul      PRIVATE -mavx -mfma -march=native)
 target_compile_options(simdMulOpt   PRIVATE -mavx -mfma -march=native)
 
-add_subdirectory(testing)
+#add_subdirectory(testing)
 
 ##############################################
 ###                 BM run                 ###
