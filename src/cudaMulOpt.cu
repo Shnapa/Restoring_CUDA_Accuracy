@@ -75,7 +75,7 @@ int main(const int argc, char** argv) {
 
     cudaMemcpy(h_C.data(), d_C, sizeC * sizeof(float), cudaMemcpyDeviceToHost);
 
-    compare(h_C, m, k, n, filePath, "rr");
+    compare(h_C, m, k, n, filePath);
     std::cout << "Optimized CUDA multiplication complete.\n"
               << "First element of result: " << h_C[0] << "\n";
 
