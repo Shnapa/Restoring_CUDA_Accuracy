@@ -30,7 +30,7 @@ void compare(const std::vector<float>& h_C,
         }
     }
 
-    constexpr float epsilon = 1e-5f;
+    constexpr float epsilon = 1e-5;
     bool match = true;
     for (size_t idx = 0; idx < size_C; ++idx) {
         if (!compareFloats(C_cpu[idx], h_C[idx])) {
