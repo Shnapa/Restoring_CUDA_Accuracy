@@ -37,7 +37,8 @@ static void BM_cublasMul(benchmark::State& state, const std::string &filePath) {
     auto* h_B = static_cast<float*>(malloc(B_elements * sizeof(float)));
     auto* h_C = static_cast<float*>(malloc(C_elements * sizeof(float)));
 
-    loadMatricesFromFileArray(filePath, h_A, A_elements, h_B, B_elements);
+    std::vector<float> h_A(sizeA), h_B(sizeB), h_C(sizeC);
+    loadMatrices_CC(filePath, h_A, h_B);
 
     float *d_A, *d_B;
     float *d_C;
