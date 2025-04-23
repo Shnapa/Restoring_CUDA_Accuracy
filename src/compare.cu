@@ -9,42 +9,44 @@ inline bool compareFloats(const float a, const float b, const float epsilon = 1e
     return res < epsilon;
 }
 
-void compare(const std::vector<float>& h_C,
-             const size_t m, const size_t k, const size_t n,
-             const std::string& filePath)
-{
-    const size_t size_A = m * k;
-    const size_t size_B = k * n;
-    const size_t size_C = m * n;
-
-    std::vector<float> A(size_A), B(size_B), C_cpu(size_C);
-    loadMatrices_RR(filePath, A, B);
-
-    for (size_t i = 0; i < m; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            float sum = 0.0f;
-            for (size_t l = 0; l < k; ++l) {
-                sum += A[i * k + l] * B[l * n + j];
-            }
-            C_cpu[i * n + j] = sum;
-        }
-    }
-
-    constexpr float epsilon = 1e-5;
-    bool match = true;
-    for (size_t idx = 0; idx < size_C; ++idx) {
-        if (!compareFloats(C_cpu[idx], h_C[idx])) {
-            std::cerr << "Mismatch at idx " << idx
-                      << ": CPU=" << C_cpu[idx]
-                      << " GPU=" << h_C[idx] << "\n";
-            match = false;
-            break;
-        }
-    }
-
-    if (match) {
-        std::cout << "Verification passed: CPU and GPU results match.\n";
-    } else {
-        std::cout << "Verification failed.\n";
-    }
-}
+void compare(const float* h_C, size_t m, size_t n, size_t k, const std::string& filePath) {
+     size_t A_elements = m * n;
+     size_t B_elements = n * k;
+ 
+     auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
+     auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
+     loadMatricesFromFileArray(filePath, A, A_elements, B, B_elements);
+ 
+     auto* C_cpu = static_cast<float*>(malloc(m * k * sizeof(float)));
+ 
+     for (size_t i = 0; i < m; ++i) {
+         for (size_t j = 0; j < k; ++j) {
+             float sum = 0.0f;
+             for (size_t l = 0; l < n; ++l) {
+                 sum += A[i * n + l] * B[l * k + j];
+             }
+             C_cpu[i * k + j] = sum;
+         }
+     }
+ 
+     bool match = true;
+     const float epsilon = 1e-5;
+     for (size_t i = 0; i < m * k; ++i) {
+         if (fabs(C_cpu[i] - h_C[i]) > epsilon) {
+             std::cerr << "Mismatch at index " << i << ": CPU = " << C_cpu[i]
+                       << ", GPU = " << h_C[i] << std::endl;
+             match = false;
+             break;
+         }
+     }
+ 
+     if (match) {
+         std::cout << "Verification passed: CPU and GPU results match." << std::endl;
+     } else {
+         std::cout << "Verification failed: CPU and GPU results do not match." << std::endl;
+     }
+ 
+     free(A);
+     free(B);
+     free(C_cpu);
+ }
