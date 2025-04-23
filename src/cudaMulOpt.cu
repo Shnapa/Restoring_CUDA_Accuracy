@@ -48,12 +48,12 @@ int main(const int argc, char** argv) {
     }
     const std::string filePath = argv[1];
 
-    int m, k, n;
+    size_t m, k, n;
     parseDimensions(filePath, m, k, n);
 
-    const int size_A = m * k;
-    const int size_B = k * n;
-    const int size_C = m * n;
+    const size_t size_A = m * k;
+    const size_t size_B = k * n;
+    const size_t size_C = m * n;
 
     std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
     loadMatrices_RR(filePath, h_A, h_B);

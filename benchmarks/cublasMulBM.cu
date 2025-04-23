@@ -28,11 +28,11 @@ int loadHalfMatricesFromFileArray(const std::string &filePath, __half* A, size_t
 }
 
 static void BM_cublasMul(benchmark::State& state, const std::string &filePath) {
-    int m, k, n;
+    size_t m, k, n;
     parseDimensions(filePath, m, k, n);
-    const int sizeA = m * k;
-    const int sizeB = k * n;
-    const int sizeC = m * n;
+    const size_t sizeA = m * k;
+    const size_t sizeB = k * n;
+    const size_t sizeC = m * n;
 
     std::vector<float> h_A(sizeA), h_B(sizeB), h_C(sizeC);
     loadMatrices_CC(filePath, h_A, h_B);

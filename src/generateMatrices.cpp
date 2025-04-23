@@ -17,7 +17,7 @@ void generate_and_write_matrices(size_t m, size_t n, size_t k) {
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_real_distribution<double> dist(-10000.0, 10000.0);
+    std::uniform_real_distribution<double> dist(0.0, 10000.0);
 
     size_t totalA = m * n;
     for (size_t i = 0; i < totalA; ++i) {

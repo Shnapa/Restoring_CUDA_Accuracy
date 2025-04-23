@@ -22,13 +22,13 @@ using namespace nvcuda;
 template <typename T>
 void padMatrix(const std::vector<T>& src,
                std::vector<T>& dst,
-               const int rows, const int cols,
-               const int padded_rows, const int padded_cols,
+               const size_t rows, const size_t cols,
+               const size_t padded_rows, const size_t padded_cols,
                T zero = T(0))
 {
     dst.assign(padded_rows * padded_cols, zero);
-    for (int i = 0; i < rows; ++i)
-        for (int j = 0; j < cols; ++j)
+    for (size_t i = 0; i < rows; ++i)
+        for (size_t j = 0; j < cols; ++j)
             dst[i * padded_cols + j] = src[i * cols + j];
 }
 
@@ -36,10 +36,10 @@ __global__ void wmmaMul(const __half *A,
                         const __half *B,
                         const float *C,
                         float *D,
-                        const int padded_M, const int padded_N, const int padded_K)
+                        const size_t padded_M, const size_t padded_N, const size_t padded_K)
 {
-    const int warpM = blockIdx.x;
-    const int warpN = blockIdx.y;
+    const size_t warpM = blockIdx.x;
+    const size_t warpN = blockIdx.y;
     if (warpM * TILE_DIM >= padded_M || warpN * TILE_DIM >= padded_N)
         return;
 
@@ -51,7 +51,7 @@ __global__ void wmmaMul(const __half *A,
     wmma::fill_fragment(acc_frag, 0.0f);
     wmma::fill_fragment(c_frag, 0.0f);
 
-    for (int tileK = 0; tileK < padded_K; tileK += TILE_DIM) {
+    for (size_t tileK = 0; tileK < padded_K; tileK += TILE_DIM) {
         const half *tileA = A + warpM * TILE_DIM * padded_K + tileK;
         const half *tileB = B + tileK * padded_N + warpN * TILE_DIM;
         wmma::load_matrix_sync(a_frag, tileA, padded_K);
@@ -62,7 +62,7 @@ __global__ void wmmaMul(const __half *A,
     const float *tileC = C + warpM * TILE_DIM * padded_N + warpN * TILE_DIM;
     wmma::load_matrix_sync(c_frag, tileC, padded_N, wmma::mem_row_major);
 
-    for (int i = 0; i < nvcuda::wmma::fragment<nvcuda::wmma::accumulator, 16, 16, 16, float, void>::num_elements; ++i)
+    for (size_t i = 0; i < wmma::fragment<wmma::accumulator, TILE_DIM, TILE_DIM, TILE_DIM, float>::num_elements; ++i)
         c_frag.x[i] += acc_frag.x[i];
 
     float *tileD = D + warpM * TILE_DIM * padded_N + warpN * TILE_DIM;
@@ -77,12 +77,12 @@ int main(const int argc, char* argv[])
     }
     const std::string filename = argv[1];
 
-    int M, K, N;
+    size_t M, K, N;
     parseDimensions(filename, M, K, N);
 
-    const int padded_M = (M + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
-    const int padded_K = (K + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
-    const int padded_N = (N + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
+    const size_t padded_M = (M + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
+    const size_t padded_K = (K + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
+    const size_t padded_N = (N + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
 
     std::vector<float> A_f(M * K), B_f(K * N), C_f(M * N, 0.0f);
     loadMatrices_RR(filename, A_f, B_f);
@@ -99,9 +99,9 @@ int main(const int argc, char* argv[])
 
     __half  *d_A, *d_B;
     float *d_C, *d_D;
-    const int sizeA = padded_M * padded_K;
-    const int sizeB = padded_K * padded_N;
-    const int sizeC = padded_M * padded_N;
+    const size_t sizeA = padded_M * padded_K;
+    const size_t sizeB = padded_K * padded_N;
+    const size_t sizeC = padded_M * padded_N;
 
     cudaMalloc(&d_A, sizeA * sizeof(__half));
     cudaMalloc(&d_B, sizeB * sizeof(__half));
