@@ -52,7 +52,8 @@ int main(int argc, char** argv) {
     auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
     auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
     auto* C = static_cast<float*>(malloc(C_elements * sizeof(float)));
-    loadMatrices_RR(filePath, matrix A, matrix B);
+    std::vector<float> A, B;
+    loadMatrices_RR(filePath, A, B);
 
     simdMulOpt(A, B, C, m, n, k);
 
