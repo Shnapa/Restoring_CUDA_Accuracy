@@ -147,6 +147,7 @@ int main(const int argc, char* argv[]) {
         }
         printf("\n");
     }
+    compare(h_D, m, k, n, filename);
 
     cudaFree(d_A);
     cudaFree(d_B);
