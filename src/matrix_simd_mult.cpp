@@ -30,11 +30,11 @@ std::vector<float> simdMul(const float* A, const float* B, size_t A_rows, size_t
     return C;
 }
 
-// int main(int argc, char** argv) {
-//     if(argc < 2) {
-//         std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
-//         return 1;
-//     }
+int main(int argc, char** argv) {
+    if(argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
+        return 1;
+    }
 //     const std::string filePath = argv[1];
 
 //     size_t m, n, k;
@@ -55,4 +55,4 @@ std::vector<float> simdMul(const float* A, const float* B, size_t A_rows, size_t
 //     free(B_raw);
 //     simdMul(paddedA.data(), paddedB.data(), paddedRowsA, paddedColsA, paddedColsB);
 //     return 0;
-// }
+}
