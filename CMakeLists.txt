@@ -43,18 +43,18 @@ add_subdirectory(testing)
 ###                 BM run                 ###
 ##############################################
 
-add_executable(cublasTest           benchmarks/cublasMulBM.cu   ${SOURCES})
-add_executable(cudaMulTest          benchmarks/cudaMulBM.cu     ${SOURCES})
-add_executable(cudaMulOptTest       benchmarks/cudaMulOptBM.cu  ${SOURCES})
-add_executable(simdMulOptTest       benchmarks/simdMulOptBM.cpp ${SOURCES})
-add_executable(wmmaTest             benchmarks/wmmaBM.cu        ${SOURCES})
+# add_executable(cublasTest           benchmarks/cublasMulBM.cu   ${SOURCES})
+#add_executable(cudaMulTest          benchmarks/cudaMulBM.cu     ${SOURCES})
+#add_executable(cudaMulOptTest       benchmarks/cudaMulOptBM.cu  ${SOURCES})
+#add_executable(simdMulOptTest       benchmarks/simdMulOptBM.cpp ${SOURCES})
+#add_executable(wmmaTest             benchmarks/wmmaBM.cu        ${SOURCES})
 
-target_link_libraries(cublasTest benchmark::benchmark cublas)
-target_compile_options(simdMulOptTest   PRIVATE -mavx -mfma -march=native)
-foreach(target cudaMulTest cudaMulOptTest simdMulOptTest wmmaTest)
-    target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
-    target_link_libraries(${target} PRIVATE benchmark::benchmark)
-endforeach()
+#target_link_libraries(cublasTest benchmark::benchmark cublas)
+#target_compile_options(simdMulOptTest   PRIVATE -mavx -mfma -march=native)
+#foreach(target cudaMulTest cudaMulOptTest simdMulOptTest wmmaTest)
+ #   target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
+ #   target_link_libraries(${target} PRIVATE benchmark::benchmark)
+#endforeach()
 
 ##############################################
 ###                 Tests                  ###
