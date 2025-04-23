@@ -1,5 +1,5 @@
 #include <cstdlib>
-#include "matrixParser.h"
+#include "../include/matrixParser.h"
 #include <benchmark/benchmark.h>
 
 #define TILE_SIZE 16
