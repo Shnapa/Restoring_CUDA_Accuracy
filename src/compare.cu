@@ -15,7 +15,8 @@ void compare(const float* h_C, size_t m, size_t n, size_t k, const std::string& 
  
      auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
      auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
-     loadMatricesFromFileArray(filePath, A, A_elements, B, B_elements);
+     std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
+     loadMatrices_RR(filePath, h_A, h_B);
  
      auto* C_cpu = static_cast<float*>(malloc(m * k * sizeof(float)));
  
