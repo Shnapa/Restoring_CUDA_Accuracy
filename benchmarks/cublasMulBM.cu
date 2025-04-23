@@ -2,7 +2,7 @@
 #include <cuda_fp16.h>
 #include <cuda_runtime.h>
 #include <iostream>
-#include "matrixParser.h"
+#include "../include/matrixParser.h"
 #include <benchmark/benchmark.h>
 #include <fstream>
 #include <vector>
