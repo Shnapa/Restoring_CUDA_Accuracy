@@ -37,12 +37,12 @@ void simdMulOpt(const float* A, const float* B, float* C,
                 }
 }
 
-// int main(int argc, char** argv) {
-//     if(argc < 2) {
-//         std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
-//         return 1;
-//     }
-//     const std::string filePath = argv[1];
+int main(int argc, char** argv) {
+    if(argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
+        return 1;
+    }
+    const std::string filePath = argv[1];
 
 //     size_t m, n, k;
 //     parseDimensions(filePath, m, n, k);
@@ -61,4 +61,4 @@ void simdMulOpt(const float* A, const float* B, float* C,
 //     free(B);
 //     free(C);
 //     return 0;
-// }
+}
