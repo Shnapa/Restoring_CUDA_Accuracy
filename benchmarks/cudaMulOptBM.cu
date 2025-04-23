@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #include <vector>
 #include <cstdlib>
-#include "matrixParser.h"
+#include "../include/matrixParser.h"
 #include <benchmark/benchmark.h>
 
 #define TILE_SIZE 32
@@ -41,7 +41,8 @@ static void BM_cudaMulOpt(benchmark::State& state, const std::string &filePath) 
     auto *h_A = static_cast<float*>(malloc(sizeA));
     auto *h_B = static_cast<float*>(malloc(sizeB));
 
-    loadMatricesFromFileArray(filePath, h_A, m * n, h_B, n * k);
+    std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
+    loadMatrices_RR(filePath, h_A, h_B);
 
     float *d_A, *d_B, *d_C;
     cudaMalloc(&d_A, sizeA);

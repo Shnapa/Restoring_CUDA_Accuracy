@@ -20,6 +20,7 @@ void compare(const std::vector<float>& h_C,
     const size_t size_C = m * n;
 
     std::vector<float> A(size_A), B(size_B), C_cpu(size_C);
+
     loadMatrices_RR(filePath, A, B);
 
     for (size_t i = 0; i < m; ++i) {

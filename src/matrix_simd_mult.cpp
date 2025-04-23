@@ -35,23 +35,24 @@ int main(int argc, char** argv) {
         std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
         return 1;
     }
-    const std::string filePath = argv[1];
+//     const std::string filePath = argv[1];
 
-    size_t m, n, k;
-    parseDimensions(filePath, m, n, k);
-    const size_t A_elements = m * n;
-    const size_t B_elements = n * k;
-    auto* A_raw = static_cast<float*>(malloc(A_elements * sizeof(float)));
-    auto* B_raw = static_cast<float*>(malloc(B_elements * sizeof(float)));
-    loadMatricesFromFileArray(filePath, A_raw, A_elements, B_raw, B_elements);
+//     size_t m, n, k;
+//     parseDimensions(filePath, m, n, k);
+//     const size_t A_elements = m * n;
+//     const size_t B_elements = n * k;
+//     auto* A_raw = static_cast<float*>(malloc(A_elements * sizeof(float)));
+//     auto* B_raw = static_cast<float*>(malloc(B_elements * sizeof(float)));
+//     std::vector<float> A, B;
+//     loadMatrices_RR(filePath, A, B);
 
-    size_t paddedRowsA, paddedColsA;
-    const std::vector<float> paddedA = padMatrix(A_raw, m, n, 8, paddedRowsA, paddedColsA);
-    size_t paddedRowsB, paddedColsB;
-    const std::vector<float> paddedB = padMatrix(B_raw, n, k, 8, paddedRowsB, paddedColsB);
+//     size_t paddedRowsA, paddedColsA;
+//     const std::vector<float> paddedA = padMatrix(A_raw, m, n, 8, paddedRowsA, paddedColsA);
+//     size_t paddedRowsB, paddedColsB;
+//     const std::vector<float> paddedB = padMatrix(B_raw, n, k, 8, paddedRowsB, paddedColsB);
 
-    free(A_raw);
-    free(B_raw);
-    simdMul(paddedA.data(), paddedB.data(), paddedRowsA, paddedColsA, paddedColsB);
-    return 0;
+//     free(A_raw);
+//     free(B_raw);
+//     simdMul(paddedA.data(), paddedB.data(), paddedRowsA, paddedColsA, paddedColsB);
+//     return 0;
 }

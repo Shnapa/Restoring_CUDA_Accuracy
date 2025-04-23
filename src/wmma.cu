@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include "compare.cu"
 
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
@@ -147,6 +148,7 @@ int main(const int argc, char* argv[]) {
         }
         printf("\n");
     }
+    compare(h_D, m, k, n, filename);
 
     cudaFree(d_A);
     cudaFree(d_B);
