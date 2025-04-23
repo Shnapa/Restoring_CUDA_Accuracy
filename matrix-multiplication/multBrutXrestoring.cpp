@@ -20,18 +20,19 @@ Matrix multiply_standard(const Matrix& A, size_t m1, size_t n1,
     return C;
 }
 
-Matrix multiply_with_restored_precision(const Matrix& A, size_t m1, size_t n1,
-                                       const Matrix& B, size_t m2, size_t n2) {
+Matrix multiply_with_restored_precision(const std::vector<double>& A, size_t m1, size_t n1,
+                                        const std::vector<double>& B, size_t m2, size_t n2) {
     Matrix A_hi(m1 * n1), A_lo(m1 * n1);
     Matrix B_hi(m2 * n2), B_lo(m2 * n2);
 
     for (size_t i = 0; i < A.size(); ++i) {
-        A_hi[i] = static_cast<double>(static_cast<short>(A[i]));
-        A_lo[i] = (A[i] - A_hi[i]) * SCALE;
+        A_hi[i] = static_cast<float>(A[i]);
+        A_lo[i] = static_cast<float>((A[i] - A_hi[i]) * SCALE);
     }
+
     for (size_t i = 0; i < B.size(); ++i) {
-        B_hi[i] = static_cast<double>(static_cast<short>(B[i]));
-        B_lo[i] = (B[i] - B_hi[i]) * SCALE;
+        B_hi[i] = static_cast<float>(B[i]);
+        B_lo[i] = static_cast<float>((B[i] - B_hi[i]) * SCALE);
     }
 
     Matrix P0 = multiply_standard(A_hi, m1, n1, B_hi, m2, n2);
@@ -46,6 +47,7 @@ Matrix multiply_with_restored_precision(const Matrix& A, size_t m1, size_t n1,
 
     return C;
 }
+
 
 Matrix generate_random_matrix(size_t rows, size_t cols, double min_val, double max_val) {
     Matrix mat(rows * cols);
@@ -67,7 +69,6 @@ void print_matrix(const Matrix& mat, size_t rows, size_t cols) {
         std::cout << std::endl;
     }
 }
-
 
 void compare_results(const Matrix& C_standard, const Matrix& C_restored, size_t rows, size_t cols) {
     double max_abs_error = 0.0;
