@@ -2,7 +2,7 @@
 #include <immintrin.h>
 #include <cstring>
 #include <cstdlib>
-#include "matrixParser.h"
+#include "../include/matrixParser.h"
 #include <benchmark/benchmark.h>
 
 #define BLOCK_SIZE 64
@@ -61,12 +61,12 @@ static void BM_simdMulOpt(benchmark::State &state, const std::string &filePath) 
 }
 
 int main(int argc, char** argv) {
-    for (const auto & filepath : filePaths) {
-        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
-            BM_simdMulOpt(state, filepath);
-        });
-    }
-    benchmark::Initialize(&argc, argv);
-    benchmark::RunSpecifiedBenchmarks();
+    // for (const auto & filepath : filePaths) {
+    //     benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
+    //         BM_simdMulOpt(state, filepath);
+    //     });
+    // }
+    // benchmark::Initialize(&argc, argv);
+    // benchmark::RunSpecifiedBenchmarks();
     return 0;
 }

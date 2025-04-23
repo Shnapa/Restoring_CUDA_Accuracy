@@ -8,9 +8,11 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include "compare.cu"
 
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
+#include "matrixParser.h"
 
 using namespace nvcuda;
 
@@ -23,18 +25,6 @@ void padMatrix(const std::vector<T>& src, std::vector<T>& dst, int rows, int col
     for (int i = 0; i < rows; ++i)
         for (int j = 0; j < cols; ++j)
             dst[i * padded_cols + j] = src[i * cols + j];
-}
-
-void parseDimensionsFromFilename(const std::string& filename, int& M, int& K, int& N) {
-    std::regex pattern(".*_(\\d+)x(\\d+)x(\\d+)\\.txt");
-    std::smatch match;
-    if (std::regex_match(filename, match, pattern)) {
-        M = std::stoi(match[1]);
-        K = std::stoi(match[2]);
-        N = std::stoi(match[3]);
-    } else {
-        throw std::runtime_error("Filename does not match expected format");
-    }
 }
 
 void loadMatricesFromFile(const std::string& filename, std::vector<__half>& A, std::vector<__half>& B, std::vector<float>& C, int M, int K, int N) {
@@ -83,7 +73,6 @@ __global__ void WMMAKernel(half *A, half *B, float *C, float *D, int M_GLOBAL, i
     }
 
     float *tileC = C + warpM * TILE_DIM * padded_N + warpN * TILE_DIM;
-    // wmma::load_matrix_sync(c_frag, tileC, padded_N, wmma::mem_row_major);
 
     for (int i = 0; i < acc_frag.num_elements; ++i)
         c_frag.x[i] += acc_frag.x[i];
@@ -92,29 +81,29 @@ __global__ void WMMAKernel(half *A, half *B, float *C, float *D, int M_GLOBAL, i
     wmma::store_matrix_sync(tileD, c_frag, padded_N, wmma::mem_row_major);
 }
 
-int main(int argc, char* argv[]) {
+int main(const int argc, char* argv[]) {
     if (argc != 2) {
         printf("Usage: ./main matrix_MxKxN.txt\n");
         return 1;
     }
 
-    std::string filename = argv[1];
-    int M, K, N;
-    parseDimensionsFromFilename(filename, M, K, N);
+    const std::string filename = argv[1];
+    size_t m, k, n;
+    parseDimensions(filename, m, k, n);
 
-    int padded_M = ((M + TILE_DIM - 1) / TILE_DIM) * TILE_DIM;
-    int padded_K = ((K + TILE_DIM - 1) / TILE_DIM) * TILE_DIM;
-    int padded_N = ((N + TILE_DIM - 1) / TILE_DIM) * TILE_DIM;
+    const int padded_M = ((m + TILE_DIM - 1) / TILE_DIM) * TILE_DIM;
+    const int padded_K = ((k + TILE_DIM - 1) / TILE_DIM) * TILE_DIM;
+    const int padded_N = ((n + TILE_DIM - 1) / TILE_DIM) * TILE_DIM;
 
     std::vector<__half> A, B;
     std::vector<float> C;
-    loadMatricesFromFile(filename, A, B, C, M, K, N);
+    loadMatricesFromFile(filename, A, B, C, m, k, n);
 
     std::vector<__half> A_padded, B_padded;
     std::vector<float> C_padded;
-    padMatrix(A, A_padded, M, K, padded_M, padded_K, __float2half(0.0f));
-    padMatrix(B, B_padded, K, N, padded_K, padded_N, __float2half(0.0f));
-    padMatrix(C, C_padded, M, N, padded_M, padded_N, 0.0f);
+    padMatrix(A, A_padded, m, k, padded_M, padded_K, __float2half(0.0f));
+    padMatrix(B, B_padded, k, n, padded_K, padded_N, __float2half(0.0f));
+    padMatrix(C, C_padded, m, n, padded_M, padded_N, 0.0f);
 
     half *d_A, *d_B;
     float *d_C, *d_D;
@@ -139,7 +128,7 @@ int main(int argc, char* argv[]) {
     cudaEventCreate(&stop);
     cudaEventRecord(start);
 
-    WMMAKernel<<<blocks, threads>>>(d_A, d_B, d_C, d_D, M, N, K, padded_M, padded_N, padded_K);
+    WMMAKernel<<<blocks, threads>>>(d_A, d_B, d_C, d_D, m, n, k, padded_M, padded_N, padded_K);
 
     cudaEventRecord(stop);
     cudaEventSynchronize(stop);
@@ -147,18 +136,19 @@ int main(int argc, char* argv[]) {
     float ms = 0;
     cudaEventElapsedTime(&ms, start, stop);
     printf("GPU execution time: %.3f ms\n", ms);
-    printf("TFLOPS: %.2f\n", ((double)M * N * K * 2) / (ms * 1e6));
+    printf("TFLOPS: %.2f\n", ((double)m * n * k * 2) / (ms * 1e6));
 
     std::vector<float> h_D(size_C);
     cudaMemcpy(h_D.data(), d_D, size_C * sizeof(float), cudaMemcpyDeviceToHost);
 
-    printf("Result matrix D = A*B + C (%dx%d):\n", M, N);
-    for (int i = 0; i < M; ++i) {
-        for (int j = 0; j < N; ++j) {
+    printf("Result matrix D = A*B + C (%dx%d):\n", m, n);
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
             printf("%.3f ", h_D[i * padded_N + j]);
         }
         printf("\n");
     }
+    compare(h_D, m, k, n, filename);
 
     cudaFree(d_A);
     cudaFree(d_B);
