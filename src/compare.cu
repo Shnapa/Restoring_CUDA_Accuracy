@@ -33,7 +33,7 @@
      constexpr float epsilon = 1e-5f;
      bool match = true;
      for (size_t idx = 0; idx < size_C; ++idx) {
-         if (!compareFloats(C_cpu[idx], h_C[idx])) {
+         if (!compareFloats(C_cpu[idx], h_C[idx], epsilon)) {
              std::cerr << "Mismatch at idx " << idx
                        << ": CPU=" << C_cpu[idx]
                        << " GPU=" << h_C[idx] << "\n";
