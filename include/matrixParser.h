@@ -1,6 +1,9 @@
-#ifndef MATRIX_PARSER_HPP
-#define MATRIX_PARSER_HPP
+//
+// Created by gllek-pc on 4/23/25.
+//
 
+#ifndef MATRIXPARSER2_H
+#define MATRIXPARSER2_H
 #include <array>
 #include <iostream>
 #include <vector>
@@ -9,34 +12,72 @@
 #include <sstream>
 #include <tuple>
 inline std::vector<std::tuple<size_t, size_t, size_t>> matrix_sizes = {
-    // {5, 2, 4}
-    {250, 100, 80},
-    {500, 250, 150},
-    {1000, 500, 800},
-    {2000, 1000, 1500},
-    {5000, 2500, 3000},
-    // {10000, 5000, 8000},
-    // {15000, 7500, 10000},
-    // {20000, 12500, 15000},
-    // {25000, 15000, 17500},
-    // {35000, 17500, 20000},
-    // {41000, 13000, 24000},
-    // {42000, 13000, 24000},
-    // {42000, 14000, 24000},
+    {  100,   100,   100},
+    {  1024,   1024,   1024},
+    {  2048,   2048,   2048},
+    {  4096,   4096,   4096},
+    {  8192,   8192,   8192},
+    { 16384,  16384,  16384},
+
+    {  9999,    9999,    9999},
+    { 13331,   10007,   20011},
+    { 22222,   11111,    5555},
+
+    { 32768,  16384,   8192},
+    { 40960,   8192,   4096},
+
+    { 10000,  15000,  10000},
+    { 15000,  10000,  15000},
+    { 20000,  10000,   8000},
+    { 30000,   7000,  18000},
+    { 35000,  20000,   5000},
+
+    { 24000,  24000,  24000},
+    { 25000,  25000,  25000},
+
+    { 25000,  20000,  15000},
+    { 15000,  35000,  10000},
+    { 10000,  40000,   6000},
+
+    { 42000,   2000,   2000},
+    {  2000,   2000,  42000},
+    {  2000,  42000,   2000},
+
+    { 42000,  14000,  24000},
 };
 
-inline std::vector<std::string> filePaths{
-    "../data/matrix_250_100_80.txt",
-    "../data/matrix_500_250_150.txt",
-    "../data/matrix_1000_500_800.txt",
-    "../data/matrix_2000_1000_1500.txt",
-    "../data/matrix_5000_2500_3000.txt",
-    // "../data/matrix_10000_5000_8000.txt",
-    // "../data/matrix_15000_7500_10000.txt",
-    // "../data/matrix_20000_12500_15000.txt",
-    // "../data/matrix_25000_15000_17500.txt",
-    // "../data/matrix_35000_17500_20000.txt",
-    // "../data/matrix_42000_14000_24000.txt",
+inline std::vector<std::string> filePaths = {
+    "../data/matrix_1024_1024_1024.txt",
+    "../data/matrix_2048_2048_2048.txt",
+    "../data/matrix_4096_4096_4096.txt",
+    "../data/matrix_8192_8192_8192.txt",
+    "../data/matrix_16384_16384_16384.txt",
+
+    "../data/matrix_9999_9999_9999.txt",
+    "../data/matrix_13331_10007_20011.txt",
+    "../data/matrix_22222_11111_5555.txt",
+
+    "../data/matrix_32768_16384_8192.txt",
+    "../data/matrix_40960_8192_4096.txt",
+
+    "../data/matrix_10000_15000_10000.txt",
+    "../data/matrix_15000_10000_15000.txt",
+    "../data/matrix_20000_10000_8000.txt",
+    "../data/matrix_30000_7000_18000.txt",
+    "../data/matrix_35000_20000_5000.txt",
+
+    "../data/matrix_24000_24000_24000.txt",
+    "../data/matrix_25000_25000_25000.txt",
+
+    "../data/matrix_25000_20000_15000.txt",
+    "../data/matrix_15000_35000_10000.txt",
+    "../data/matrix_10000_40000_6000.txt",
+
+    "../data/matrix_42000_2000_2000.txt",
+    "../data/matrix_2000_2000_42000.txt",
+    "../data/matrix_2000_42000_2000.txt",
+
+    "../data/matrix_42000_14000_24000.txt",
 };
 
 void loadMatrices_CC(const std::string &filePath,
@@ -52,8 +93,8 @@ void loadMatrices_RC(const std::string &filePath,
                     std::vector<float> &B);
 
 void parseDimensions(   const std::string& filePath,
-                        size_t &m,
-                        size_t &k,
-                        size_t &n );
+                        int &m,
+                        int &k,
+                        int &n );
 
-#endif
+#endif //MATRIXPARSER2_H

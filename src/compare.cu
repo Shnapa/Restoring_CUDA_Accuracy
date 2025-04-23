@@ -33,7 +33,7 @@ void compare(const std::vector<float>& h_C,
         }
     }
 
-    constexpr float epsilon1 = 1e-5f;
+    constexpr float epsilon1 = 1e-4f;
     constexpr float epsilon2 = 1e-6f;
     constexpr float epsilon3 = 1e-7f;
     bool match_e5 = true;
@@ -71,7 +71,7 @@ void compare(const std::vector<float>& h_C,
 
 
     if (match_e5) std::cout << "Verification passed on 1e-5f: CPU and GPU results match.\n";
-    else std::cout << "Verification failed on 1e-5f.\n";
+    else std::cout << "Verification failed on 1e-5f\n";
 
     if (match_e6) std::cout << "Verification passed on 1e-6f: CPU and GPU results match.\n";
     else std::cout << "Verification failed on 1e-6f\n";

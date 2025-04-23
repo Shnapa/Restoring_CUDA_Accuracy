@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <string>
-#include "src/matrixParser.cpp"
+#include "include/matrixParser.cpp"
 #include "src/generateMatrices.cpp"
 
 void generate_matrices(size_t m, size_t n, float* A);

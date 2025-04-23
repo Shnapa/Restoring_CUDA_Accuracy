@@ -33,7 +33,6 @@ void generate_and_write_matrices(size_t m, size_t n, size_t k) {
         if (i + 1 < totalB)
             outfile << ' ';
     }
-    outfile << '\n';
 
     outfile.close();
     std::cout << "Finished generating matrices for (" << m << ", " << n << ", " << k << ") in file: " << filename << "\n";

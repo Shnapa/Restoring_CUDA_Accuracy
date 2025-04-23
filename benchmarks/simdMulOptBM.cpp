@@ -8,7 +8,7 @@
 #define BLOCK_SIZE 64
 
 void simdMatrixMultiply(const float* A, const float* B, float* C,
-                                  const size_t m, const size_t n, const size_t k) {
+                                  const size_t m, const size_t k, const size_t n) {
 #pragma omp parallel for collapse(2)
     for (size_t i = 0; i < m; i += BLOCK_SIZE)
         for (size_t j = 0; j < k; j += BLOCK_SIZE)
@@ -39,34 +39,29 @@ void simdMatrixMultiply(const float* A, const float* B, float* C,
 }
 
 static void BM_simdMulOpt(benchmark::State &state, const std::string &filePath) {
-    size_t m, n, k;
-    parseDimensions(filePath, m, n, k);
-    const size_t A_elements = m * n;
-    const size_t B_elements = n * k;
-    const size_t C_elements = m * k;
-    auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
-    auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
-    auto* C = static_cast<float*>(malloc(C_elements * sizeof(float)));
+    int m, k, n;
+    parseDimensions(filePath, m, k, n);
 
-    loadMatricesFromFileArray(filePath, A, A_elements, B, B_elements);
+    const size_t size_A = m * k;
+    const size_t size_B = k * n;
+    const size_t size_C = m * n;
+
+    std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
+    loadMatrices_RR(filePath, h_A, h_B);
 
     for (auto _ : state) {
-        memset(C, 0, C_elements * sizeof(float));
-        simdMatrixMultiply(A, B, C, m, n, k);
+        simdMatrixMultiply(h_A.data(), h_B.data(), h_C.data(), m, k, n);
         benchmark::ClobberMemory();
     }
-    free(A);
-    free(B);
-    free(C);
 }
 
 int main(int argc, char** argv) {
-    // for (const auto & filepath : filePaths) {
-    //     benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
-    //         BM_simdMulOpt(state, filepath);
-    //     });
-    // }
-    // benchmark::Initialize(&argc, argv);
-    // benchmark::RunSpecifiedBenchmarks();
+    for (const auto & filepath : filePaths) {
+        benchmark::RegisterBenchmark(filepath, [filepath](benchmark::State &state) {
+            BM_simdMulOpt(state, filepath);
+        });
+    }
+    benchmark::Initialize(&argc, argv);
+    benchmark::RunSpecifiedBenchmarks();
     return 0;
 }

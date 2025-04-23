@@ -1,9 +1,8 @@
 //
 // Created by gllek-pc on 3/30/25.
 //
-#include "matrixParser.h"
-#include <regex>
 
+#include <regex>
 #include <fstream>
 #include <sstream>
 #include <vector>
@@ -15,7 +14,7 @@ void loadMatrices_RR(const std::string &filePath,
                     std::vector<float> &A,
                     std::vector<float> &B)
 {
-    size_t m, k, n;
+    int m, k, n;
     parseDimensions(filePath, m, k, n);
     std::ifstream fin(filePath);
     if (!fin.is_open()) std::exit(EXIT_FAILURE);
@@ -30,14 +29,13 @@ void loadMatrices_RR(const std::string &filePath,
     isa.str(line);
     i = 0;
     while (isa >> v && i < B.size()) B[i++] = v;
-
 }
 
 void loadMatrices_RC(const std::string &filePath,
                     std::vector<float> &A,
                     std::vector<float> &B)
 {
-    size_t m,k,n;
+    int m,k,n;
     parseDimensions(filePath, m, k, n);
     std::ifstream fin(filePath);
     if (!fin.is_open()) std::exit(EXIT_FAILURE);
@@ -62,7 +60,7 @@ void loadMatrices_CC(const std::string &filePath,
                     std::vector<float> &A,
                     std::vector<float> &B)
 {
-    size_t m,k,n;
+    int m,k,n;
     parseDimensions(filePath, m, k, n);
     std::ifstream fin(filePath);
     if (!fin.is_open()) std::exit(EXIT_FAILURE);
@@ -87,8 +85,8 @@ void loadMatrices_CC(const std::string &filePath,
         B[col*k + row] = tmpB[row*n + col];
 }
 
-void parseDimensions(const std::string& filePath, size_t &m, size_t &k, size_t &n) {
-    const std::regex pattern(".*_(\\d+)_(\\d+)_(\\d+)\\.txt");
+void parseDimensions(const std::string& filePath, int &m, int &k, int &n) {
+    const std::regex pattern(R"(.*_(\d+)_(\d+)_(\d+)\.txt)");
     if (std::smatch match; std::regex_match(filePath, match, pattern)) {
         m = std::stoi(match[1]);
         k = std::stoi(match[2]);

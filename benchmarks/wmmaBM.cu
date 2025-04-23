@@ -54,12 +54,12 @@ __global__ void matrixMultiplyWMMA(const __half *A, const __half *B, float *C, s
 }
 
 static void BM_RunMultiplicationWMMA(benchmark::State &state, const std::string &filePath) {
-    size_t m, n, k;
+    int m, n, k;
     parseDimensions(filePath, m, n, k);
 
-    const size_t sizeA = m * k * sizeof(__half);
-    const size_t sizeB = k * n * sizeof(__half);
-    const size_t sizeC = m * n * sizeof(float);
+    const int sizeA = m * k * sizeof(__half);
+    const int sizeB = k * n * sizeof(__half);
+    const int sizeC = m * n * sizeof(float);
 
     auto *h_A = static_cast<half*>(malloc(sizeA));
     auto *h_B = static_cast<half*>(malloc(sizeB));

@@ -3,6 +3,7 @@
 #include "matrixParser.h"
 #include <cuda_runtime.h>
 #include "compare.cu"
+#include "timeMeasurement.h"
 #define TILE_SIZE 16
 
 __global__ void cudaMul(const float* A, const float* B, float* C,
@@ -25,12 +26,12 @@ int main(const int argc, char** argv) {
     }
     const std::string filePath = argv[1];
 
-    size_t m, k, n;
+    int m, k, n;
     parseDimensions(filePath, m, k, n);
 
-    const size_t size_A = m * k;
-    const size_t size_B = k * n;
-    const size_t size_C = m * n;
+    const int size_A = m * k;
+    const int size_B = k * n;
+    const int size_C = m * n;
 
     std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
     loadMatrices_RR(filePath, h_A, h_B);

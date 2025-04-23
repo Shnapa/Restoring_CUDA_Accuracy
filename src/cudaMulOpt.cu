@@ -8,7 +8,7 @@
 #define TILE_SIZE 16
 
 __global__ void cudaMulOpt(const float* A, const float* B, float* C,
-                           size_t m, size_t k, size_t n)
+                           const size_t m, const size_t k, const size_t n)
 {
     __shared__ float tileA[TILE_SIZE][TILE_SIZE];
     __shared__ float tileB[TILE_SIZE][TILE_SIZE];
@@ -48,36 +48,35 @@ int main(const int argc, char** argv) {
     }
     const std::string filePath = argv[1];
 
-    size_t m, k, n;
+    int m, k, n;
     parseDimensions(filePath, m, k, n);
 
-    const size_t sizeA = m * k;
-    const size_t sizeB = k * n;
-    const size_t sizeC = m * n;
+    const int size_A = m * k;
+    const int size_B = k * n;
+    const int size_C = m * n;
 
-    std::vector<float> h_A(sizeA), h_B(sizeB), h_C(sizeC);
+    std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
     loadMatrices_RR(filePath, h_A, h_B);
 
     float *d_A, *d_B, *d_C;
-    cudaMalloc(&d_A, sizeA * sizeof(float));
-    cudaMalloc(&d_B, sizeB * sizeof(float));
-    cudaMalloc(&d_C, sizeC * sizeof(float));
+    cudaMalloc(&d_A, size_A * sizeof(float));
+    cudaMalloc(&d_B, size_B * sizeof(float));
+    cudaMalloc(&d_C, size_C * sizeof(float));
 
-    cudaMemcpy(d_A, h_A.data(), sizeA * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B.data(), sizeB * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_A, h_A.data(), size_A * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B.data(), size_B * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemset(d_C, 0,        size_C * sizeof(float));
 
-    dim3 threads(TILE_SIZE, TILE_SIZE);
-    dim3 blocks((n + TILE_SIZE - 1) / TILE_SIZE,
-                (m + TILE_SIZE - 1) / TILE_SIZE);
+    dim3 threadsPerBlock(TILE_SIZE, TILE_SIZE);
+    dim3 blocksPerGrid((n + TILE_SIZE - 1) / TILE_SIZE,
+                       (m + TILE_SIZE - 1) / TILE_SIZE);
 
-    cudaMulOpt<<<blocks, threads>>>(d_A, d_B, d_C, m, k, n);
+    cudaMulOpt<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, k, n);
     cudaDeviceSynchronize();
 
-    cudaMemcpy(h_C.data(), d_C, sizeC * sizeof(float), cudaMemcpyDeviceToHost);
+    cudaMemcpy(h_C.data(), d_C, size_C * sizeof(float), cudaMemcpyDeviceToHost);
 
     compare(h_C, m, k, n, filePath);
-    std::cout << "Optimized CUDA multiplication complete.\n"
-              << "First element of result: " << h_C[0] << "\n";
 
     cudaFree(d_A);
     cudaFree(d_B);
