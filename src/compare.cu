@@ -14,21 +14,22 @@
               const std::string& filePath)
  {
      const size_t size_A = m * k;
-     const size_t size_B = k * n;
-     const size_t size_C = m * n;
- 
-     std::vector<float> A(size_A), B(size_B), C_cpu(size_C);
-     loadMatrices_RR(filePath, A, B);
- 
-     for (size_t i = 0; i < m; ++i) {
-         for (size_t j = 0; j < n; ++j) {
-             float sum = 0.0f;
-             for (size_t l = 0; l < k; ++l) {
-                 sum += A[i * k + l] * B[l * n + j];
-             }
-             C_cpu[i * n + j] = sum;
-         }
-     }
+    const size_t size_B = k * n;
+    const size_t size_C = m * n;
+
+    std::vector<float> A(size_A), B(size_B), C_cpu(size_C);
+
+    loadMatrices_RR(filePath, A, B);
+
+    for (size_t i = 0; i < m; ++i) {
+        for (size_t j = 0; j < n; ++j) {
+            float sum = 0.0f;
+            for (size_t l = 0; l < k; ++l) {
+                sum += A[i * k + l] * B[l * n + j];
+            }
+            C_cpu[i * n + j] = sum;
+        }
+    }
  
      constexpr float epsilon = 1e-5f;
      bool match = true;
