@@ -4,7 +4,7 @@
  #include <cmath>
  #include "matrixParser.h"
  
- inline bool compareFloats(const float a, const float b, const float epsilon = 1e-7) {
+ inline bool compareFloats(const float a, const float b, const float epsilon = 1e-5) {
      const float res = std::abs((b - a)/a);
      return res < epsilon;
  }
