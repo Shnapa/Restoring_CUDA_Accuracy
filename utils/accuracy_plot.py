@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 methods = {
-    "--simd":      ("FP32 SIMT", 'blue', 'o'),
-    "--cuda":      ("TensorCore w/o ErrCor", 'red', 'v'),
-    "--simd-opt":  ("Our method", 'orange', 'x'),
-    "--wmma":      ("Markidis' method", 'green', '^'),
-    "--cuda-opt":  ("Feng's method", 'purple', '+')
+    "--simd":      ("SIMD", 'blue', 'o'),
+    "--cuda":      ("Cuda", 'red', 'v'),
+    "--simd-opt":  ("SIMD Opt", 'orange', 'x'),
+    "--wmma":      ("WMMA' method", 'green', '^'),
+    "--cuda-opt":  ("Cuda Opt", 'purple', '+')
 }
 
 baseline_flag = "--naive"
@@ -19,45 +19,50 @@ def generate_matrix_file(filename, rows, cols):
     matrix = np.random.rand(rows, cols).astype(np.float32)
     np.savetxt(filename, matrix, fmt='%.6f')
 
-errors_by_method = {key: [] for key in methods.keys()}
+errors_by_method = {flag: [] for flag in methods}
 
 for k in k_values:
+    print(f"Running tests for k = {k}")
     generate_matrix_file("matrixA.txt", m, k)
     generate_matrix_file("matrixB.txt", k, n)
 
     result_naive = subprocess.run(
         ["../cmake-build-debug/matmul_compare", baseline_flag, "matrixA.txt", "matrixB.txt"],
-        check=True, capture_output=True, text=True
+        capture_output=True, text=True
     )
-
-    # Check correctness of baseline
-    if "error =" not in result_naive.stdout:
-        raise RuntimeError("Baseline (naive) failed at k={}".format(k))
+    if result_naive.returncode != 0 or "error =" not in result_naive.stdout:
+        print(f"Naive failed at k={k}, skipping")
+        for flag in methods:
+            errors_by_method[flag].append(None)
+        continue
 
     for flag in methods:
         try:
             result = subprocess.run(
                 ["../cmake-build-debug/matmul_compare", flag, "matrixA.txt", "matrixB.txt"],
-                check=True,
-                capture_output=True,
-                text=True
+                capture_output=True, text=True
             )
+            found = False
             for line in result.stdout.splitlines():
                 if "error =" in line:
-                    error_value = float(line.strip().split('=')[-1])
-                    errors_by_method[flag].append(error_value)
+                    error_val = float(line.strip().split('=')[-1])
+                    errors_by_method[flag].append(error_val)
+                    found = True
                     break
+            if not found:
+                errors_by_method[flag].append(None)
+                print(f"[{flag}] No error output at k={k}")
         except subprocess.CalledProcessError as e:
             print(f"[{flag}] Failed at k={k}: {e.stderr}")
             errors_by_method[flag].append(None)
 
-# Plot
 plt.figure(figsize=(10, 6))
 for flag, (label, color, marker) in methods.items():
     y_vals = errors_by_method[flag]
     if all(v is None for v in y_vals):
         continue
-    plt.plot(k_values, y_vals, label=label, marker=marker, color=color)
+    y_vals_clean = [y if y is not None else np.nan for y in y_vals]
+    plt.plot(k_values, y_vals_clean, label=label, marker=marker, color=color)
 
 plt.xscale("log", base=2)
 plt.yscale("log")
