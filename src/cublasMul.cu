@@ -7,7 +7,10 @@
 #include "compare.cu"
 
 int main(const int argc, char** argv) {
-    if (argc < 2) return 1;
+    if (argc < 2) {
+        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
+        return 1;
+    }
     const std::string filePath = argv[1];
 
     size_t m, k, n;
@@ -18,39 +21,41 @@ int main(const int argc, char** argv) {
     const size_t size_C = m * n;
 
     std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
-    loadMatrices_CC(filePath, h_A, h_B);
+    loadMatrices_RR(filePath, h_A, h_B);
 
-    float *d_A, *d_B, *d_C;
+    float *d_A = nullptr, *d_B = nullptr, *d_C = nullptr;
     cudaMalloc(&d_A, size_A * sizeof(float));
     cudaMalloc(&d_B, size_B * sizeof(float));
     cudaMalloc(&d_C, size_C * sizeof(float));
 
     cudaMemcpy(d_A, h_A.data(), size_A * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, h_B.data(), size_B * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemset(d_C, 0, size_C * sizeof(float));
 
     cublasHandle_t handle;
     cublasCreate(&handle);
 
-    constexpr float alpha = 1.0f, beta = 0.0f;
+    constexpr float alpha = 1.0f, beta = 1.0f;
+
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
-    cudaEventRecord(start, nullptr);
+
+    cudaEventRecord(start);
+
+    cublasSetMathMode(handle, CUBLAS_MATH_DISALLOW_REDUCED_PRECISION_REDUCTION);
 
     cublasGemmEx(handle,
-                 CUBLAS_OP_T, CUBLAS_OP_T,
-                 n, m, k,
+                 CUBLAS_OP_N, CUBLAS_OP_N,
+                 m, n, k,
                  &alpha,
-                 d_B, CUDA_R_32F, k,
-                 d_A, CUDA_R_32F, m,
+                 d_B, CUDA_R_32F, m,
+                 d_A, CUDA_R_32F, k,
                  &beta,
-                 d_C, CUDA_R_32F, n,
-                 CUDA_R_32F,
+                 d_C, CUDA_R_32F, m,
+                 CUBLAS_COMPUTE_32F,
                  CUBLAS_GEMM_DEFAULT);
-
     cudaDeviceSynchronize();
-    cudaEventRecord(stop, nullptr);
+    cudaEventRecord(stop);
     cudaEventSynchronize(stop);
 
     float elapsed = 0.0f;
@@ -62,8 +67,11 @@ int main(const int argc, char** argv) {
     compare(h_C, m, k, n, filePath);
 
     cublasDestroy(handle);
+    cudaEventDestroy(start);
+    cudaEventDestroy(stop);
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
+
     return 0;
 }

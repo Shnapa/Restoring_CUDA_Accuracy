@@ -43,6 +43,7 @@ static void BM_cudaMul(benchmark::State &state, const std::string &filePath) {
     for (auto _ : state) {
         matrixMultiplicationNaiveKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, k, n);
         cudaDeviceSynchronize();
+        benchmark::ClobberMemory();
     }
 
     cudaFree(d_A);

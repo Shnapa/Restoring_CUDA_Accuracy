@@ -63,6 +63,7 @@ static void BM_cublasMul(benchmark::State& state, const std::string &filePath) {
                  CUDA_R_32F,
                  CUBLAS_GEMM_DEFAULT);
         cudaDeviceSynchronize();
+        benchmark::ClobberMemory();
     }
     cudaMemcpy(h_C.data(), d_C, sizeC * sizeof(float), cudaMemcpyDeviceToHost);
 
