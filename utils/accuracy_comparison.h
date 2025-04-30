@@ -1,10 +1,15 @@
-//
-// Created by yuliana on 23.04.25.
-//
-
 #ifndef ACCURACY_COMPARISON_H
 #define ACCURACY_COMPARISON_H
 
-double relativeResidual(const std::vector<float>& C_ref, const std::vector<float>& C_target);
+#include <vector>
+#include <string>
 
-#endif //ACCURACY_COMPARISON_H
+std::vector<std::vector<float>> loadMatrix(const std::string& filename);
+
+std::vector<std::vector<float>> multiplyNaive(const std::vector<std::vector<float>>& A,
+                                              const std::vector<std::vector<float>>& B);
+
+float compareMatrices(const std::vector<std::vector<float>>& A,
+                      const std::vector<std::vector<float>>& B);
+
+#endif // ACCURACY_COMPARISON_H

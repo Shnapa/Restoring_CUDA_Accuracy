@@ -66,6 +66,7 @@ static void BM_cudaMulOpt(benchmark::State& state, const std::string &filePath) 
     for (auto _ : state) {
         cudaMulOpt<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
         cudaDeviceSynchronize();
+        benchmark::ClobberMemory();
     }
 
     cudaFree(d_A);

@@ -3,8 +3,8 @@ set(CMAKE_CUDA_ARCHITECTURES 75 89)
 set(CMAKE_CXX_STANDARD 20)
 
 set(PROJECT_NAME Restoring_Accuracy)
-project(${PROJECT_NAME} C CXX)
-project(${PROJECT_NAME} CXX CUDA)
+project(${PROJECT_NAME} C CXX CUDA)
+set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --fmad=false --prec-div=true --prec-sqrt=true --ftz=false")
 
 set(SOURCE_DIRECTORIES include src data)
 
@@ -19,6 +19,8 @@ find_package(benchmark REQUIRED)
 ###              Default run               ###
 ##############################################
 
+add_subdirectory(utils)
+
 add_executable(cublasMul        src/cublasMul.cu                    ${SOURCES})
 add_executable(cudaMul          src/cudaMul.cu                      ${SOURCES})
 add_executable(cudaMulOpt       src/cudaMulOpt.cu                   ${SOURCES})
@@ -26,6 +28,7 @@ add_executable(wmma             src/wmma.cu                         ${SOURCES})
 add_executable(simdMul          src/matrix_simd_mult.cpp            ${SOURCES})
 add_executable(simdMulOpt       src/matrix_simd_parallel_mult.cpp   ${SOURCES})
 add_executable(generateMatrices src/generateMatrices.cpp            ${SOURCES})
+add_executable(cpuRun           src/mmul.cpp                        ${SOURCES})
 
 foreach(target cublasMul cudaMul cudaMulOpt wmma simdMul simdMulOpt generateMatrices)
     target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})

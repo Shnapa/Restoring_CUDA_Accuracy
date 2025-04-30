@@ -12,7 +12,8 @@
 #include <sstream>
 #include <tuple>
 inline std::vector<std::tuple<size_t, size_t, size_t>> matrix_sizes = {
-    {  100,   100,   100},
+    // {  100,   100,   100},
+    {64, 64 , 64}
     // {  1024,   1024,   1024},
     // {  2048,   2048,   2048},
     // {  4096,   4096,   4096},

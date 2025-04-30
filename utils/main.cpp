@@ -1,6 +1,8 @@
 #include "accuracy_comparison.h"
 #include <iostream>
 #include <string>
+#include <vector>
+#include "accuracy_comparison.h"
 
 std::vector<double> referenceGEMM_FP64(const std::vector<float>& A, const std::vector<float>& B, size_t m, size_t k, size_t n) {
     std::vector<double> C(m * n, 0.0);
@@ -33,17 +35,17 @@ int main(int argc, char** argv) {
     std::vector<std::vector<float>> result_tested;
     std::vector<std::vector<float>> result_naive = multiplyNaive(A, B);
 
-    if (flag == "--simd") {
-        result_tested = ...;
-    } else if (flag == "--simd-opt") {
-        result_tested = ...;
-    } else if (flag == "--cuda") {
-        result_tested = ...;
-    } else if (flag == "--cuda-opt") {
-        result_tested = ...;
-    } else if (flag == "--wmma") {
-        result_tested = ...;
-    } else if (flag == "--naive") {
+    // if (flag == "--simd") {
+    //     result_tested = ...;
+    // } else if (flag == "--simd-opt") {
+    //     result_tested = ...;
+    // } else if (flag == "--cuda") {
+    //     result_tested = ...;
+    // } else if (flag == "--cuda-opt") {
+    //     result_tested = ...;
+    // } else if (flag == "--wmma") {
+    //     result_tested = ...;
+    if (flag == "--naive") {
         result_tested = result_naive;
     } else {
         std::cerr << "Unknown multiplication type flag: " << flag << std::endl;
