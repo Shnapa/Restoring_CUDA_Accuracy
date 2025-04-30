@@ -20,6 +20,12 @@ Matrix multiply_standard(const Matrix& A, size_t m1, size_t n1,
     return C;
 }
 
+float round_fp16(float x) {
+    const int mantissa_bits = 10;
+    float scale = static_cast<float>(1 << mantissa_bits);
+    return std::round(x * scale) / scale;
+}
+
 Matrix multiply_with_restored_precision(const std::vector<double>& A, size_t m1, size_t n1,
                                         const std::vector<double>& B, size_t m2, size_t n2) {
     Matrix A_hi(m1 * n1), A_lo(m1 * n1);
@@ -50,17 +56,21 @@ Matrix multiply_with_restored_precision(const std::vector<double>& A, size_t m1,
 
 Matrix multiply_with_restored_precision_feng(const std::vector<double>& A, size_t m1, size_t n1,
                                              const std::vector<double>& B, size_t m2, size_t n2) {
+    const float SCALE = 2048.0f;
+
     Matrix A_hi(m1 * n1), A_lo(m1 * n1);
     Matrix B_hi(m2 * n2), B_lo(m2 * n2);
 
     for (size_t i = 0; i < A.size(); ++i) {
-        A_hi[i] = static_cast<float>(A[i]);
-        A_lo[i] = static_cast<float>((A[i] - A_hi[i]) * SCALE);
+        float a_hi = round_fp16(static_cast<float>(A[i]));
+        A_hi[i] = a_hi;
+        A_lo[i] = static_cast<float>((A[i] - static_cast<double>(a_hi)) * SCALE);
     }
 
     for (size_t i = 0; i < B.size(); ++i) {
-        B_hi[i] = static_cast<float>(B[i]);
-        B_lo[i] = static_cast<float>((B[i] - B_hi[i]) * SCALE);
+        float b_hi = round_fp16(static_cast<float>(B[i]));
+        B_hi[i] = b_hi;
+        B_lo[i] = static_cast<float>((B[i] - static_cast<double>(b_hi)) * SCALE);
     }
 
     Matrix P0 = multiply_standard(A_hi, m1, n1, B_hi, m2, n2);  // A_hi × B_hi
