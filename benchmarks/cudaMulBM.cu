@@ -17,12 +17,12 @@ __global__ void matrixMultiplicationNaiveKernel(const float *A, const float *B, 
 }
 
 static void BM_cudaMul(benchmark::State &state, const std::string &filePath) {
-    int m, k, n;
+    size_t m, k, n;
     parseDimensions(filePath, m, k, n);
 
-    const int size_A = m * k;
-    const int size_B = k * n;
-    const int size_C = m * n;
+    const size_t size_A = m * k;
+    const size_t size_B = k * n;
+    const size_t size_C = m * n;
 
     std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
     loadMatrices_RR(filePath, h_A, h_B);
@@ -43,6 +43,7 @@ static void BM_cudaMul(benchmark::State &state, const std::string &filePath) {
     for (auto _ : state) {
         matrixMultiplicationNaiveKernel<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, k, n);
         cudaDeviceSynchronize();
+        benchmark::ClobberMemory();
     }
 
     cudaFree(d_A);

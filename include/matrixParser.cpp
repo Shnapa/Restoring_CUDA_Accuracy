@@ -14,7 +14,7 @@ void loadMatrices_RR(const std::string &filePath,
                     std::vector<float> &A,
                     std::vector<float> &B)
 {
-    int m, k, n;
+    size_t m, k, n;
     parseDimensions(filePath, m, k, n);
     std::ifstream fin(filePath);
     if (!fin.is_open()) std::exit(EXIT_FAILURE);
@@ -35,7 +35,7 @@ void loadMatrices_RC(const std::string &filePath,
                     std::vector<float> &A,
                     std::vector<float> &B)
 {
-    int m,k,n;
+    size_t m,k,n;
     parseDimensions(filePath, m, k, n);
     std::ifstream fin(filePath);
     if (!fin.is_open()) std::exit(EXIT_FAILURE);
@@ -60,7 +60,7 @@ void loadMatrices_CC(const std::string &filePath,
                     std::vector<float> &A,
                     std::vector<float> &B)
 {
-    int m,k,n;
+    size_t m,k,n;
     parseDimensions(filePath, m, k, n);
     std::ifstream fin(filePath);
     if (!fin.is_open()) std::exit(EXIT_FAILURE);
@@ -85,7 +85,7 @@ void loadMatrices_CC(const std::string &filePath,
         B[col*k + row] = tmpB[row*n + col];
 }
 
-void parseDimensions(const std::string& filePath, int &m, int &k, int &n) {
+void parseDimensions(const std::string& filePath, size_t &m, size_t &k, size_t &n) {
     const std::regex pattern(R"(.*_(\d+)_(\d+)_(\d+)\.txt)");
     if (std::smatch match; std::regex_match(filePath, match, pattern)) {
         m = std::stoi(match[1]);

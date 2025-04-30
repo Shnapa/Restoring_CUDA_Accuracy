@@ -2,10 +2,8 @@
 #include <vector>
 #include <iostream>
 
-using Matrix = std::vector<int>;  // 1D matrix representation
-
 Matrix multiplication(const Matrix& A, size_t m1, size_t n1, const Matrix& B, size_t m2, size_t n2) {
-    Matrix result(m1 * n2, 0);  // 1D array to store the result
+    Matrix result(m1 * n2, 0);
 
     for (size_t i = 0; i < m1; ++i) {
         for (size_t j = 0; j < n2; ++j) {

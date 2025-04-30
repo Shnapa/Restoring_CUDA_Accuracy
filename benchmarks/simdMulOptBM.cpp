@@ -39,7 +39,7 @@ void simdMatrixMultiply(const float* A, const float* B, float* C,
 }
 
 static void BM_simdMulOpt(benchmark::State &state, const std::string &filePath) {
-    int m, k, n;
+    size_t m, k, n;
     parseDimensions(filePath, m, k, n);
 
     const size_t size_A = m * k;
