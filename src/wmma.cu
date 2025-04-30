@@ -1,74 +1,10 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <cuda.h>
-#include <mma.h>
-#include <regex>
 #include <fstream>
-#include <sstream>
 #include <string>
 #include <vector>
 #include <cmath>
-#include "compare.cu"
-
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
 #include "matrixParser.h"
-
-using namespace nvcuda;
-
-#define WARP_SIZE 32
-#define TILE_DIM 16
-
-template <typename T>
-void padMatrix(const std::vector<T>& src,
-               std::vector<T>& dst,
-               const size_t rows, const size_t cols,
-               const size_t padded_rows, const size_t padded_cols,
-               T zero = T(0))
-{
-    dst.assign(padded_rows * padded_cols, zero);
-    for (size_t i = 0; i < rows; ++i)
-        for (size_t j = 0; j < cols; ++j)
-            dst[i * padded_cols + j] = src[i * cols + j];
-}
-
-__global__ void wmmaMul(const __half *A,
-                        const __half *B,
-                        const float *C,
-                        float *D,
-                        const size_t padded_M, const size_t padded_N, const size_t padded_K)
-{
-    const size_t warpM = blockIdx.x;
-    const size_t warpN = blockIdx.y;
-    if (warpM * TILE_DIM >= padded_M || warpN * TILE_DIM >= padded_N)
-        return;
-
-    wmma::fragment<wmma::matrix_a, TILE_DIM, TILE_DIM, TILE_DIM, __half, wmma::row_major>   a_frag;
-    wmma::fragment<wmma::matrix_b, TILE_DIM, TILE_DIM, TILE_DIM, __half, wmma::row_major>   b_frag;
-    wmma::fragment<wmma::accumulator, TILE_DIM, TILE_DIM, TILE_DIM, float>               acc_frag;
-    wmma::fragment<wmma::accumulator, TILE_DIM, TILE_DIM, TILE_DIM, float>               c_frag;
-
-    wmma::fill_fragment(acc_frag, 0.0f);
-    wmma::fill_fragment(c_frag, 0.0f);
-
-    for (size_t tileK = 0; tileK < padded_K; tileK += TILE_DIM) {
-        const half *tileA = A + warpM * TILE_DIM * padded_K + tileK;
-        const half *tileB = B + tileK * padded_N + warpN * TILE_DIM;
-        wmma::load_matrix_sync(a_frag, tileA, padded_K);
-        wmma::load_matrix_sync(b_frag, tileB, padded_N);
-        wmma::mma_sync(acc_frag, a_frag, b_frag, acc_frag);
-    }
-
-    const float *tileC = C + warpM * TILE_DIM * padded_N + warpN * TILE_DIM;
-    wmma::load_matrix_sync(c_frag, tileC, padded_N, wmma::mem_row_major);
-
-    for (size_t i = 0; i < wmma::fragment<wmma::accumulator, TILE_DIM, TILE_DIM, TILE_DIM, float>::num_elements; ++i)
-        c_frag.x[i] += acc_frag.x[i];
-
-    float *tileD = D + warpM * TILE_DIM * padded_N + warpN * TILE_DIM;
-    wmma::store_matrix_sync(tileD, c_frag, padded_N, wmma::mem_row_major);
-}
-
+#include "mmul.cuh"
+#include "compare.h"
 int main(const int argc, char* argv[])
 {
     if (argc != 2) {
@@ -77,68 +13,16 @@ int main(const int argc, char* argv[])
     }
     const std::string filename = argv[1];
 
-    size_t M, K, N;
-    parseDimensions(filename, M, K, N);
+    size_t m, k, n;
+    parseDimensions(filename, m, k, n);
 
-    const size_t padded_M = (M + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
-    const size_t padded_K = (K + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
-    const size_t padded_N = (N + TILE_DIM - 1) / TILE_DIM * TILE_DIM;
-
-    std::vector<float> A_f(M * K), B_f(K * N), C_f(M * N, 0.0f);
+    std::vector<float> A_f(m*k), B_f(n*k), C_f(m*n, 0.0f);
     loadMatrices_RR(filename, A_f, B_f);
 
-    std::vector<__half> A_h(M * K), B_h(K * N);
-    for (size_t i = 0; i < A_f.size(); ++i) A_h[i] = __float2half(A_f[i]);
-    for (size_t i = 0; i < B_f.size(); ++i) B_h[i] = __float2half(B_f[i]);
+    float exec_time = 0.0f;
+    wmmaMatrixMultiply(A_f.data(), B_f.data(), C_f.data(), m, k, n,exec_time);
 
-    std::vector<__half>   A_pad, B_pad;
-    std::vector<float> C_pad;
-    padMatrix<__half>( A_h, A_pad, M, K, padded_M, padded_K, __float2half(0.0f));
-    padMatrix<__half>( B_h, B_pad, K, N, padded_K, padded_N, __float2half(0.0f));
-    padMatrix<float>(C_f, C_pad, M, N, padded_M, padded_N, 0.0f);
+    std::cout << "Execution time: " << exec_time << "ms" << std::endl;
 
-    __half  *d_A, *d_B;
-    float *d_C, *d_D;
-    const size_t sizeA = padded_M * padded_K;
-    const size_t sizeB = padded_K * padded_N;
-    const size_t sizeC = padded_M * padded_N;
-
-    cudaMalloc(&d_A, sizeA * sizeof(__half));
-    cudaMalloc(&d_B, sizeB * sizeof(__half));
-    cudaMalloc(&d_C, sizeC * sizeof(float));
-    cudaMalloc(&d_D, sizeC * sizeof(float));
-
-    cudaMemcpy(d_A, A_pad.data(), sizeA * sizeof(__half),  cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, B_pad.data(), sizeB * sizeof(__half),  cudaMemcpyHostToDevice);
-    cudaMemcpy(d_C, C_pad.data(), sizeC * sizeof(float), cudaMemcpyHostToDevice);
-
-    dim3 threads(WARP_SIZE, 1);
-    dim3 blocks(padded_M / TILE_DIM, padded_N / TILE_DIM);
-
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-    cudaEventRecord(start);
-
-    wmmaMul<<<blocks, threads>>>(d_A, d_B, d_C, d_D,
-                                    padded_M, padded_N, padded_K);
-    cudaDeviceSynchronize();
-    cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-
-    float ms = 0.0f;
-    cudaEventElapsedTime(&ms, start, stop);
-    printf("GPU execution time: %.3f ms\n", ms);
-    printf("TFLOPS: %.2f\n", (static_cast<double>(M) * N * K * 2) / (ms * 1e6));
-
-    std::vector<float> D_h(sizeC);
-    cudaMemcpy(D_h.data(), d_D, sizeC * sizeof(float), cudaMemcpyDeviceToHost);
-
-    compare(D_h, M, K, N, filename);
-
-    cudaFree(d_A);
-    cudaFree(d_B);
-    cudaFree(d_C);
-    cudaFree(d_D);
-    return 0;
+    compare(C_f, m, k, n, filename);
 }

@@ -1,8 +1,8 @@
 #include <vector>
 #include <immintrin.h>
 #include <cstring>
-#include <cstdlib>
 #include "matrixParser.h"
+#include "mmul.cuh"
 
 #define BLOCK_SIZE 64
 
@@ -44,21 +44,8 @@ int main(int argc, char** argv) {
     }
     const std::string filePath = argv[1];
 
-//     size_t m, n, k;
-//     parseDimensions(filePath, m, n, k);
-//     const size_t A_elements = m * n;
-//     const size_t B_elements = n * k;
-//     const size_t C_elements = m * k;
-//     auto* A = static_cast<float*>(malloc(A_elements * sizeof(float)));
-//     auto* B = static_cast<float*>(malloc(B_elements * sizeof(float)));
-//     auto* C = static_cast<float*>(malloc(C_elements * sizeof(float)));
-//     std::vector<float> A, B;
-//     loadMatrices_RR(filePath, A, B);
+     size_t m, n, k;
+     parseDimensions(filePath, m, k, n);
 
-//     simdMulOpt(A, B, C, m, n, k);
 
-//     free(A);
-//     free(B);
-//     free(C);
-//     return 0;
 }

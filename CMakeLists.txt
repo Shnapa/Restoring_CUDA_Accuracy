@@ -9,8 +9,17 @@ set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --fmad=false --prec-div=true --prec-sq
 set(SOURCE_DIRECTORIES include src data)
 
 set(SOURCES
-        include/matrixParser.cpp include/matrixParser.h
-        include/timeMeasurement.h)
+        src/matrixParser.cpp
+        include/matrixParser.h
+
+        include/timeMeasurement.h
+
+        src/mmul.cu
+        include/mmul.cuh
+
+        src/compare.cpp
+        include/compare.h
+)
 
 find_package(Threads REQUIRED)
 find_package(benchmark REQUIRED)
@@ -26,13 +35,14 @@ add_executable(wmma             src/wmma.cu                         ${SOURCES})
 add_executable(simdMul          src/matrix_simd_mult.cpp            ${SOURCES})
 add_executable(simdMulOpt       src/matrix_simd_parallel_mult.cpp   ${SOURCES})
 add_executable(generateMatrices src/generateMatrices.cpp            ${SOURCES})
-add_executable(cpuRun           src/mmul.cpp                        ${SOURCES})
 
 foreach(target cublasMul cudaMul cudaMulOpt wmma simdMul simdMulOpt generateMatrices)
     target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 endforeach()
 
-target_link_libraries(cublasMul cublas)
+target_link_libraries(cublasMul cublas ${CUDA_LIBRARIES})
+target_link_libraries(wmma cublas ${CUDA_LIBRARIES})
+
 target_link_libraries(generateMatrices  Threads::Threads)
 
 target_compile_options(simdMul      PRIVATE -mavx -mfma -march=native)

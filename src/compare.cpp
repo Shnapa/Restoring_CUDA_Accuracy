@@ -1,14 +1,8 @@
 // compare.cu
 #include <iostream>
 #include <vector>
-#include <cmath>
-
-#include "../include/matrixParser.h"
-
-inline bool compareFloats(const float a, const float b, const float epsilon) {
-    const float res = std::abs((b - a)/a);
-    return res < epsilon;
-}
+#include "compare.h"
+#include "matrixParser.h"
 
 void compare(const std::vector<float>& h_C,
              const size_t m, const size_t k, const size_t n,

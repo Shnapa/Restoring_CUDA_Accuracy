@@ -8,11 +8,11 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
-#include "matrixParser.h"
+#include "../include/matrixParser.h"
 
 void loadMatrices_RR(const std::string &filePath,
-                    std::vector<float> &A,
-                    std::vector<float> &B)
+                     std::vector<float> &A,
+                     std::vector<float> &B)
 {
     size_t m, k, n;
     parseDimensions(filePath, m, k, n);

@@ -1,10 +1,8 @@
 #include <iostream>
 #include <vector>
-#include <cuda_runtime.h>
-#include <cublas_v2.h>
 #include "matrixParser.h"
-#include "timeMeasurement.h"
-#include "compare.cu"
+#include "compare.h"
+#include "mmul.cuh"
 
 int main(const int argc, char** argv) {
     if (argc < 2) {
@@ -23,55 +21,12 @@ int main(const int argc, char** argv) {
     std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
     loadMatrices_RR(filePath, h_A, h_B);
 
-    float *d_A = nullptr, *d_B = nullptr, *d_C = nullptr;
-    cudaMalloc(&d_A, size_A * sizeof(float));
-    cudaMalloc(&d_B, size_B * sizeof(float));
-    cudaMalloc(&d_C, size_C * sizeof(float));
+    float exec_time = 0.0f;
+    cublasMatrixMultiply(h_A.data(), h_B.data(), h_C.data(), m, k, n, exec_time);
 
-    cudaMemcpy(d_A, h_A.data(), size_A * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B.data(), size_B * sizeof(float), cudaMemcpyHostToDevice);
-
-    cublasHandle_t handle;
-    cublasCreate(&handle);
-
-    constexpr float alpha = 1.0f, beta = 1.0f;
-
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-
-    cudaEventRecord(start);
-
-    cublasSetMathMode(handle, CUBLAS_MATH_DISALLOW_REDUCED_PRECISION_REDUCTION);
-
-    cublasGemmEx(handle,
-                 CUBLAS_OP_N, CUBLAS_OP_N,
-                 m, n, k,
-                 &alpha,
-                 d_B, CUDA_R_32F, m,
-                 d_A, CUDA_R_32F, k,
-                 &beta,
-                 d_C, CUDA_R_32F, m,
-                 CUBLAS_COMPUTE_32F,
-                 CUBLAS_GEMM_DEFAULT);
-    cudaDeviceSynchronize();
-    cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-
-    float elapsed = 0.0f;
-    cudaEventElapsedTime(&elapsed, start, stop);
-    std::cout << elapsed << "\n";
-
-    cudaMemcpy(h_C.data(), d_C, size_C * sizeof(float), cudaMemcpyDeviceToHost);
+    std::cout << "Execution time: " << exec_time << "ms" << std::endl;
 
     compare(h_C, m, k, n, filePath);
-
-    cublasDestroy(handle);
-    cudaEventDestroy(start);
-    cudaEventDestroy(stop);
-    cudaFree(d_A);
-    cudaFree(d_B);
-    cudaFree(d_C);
 
     return 0;
 }
