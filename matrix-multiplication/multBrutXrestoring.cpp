@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <tuple>
 #include <cmath>
 
 using Matrix = std::vector<double>;
@@ -55,36 +56,58 @@ Matrix multiply_with_restored_precision(const std::vector<double>& A, size_t m1,
 }
 
 Matrix multiply_with_restored_precision_feng(const std::vector<double>& A, size_t m1, size_t n1,
-                                             const std::vector<double>& B, size_t m2, size_t n2) {
-    const float SCALE = 2048.0f;
+                                            const std::vector<double>& B, size_t m2, size_t n2) {
+    const double SPLIT_FACTOR = (1 << 27) + 1;
+    double scale = 1 << 27;
 
-    Matrix A_hi(m1 * n1), A_lo(m1 * n1);
-    Matrix B_hi(m2 * n2), B_lo(m2 * n2);
+    auto split = [](double x, double factor) -> std::pair<double, double> {
+        double temp = factor * x;
+        double x_hi = temp - (temp - x);
+        double x_lo = x - x_hi;
+        return {x_hi, x_lo};
+    };
+
+    Matrix A_hi(A.size()), A_lo(A.size());
+    Matrix B_hi(B.size()), B_lo(B.size());
 
     for (size_t i = 0; i < A.size(); ++i) {
-        float a_hi = round_fp16(static_cast<float>(A[i]));
-        A_hi[i] = a_hi;
-        A_lo[i] = static_cast<float>((A[i] - static_cast<double>(a_hi)) * SCALE);
+        std::tie(A_hi[i], A_lo[i]) = split(A[i], SPLIT_FACTOR);
     }
 
     for (size_t i = 0; i < B.size(); ++i) {
-        float b_hi = round_fp16(static_cast<float>(B[i]));
-        B_hi[i] = b_hi;
-        B_lo[i] = static_cast<float>((B[i] - static_cast<double>(b_hi)) * SCALE);
+        std::tie(B_hi[i], B_lo[i]) = split(B[i], SPLIT_FACTOR);
     }
 
     Matrix P0 = multiply_standard(A_hi, m1, n1, B_hi, m2, n2);  // A_hi × B_hi
-    Matrix P1 = multiply_standard(A_lo, m1, n1, B_hi, m2, n2);  // A_lo × B_hi
-    Matrix P2 = multiply_standard(A_hi, m1, n1, B_lo, m2, n2);  // A_hi × B_lo
+    Matrix P1 = multiply_standard(A_hi, m1, n1, B_lo, m2, n2);  // A_hi × B_lo
+    Matrix P2 = multiply_standard(A_lo, m1, n1, B_hi, m2, n2);  // A_lo × B_hi
     Matrix P3 = multiply_standard(A_lo, m1, n1, B_lo, m2, n2);  // A_lo × B_lo
 
     Matrix C(m1 * n2);
     for (size_t i = 0; i < C.size(); ++i) {
-        C[i] = P0[i] + (P1[i] + P2[i]) / SCALE + P3[i] / (SCALE * SCALE);
+        C[i] = P0[i] +
+               (P1[i] + P2[i]) / scale +
+               P3[i] / (scale * scale);
     }
+
+    bool overflow_detected;
+    do {
+        overflow_detected = false;
+        Matrix validation(C.size());
+
+        for (size_t i = 0; i < C.size(); ++i) {
+            validation[i] = C[i] * scale;
+            if (std::isinf(validation[i])) {
+                overflow_detected = true;
+                scale /= 2.0;
+                break;
+            }
+        }
+    } while (overflow_detected);
 
     return C;
 }
+
 
 
 Matrix generate_random_matrix(size_t rows, size_t cols, double min_val, double max_val) {
