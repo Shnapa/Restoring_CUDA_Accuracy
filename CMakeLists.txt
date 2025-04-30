@@ -19,6 +19,8 @@ find_package(benchmark REQUIRED)
 ###              Default run               ###
 ##############################################
 
+add_subdirectory(utils)
+
 add_executable(cublasMul        src/cublasMul.cu                    ${SOURCES})
 add_executable(cudaMul          src/cudaMul.cu                      ${SOURCES})
 add_executable(cudaMulOpt       src/cudaMulOpt.cu                   ${SOURCES})
