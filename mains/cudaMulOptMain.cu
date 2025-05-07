@@ -1,9 +1,8 @@
 #include <iostream>
 #include <vector>
 #include "matrixParser.h"
-#include "compare.h"
-#include "mmul.cuh"
-
+#include "mmul.h"
+#include "compare.cu"
 int main(const int argc, char** argv) {
     if (argc < 2) {
         std::cerr << argv[0] << " <matrix_file_path>\n";

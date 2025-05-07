@@ -6,7 +6,7 @@ set(PROJECT_NAME Restoring_Accuracy)
 project(${PROJECT_NAME} C CXX CUDA)
 set(CMAKE_CUDA_FLAGS "${CMAKE_CUDA_FLAGS} --fmad=false --prec-div=true --prec-sqrt=true --ftz=false")
 
-set(SOURCE_DIRECTORIES include src data restoring_accuracy)
+set(SOURCE_DIRECTORIES include src data restoring_accuracy utils)
 
 set(SOURCES
         src/matrixParser.cpp
@@ -14,10 +14,9 @@ set(SOURCES
 
         include/timeMeasurement.h
 
-        src/compare.cpp
-        include/compare.h
+#        src/compare.cu
 
-        include/mmul.cuh
+        include/mmul.h
 )
 
 find_package(Threads REQUIRED)
@@ -27,25 +26,50 @@ find_package(benchmark REQUIRED)
 ###              Default run               ###
 ##############################################
 
-add_subdirectory(utils)
+#add_subdirectory(utils)
 
+add_executable(restoringAcc     restoring_accuracy/main.cu                                          ${SOURCES} )
 add_executable(cublasMul        mains/cublasMain.cu                 src/cublasMM.cu                 ${SOURCES} )
 add_executable(cudaMul          mains/cudaMain.cu                   src/cudaMM.cu                   ${SOURCES} )
 add_executable(cudaMulOpt       mains/cudaMulOptMain.cu             src/cudaMM.cu                   ${SOURCES} )
 add_executable(wmma             mains/wmmaMain.cu                   src/wmmaMM.cu                   ${SOURCES} )
-add_executable(simdMul          mains/matrix_simd_mult.cpp          src/simdMM.cpp                  ${SOURCES} )
-add_executable(simdMulOpt       mains/matrix_simd_parallel_mult.cpp src/simdMM.cpp                  ${SOURCES} )
-add_executable(generateMatrices src/generateMatrices.cpp                                            ${SOURCES} )
-add_executable(restoringAcc     restoring_accuracy/main.cu                                          ${SOURCES} )
+add_executable(simdMulOpt mains/matrix_simd_parallel_mult.cpp src/simdMM.cpp src/cublasMM.cu         ${SOURCES} )
+#add_executable(generateMatrices src/generateMatrices.cpp                                            ${SOURCES} )
 
-foreach(target cublasMul cudaMul cudaMulOpt wmma simdMul simdMulOpt generateMatrices restoringAcc)
+foreach(target cublasMul cudaMul cudaMulOpt wmma simdMulOpt restoringAcc)
     target_include_directories(${target} PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
 endforeach()
 
-target_link_libraries(cublasMul cublas)
-target_link_libraries(generateMatrices  Threads::Threads)
+foreach(target cublasMul cudaMul cudaMulOpt wmma simdMulOpt restoringAcc)
+    target_link_libraries(${target} cublas)
+endforeach()
 
-target_compile_options(simdMul      PRIVATE -mavx -mfma -march=native)
+
+set(SOURCES
+        utils/accuracy_comparison.cpp
+        utils/accuracy_comparison.h
+        include/mmul.h
+        src/cudaMM.cu
+        src/cublasMM.cu
+        src/simdMM.cpp
+        src/wmmaMM.cu
+        restoring_accuracy/restore.cu
+)
+
+add_executable(matmul_compare
+        utils/main.cu
+        ${SOURCES}
+)
+
+target_include_directories(matmul_compare PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_compile_options(matmul_compare PRIVATE -mavx -mfma -march=native)
+
+find_package(Threads REQUIRED)
+target_link_libraries(matmul_compare Threads::Threads cublas ${CUDA_LIBRARIES})
+
+#target_link_libraries(generateMatrices  Threads::Threads)
+
 target_compile_options(simdMulOpt      PRIVATE -mavx -mfma -march=native)
 ##############################################
 ###                 BM run                 ###

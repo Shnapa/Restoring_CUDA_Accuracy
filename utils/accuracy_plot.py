@@ -4,15 +4,16 @@ import numpy as np
 
 methods = {
     "--cuda":      ("Cuda", 'red', 'v'),
-    "--simd-opt":  ("SIMD Opt", 'orange', 'x'),
-    "--wmma":      ("WMMA' method", 'green', '^'),
+    # "--simd-opt":  ("SIMD Opt", 'orange', 'x'),
+    "--wmma":      ("WMMA method", 'green', '^'),
     "--cuda-opt":  ("Cuda Opt", 'purple', '+'),
-    "--cublas":    ("Cublas", 'yellow', 'o')
+    "--cublas":    ("Cublas", 'yellow', 'o'),
+    "--restore_wmma": ("Restore WMMA method", 'blue', 'x')
 }
 
 baseline_flag = "--naive"
 
-k_values = [2**i for i in range(6, 10)]
+k_values = [2**i for i in range(0, 11)]
 m, n = 16, 16
 
 def generate_matrix_file(filename, rows, cols):
@@ -27,7 +28,7 @@ for k in k_values:
     generate_matrix_file("matrixB.txt", k, n)
 
     result_naive = subprocess.run(
-        ["../build/utils/matmul_compare", baseline_flag, "matrixA.txt", "matrixB.txt"],
+        ["../build/matmul_compare", baseline_flag, "matrixA.txt", "matrixB.txt"],
         capture_output=True, text=True
     )
     if result_naive.returncode != 0 or "error =" not in result_naive.stdout:
@@ -39,7 +40,7 @@ for k in k_values:
     for flag in methods:
         try:
             result = subprocess.run(
-                ["../build/utils/matmul_compare", flag, "matrixA.txt", "matrixB.txt"],
+                ["../build/matmul_compare", flag, "matrixA.txt", "matrixB.txt"],
                 capture_output=True, text=True
             )
             found = False
@@ -70,7 +71,7 @@ plt.yscale("log")
 plt.xlabel(r"$k$ : matmul-(16, 16, $k$)")
 plt.ylabel("Relative residual")
 plt.title("Relative Residual vs Matrix Inner Dimension (k)")
-plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+plt.grid(True, which="major", linestyle="--", linewidth=0.5)
 plt.legend()
 plt.tight_layout()
 plt.show()

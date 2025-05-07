@@ -1,6 +1,5 @@
-#include "mmul.cuh"
+#include "../include/mmul.h"
 #include <cuda_runtime.h>
-#include <cublas_v2.h>
 
 #define TILE_SIZE 16
 #define WARP_SIZE 32
@@ -50,8 +49,6 @@ __global__ void cudaMulOptKernel(const float* A, const float* B, float* C,
         C[row * n + col] = sum;
     }
 }
-
-
 
 void cudaMatrixMultiply(const float* h_A, const float* h_B, float* h_C,
                       const size_t m, const size_t k, const size_t n,

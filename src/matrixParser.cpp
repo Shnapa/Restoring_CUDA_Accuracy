@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
-#include "../include/matrixParser.h"
+#include "matrixParser.h"
 
 void loadMatrices_RR(const std::string &filePath,
                      std::vector<float> &A,

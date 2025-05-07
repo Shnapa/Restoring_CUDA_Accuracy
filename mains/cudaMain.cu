@@ -1,7 +1,7 @@
 #include <iostream>
 #include "matrixParser.h"
-#include "compare.h"
-#include "mmul.cuh"
+#include "mmul.h"
+#include "compare.cu"
 
 int main(const int argc, char** argv) {
     if (argc < 2) {

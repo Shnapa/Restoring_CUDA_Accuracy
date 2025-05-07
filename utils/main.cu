@@ -1,5 +1,5 @@
 #include "accuracy_comparison.h"
-#include "../include/mmul.cuh"
+#include "../include/mmul.h"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -23,7 +23,7 @@ std::vector<std::vector<float>> flattenAndCallCuda(
     void (*cudaFunc)(const float*, const float*, float*, size_t, size_t, size_t, float&),
     const std::vector<std::vector<float>>& A,
     const std::vector<std::vector<float>>& B,
-    size_t m, size_t k, size_t n
+    size_t m, size_t k, const size_t n
 ) {
     std::vector<float> flatA(m * k);
     std::vector<float> flatB(k * n);
@@ -110,7 +110,10 @@ int main(const int argc, char** argv) {
             result_tested = flattenAndCallCuda(cublasMatrixMultiply, A, B, m, k, n);
         } else if (flag == "--wmma") {
             result_tested = flattenAndCallCuda(wmmaMatrixMultiply, A, B, m, k, n);
-        } else {
+        } else if (flag == "--restore_wmma") {
+            result_tested = flattenAndCallCuda(wmmaRestore, A, B, m, k, n);
+        }
+        else {
             std::cerr << "Unknown multiplication type flag: " << flag << std::endl;
             return 1;
         }

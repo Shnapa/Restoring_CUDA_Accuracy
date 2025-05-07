@@ -1,15 +1,18 @@
 set(SOURCES
         accuracy_comparison.cpp
         accuracy_comparison.h
-        ../include/mmul.cuh
+        ../include/mmul.h
         ../src/cudaMM.cu
+        ../src/cublasMM.cu
+        ../src/simdMM.cpp
+        ../src/wmmaMM.cu
+        ../restoring_accuracy/main.cu
 )
 
 add_executable(matmul_compare
-        main.cpp
+        main.cu
         ${SOURCES}
 )
-
 
 target_include_directories(matmul_compare PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 

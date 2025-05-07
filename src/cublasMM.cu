@@ -1,14 +1,16 @@
 #include <cublas_v2.h>
-#include "mmul.cuh"
+#include "../include/mmul.h"
+#include "../include/timeMeasurement.h"
 
 void cublasMatrixMultiply(const float* h_A, const float* h_B, float* h_C,
-                        const size_t m, const size_t k, const size_t n,
-                        float& executionTime) {
+                          const size_t m, const size_t k, const size_t n,
+                          float& executionTime) {
     const size_t size_A = m * k * sizeof(float);
     const size_t size_B = k * n * sizeof(float);
     const size_t size_C = m * n * sizeof(float);
 
-    float *d_A, *d_B, *d_C;
+    float *d_A, *d_B;
+    float *d_C;
     cudaMalloc(&d_A, size_A);
     cudaMalloc(&d_B, size_B);
     cudaMalloc(&d_C, size_C);
@@ -23,12 +25,7 @@ void cublasMatrixMultiply(const float* h_A, const float* h_B, float* h_C,
     constexpr float alpha = 1.0f;
     constexpr float beta = 0.0f;
 
-    cudaEvent_t start, stop;
-    cudaEventCreate(&start);
-    cudaEventCreate(&stop);
-
-    cudaEventRecord(start);
-
+    const auto start = get_current_time_fenced();
     cublasGemmEx(handle,
                CUBLAS_OP_N, CUBLAS_OP_N,
                n, m, k,
@@ -39,17 +36,12 @@ void cublasMatrixMultiply(const float* h_A, const float* h_B, float* h_C,
                d_C, CUDA_R_32F, n,
                CUBLAS_COMPUTE_32F,
                CUBLAS_GEMM_DEFAULT);
+    const auto end = get_current_time_fenced();
 
-    cudaEventRecord(stop);
-    cudaEventSynchronize(stop);
-
-    cudaEventElapsedTime(&executionTime, start, stop);
-
+    executionTime = to_ms_f(end - start);
     cudaMemcpy(h_C, d_C, size_C, cudaMemcpyDeviceToHost);
 
     cublasDestroy(handle);
-    cudaEventDestroy(start);
-    cudaEventDestroy(stop);
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);

@@ -1,8 +1,9 @@
+#include <cuda_fp16.h>
 #include <iostream>
 #include <vector>
 #include "matrixParser.h"
-#include "compare.h"
-#include "mmul.cuh"
+#include "mmul.h"
+#include "compare.cu"
 
 int main(const int argc, char** argv) {
     if (argc < 2) {
@@ -18,9 +19,11 @@ int main(const int argc, char** argv) {
     const size_t size_B = k * n;
     const size_t size_C = m * n;
 
-    std::vector<float> h_A(size_A), h_B(size_B), h_C(size_C);
+    std::vector<float> h_A(size_A), h_B(size_B);
+    std::vector<float> h_C(size_C);
     loadMatrices_RR(filePath, h_A, h_B);
-
+    for (size_t i = 0; i < size_A; i++) h_A[i] = __float2half(h_A[i]);
+    for (size_t i = 0; i < size_A; i++) h_A[i] = __float2half(h_A[i]);
     float exec_time = 0.0f;
     cublasMatrixMultiply(h_A.data(), h_B.data(), h_C.data(), m, k, n, exec_time);
 

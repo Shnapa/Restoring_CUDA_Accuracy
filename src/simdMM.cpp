@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <immintrin.h>
 
-#include "mmul.cuh"
+#include "../include/mmul.h"
 
 #define BLOCK_SIZE 64
 
