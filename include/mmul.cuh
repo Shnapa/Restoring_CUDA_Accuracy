@@ -6,11 +6,6 @@
 #define MMUL_H
 #pragma once
 
-#include <vector>
-#include <string>
-#include <cuda_runtime.h>
-#include <cublas_v2.h>
-
 void cudaMatrixMultiply(const float* h_A, const float* h_B, float* h_C,
                         size_t m, size_t k, size_t n,
                         float& executionTime);
@@ -29,5 +24,7 @@ void wmmaMatrixMultiply(const float* h_A, const float* h_B, float* h_C,
 
 
 void simdMulOpt(const float* A, const float* B, float* C,
-               size_t m, size_t n, size_t k);
+               size_t m, size_t k, size_t n);
+
+
 #endif //MMUL_H

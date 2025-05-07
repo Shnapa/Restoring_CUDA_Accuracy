@@ -1,7 +1,7 @@
 // compare.cu
 #include <iostream>
 #include <vector>
-#include "compare.h"
+#include "../include/compare.h"
 #include "matrixParser.h"
 
 void compare(const std::vector<float>& h_C,

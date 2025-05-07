@@ -38,6 +38,9 @@ double relativeResidual(const std::vector<float>& C_ref, const std::vector<float
 
 std::vector<std::vector<float>> loadMatrix(const std::string& filename) {
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open file " + filename);
+    }
     std::vector<std::vector<float>> matrix;
     std::string line;
 

@@ -1,5 +1,5 @@
 #include "accuracy_comparison.h"
-#include "mmul.cuh"
+#include "../include/mmul.cuh"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -51,7 +51,7 @@ std::vector<std::vector<float>> flattenAndCallCuda(
 std::vector<std::vector<float>> simdWrapper(
     const std::vector<std::vector<float>>& A,
     const std::vector<std::vector<float>>& B,
-    size_t m, size_t k, size_t n
+    const size_t m, const size_t k, const size_t n
 ) {
     std::vector<float> flatA(m * k), flatB(k * n), flatC(m * n);
     for (size_t i = 0; i < m; ++i)
@@ -72,27 +72,32 @@ std::vector<std::vector<float>> simdWrapper(
     return C;
 }
 
-int main(int argc, char** argv) {
+int main(const int argc, char** argv) {
     if (argc != 4) {
         std::cerr << "Usage: " << argv[0] << " --type matrixA.txt matrixB.txt\n";
         return 1;
     }
 
-    std::string flag = argv[1];
-    std::string matrixA_path = argv[2];
-    std::string matrixB_path = argv[3];
+    const std::string flag = argv[1];
+    const std::string matrixA_path = argv[2];
+    const std::string matrixB_path = argv[3];
 
-    auto A = loadMatrix(matrixA_path);
-    auto B = loadMatrix(matrixB_path);
+    const auto A = loadMatrix(matrixA_path);
+    const auto B = loadMatrix(matrixB_path);
 
-    size_t m = A.size();
-    size_t k = A[0].size();
-    size_t n = B[0].size();
+    const size_t m = A.size();
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+            std::cout << A[i][0] << std::endl;
+        }
+    }
+    const size_t k = A[0].size();
+    const size_t n = B[0].size();
 
-    auto result_naive = multiplyNaive(A, B);
-    std::vector<std::vector<float>> result_tested;
+    const auto result_naive = multiplyNaive(A, B);
 
     try {
+        std::vector<std::vector<float>> result_tested;
         if (flag == "--naive") {
             result_tested = result_naive;
         } else if (flag == "--simd" || flag == "--simd-opt") {
@@ -110,10 +115,10 @@ int main(int argc, char** argv) {
             return 1;
         }
 
-        float error = compareMatrices(result_tested, result_naive);
+        const float error = compareMatrices(result_tested, result_naive);
         std::cout << "Comparison with naive result: error = " << error << std::endl;
 
-        if (error > 1e-7) {
+        if (error > 1e-12) {
             std::cerr << "Too large error. Probably incorrect implementation." << std::endl;
             return 1;
         }

@@ -3,16 +3,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 methods = {
-    "--simd":      ("SIMD", 'blue', 'o'),
     "--cuda":      ("Cuda", 'red', 'v'),
     "--simd-opt":  ("SIMD Opt", 'orange', 'x'),
     "--wmma":      ("WMMA' method", 'green', '^'),
-    "--cuda-opt":  ("Cuda Opt", 'purple', '+')
+    "--cuda-opt":  ("Cuda Opt", 'purple', '+'),
+    "--cublas":    ("Cublas", 'yellow', 'o')
 }
 
 baseline_flag = "--naive"
 
-k_values = [2**i for i in range(6, 19)]
+k_values = [2**i for i in range(6, 10)]
 m, n = 16, 16
 
 def generate_matrix_file(filename, rows, cols):
@@ -27,7 +27,7 @@ for k in k_values:
     generate_matrix_file("matrixB.txt", k, n)
 
     result_naive = subprocess.run(
-        ["../cmake-build-debug/matmul_compare", baseline_flag, "matrixA.txt", "matrixB.txt"],
+        ["../build/utils/matmul_compare", baseline_flag, "matrixA.txt", "matrixB.txt"],
         capture_output=True, text=True
     )
     if result_naive.returncode != 0 or "error =" not in result_naive.stdout:
@@ -39,7 +39,7 @@ for k in k_values:
     for flag in methods:
         try:
             result = subprocess.run(
-                ["../cmake-build-debug/matmul_compare", flag, "matrixA.txt", "matrixB.txt"],
+                ["../build/utils/matmul_compare", flag, "matrixA.txt", "matrixB.txt"],
                 capture_output=True, text=True
             )
             found = False
@@ -65,6 +65,7 @@ for flag, (label, color, marker) in methods.items():
     plt.plot(k_values, y_vals_clean, label=label, marker=marker, color=color)
 
 plt.xscale("log", base=2)
+plt.xticks(k_values, labels=[str(k) for k in k_values])
 plt.yscale("log")
 plt.xlabel(r"$k$ : matmul-(16, 16, $k$)")
 plt.ylabel("Relative residual")

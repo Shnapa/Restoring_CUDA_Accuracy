@@ -3,9 +3,10 @@
 #include <random>
 #include <tuple>
 #include <cmath>
+#include <iomanip>
 
 using Matrix = std::vector<double>;
-const double SCALE = 2048;
+constexpr double SCALE = 2048;
 
 
 Matrix multiply_standard(const Matrix& A, size_t m1, size_t n1,
@@ -125,7 +126,7 @@ Matrix generate_random_matrix(size_t rows, size_t cols, double min_val, double m
 void print_matrix(const Matrix& mat, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
-            std::cout << mat[i * cols + j] << "\t";
+            std::cout << std::fixed << std::setprecision(33) << mat[i * cols + j] << "\t";
         }
         std::cout << std::endl;
     }

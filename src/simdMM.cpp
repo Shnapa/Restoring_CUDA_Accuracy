@@ -1,13 +1,13 @@
-#include <vector>
+#include <algorithm>
 #include <immintrin.h>
-#include <cstring>
-#include "matrixParser.h"
+
 #include "mmul.cuh"
 
 #define BLOCK_SIZE 64
 
 void simdMulOpt(const float* A, const float* B, float* C,
-                                  const size_t m, const size_t n, const size_t k) {
+                const size_t m, const size_t n, const size_t k)
+{
 #pragma omp parallel for collapse(2)
     for (size_t i = 0; i < m; i += BLOCK_SIZE)
         for (size_t j = 0; j < k; j += BLOCK_SIZE)
@@ -17,8 +17,8 @@ void simdMulOpt(const float* A, const float* B, float* C,
                         if (j_block + 8 <= std::min(j + BLOCK_SIZE, k)) {
                             __m256 sum = _mm256_setzero_ps();
                             for (size_t kk_iter = kk; kk_iter < std::min(kk + BLOCK_SIZE, n); kk_iter++) {
-                                __m256 a = _mm256_set1_ps(A[ii * n + kk_iter]);
-                                __m256 b = _mm256_loadu_ps(&B[kk_iter * k + j_block]);
+                                const __m256 a = _mm256_set1_ps(A[ii * n + kk_iter]);
+                                const __m256 b = _mm256_loadu_ps(&B[kk_iter * k + j_block]);
                                 sum = _mm256_fmadd_ps(a, b, sum);
                             }
                             const __m256 c_val = _mm256_loadu_ps(&C[ii * k + j_block]);
@@ -35,17 +35,4 @@ void simdMulOpt(const float* A, const float* B, float* C,
                         }
                     }
                 }
-}
-
-int main(int argc, char** argv) {
-    if(argc < 2) {
-        std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
-        return 1;
-    }
-    const std::string filePath = argv[1];
-
-     size_t m, n, k;
-     parseDimensions(filePath, m, k, n);
-
-
 }
