@@ -1,5 +1,5 @@
 #include "accuracy_comparison.h"
-#include "../include/mmul.h"
+#include "mmul.h"
 #include <iostream>
 #include <string>
 #include <vector>

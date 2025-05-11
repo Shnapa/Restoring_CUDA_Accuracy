@@ -1,6 +1,4 @@
-//
 // Created by yuliana on 22.04.25.
-//
 
 #include "accuracy_comparison.h"
 #include <vector>
@@ -36,6 +34,20 @@ double relativeResidual(const std::vector<double>& C_ref, const std::vector<floa
     return norm_diff / norm_ref;
 }
 
+std::vector<double> referenceGEMM_FP64(const std::vector<float>& A, const std::vector<float>& B,
+                                       size_t m, size_t k, size_t n) {
+    std::vector<double> C(m * n, 0.0);
+    for (size_t row = 0; row < m; ++row) {
+        for (size_t col = 0; col < n; ++col) {
+            double sum = 0.0;
+            for (size_t i = 0; i < k; ++i) {
+                sum += static_cast<double>(A[row * k + i]) * static_cast<double>(B[i * n + col]);
+            }
+            C[row * n + col] = sum;
+        }
+    }
+    return C;
+}
 
 std::vector<std::vector<float>> loadMatrix(const std::string& filename) {
     std::ifstream file(filename);
