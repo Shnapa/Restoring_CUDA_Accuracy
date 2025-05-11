@@ -38,6 +38,7 @@ add_executable(cublasMul
         include/mmul.cuh
         ${SOURCES} )
 
+<<<<<<< Updated upstream
 add_executable(cudaMul
         mains/cudaMain.cu
         matrix-multiplication/cudaMM.cu
@@ -94,6 +95,9 @@ endforeach()
 foreach(target cublasMul wmma restoringAcc)
     target_link_libraries(${target} cublas)
 endforeach()
+=======
+#target_link_libraries(generateMatrices  Threads::Threads)
+>>>>>>> Stashed changes
 
 target_compile_options(simdMulOpt      PRIVATE -mavx -mfma -march=native)
 target_compile_options(matmul_compare PRIVATE -mavx -mfma -march=native)
@@ -164,6 +168,7 @@ add_test(
         --benchmark_out=../benchmark_results/results_CublasHalfMul.json
 )
 
+<<<<<<< Updated upstream
 add_test(
         NAME Benchmark_WMMA
         COMMAND $<TARGET_FILE:wmmaTest>
@@ -207,3 +212,22 @@ add_test(
         --benchmark_out_format=json
         --benchmark_out=../benchmark_results/results_simd.json
 )
+=======
+#add_test(
+#        NAME Benchmark_wmmaMul
+#        COMMAND $<TARGET_FILE:wmmaTest>
+#        --benchmark_repetitions=5
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_wmmaMul.json
+#)
+
+add_executable(generate_matrices src/generateMatrices.cpp)
+
+target_include_directories(generate_matrices PRIVATE ${CMAKE_SOURCE_DIR} ${SOURCE_DIRECTORIES})
+target_compile_options(generate_matrices PRIVATE -O2)
+
+add_subdirectory(utils)
+>>>>>>> Stashed changes

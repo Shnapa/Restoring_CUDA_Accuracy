@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/cudaMul.dir/mains/cudaMain.cu.o CMakeFiles/cudaMul.dir/src/cudaMM.cu.o CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o -o cudaMul   -L/usr/local/cuda/targets/x86_64-linux/lib  -lcublas -lcudadevrt -lcudart_static -lrt -lpthread -ldl 

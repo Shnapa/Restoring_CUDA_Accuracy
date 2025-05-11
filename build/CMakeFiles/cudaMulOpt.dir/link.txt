@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/cudaMulOpt.dir/mains/cudaMulOptMain.cu.o CMakeFiles/cudaMulOpt.dir/src/cudaMM.cu.o CMakeFiles/cudaMulOpt.dir/src/matrixParser.cpp.o -o cudaMulOpt   -L/usr/local/cuda/targets/x86_64-linux/lib  -lcublas -lcudadevrt -lcudart_static -lrt -lpthread -ldl 
