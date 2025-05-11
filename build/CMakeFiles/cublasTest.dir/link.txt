@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/cublasTest.dir/benchmarks/cublasMulBM.cu.o CMakeFiles/cublasTest.dir/src/matrixParser.cu.o CMakeFiles/cublasTest.dir/src/compare.cpp.o -o cublasTest   -L/usr/local/cuda/targets/x86_64-linux/lib  /usr/lib/x86_64-linux-gnu/libbenchmark.so.1.8.3 -lcublas -lcudadevrt -lcudart_static -lrt -lpthread -ldl 

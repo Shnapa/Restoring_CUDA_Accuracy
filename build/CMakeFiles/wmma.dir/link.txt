@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/wmma.dir/mains/wmmaMain.cu.o "CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o" CMakeFiles/wmma.dir/src/matrixParser.cu.o CMakeFiles/wmma.dir/src/compare.cpp.o -o wmma   -L/usr/local/cuda/targets/x86_64-linux/lib  -lcublas -lcudadevrt -lcudart_static -lrt -lpthread -ldl 

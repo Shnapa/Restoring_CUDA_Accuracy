@@ -16,18 +16,14 @@ def run_cpp_binary(flag, matrix_file):
             if line.startswith("RESIDUAL="):
                 return float(line.strip().split("=")[1])
     except subprocess.CalledProcessError as e:
-        print(f"❌ Error for {flag}: {e.stderr.strip()}")
+        print(f"❌ Error for {flag} on {matrix_file}: {e.stderr.strip()}")
         return None
 
-
 def main():
-    # Change this if needed
-    m, n, k = 16, 16, 16
-    matrix_path = f"../data/matrix_{m}_{n}_{k}.txt"
-    if not os.path.exists(matrix_path):
-        print(f"❌ Matrix file not found: {matrix_path}")
-        return
+    m = n = 16
+    ks = [2**i for i in range(6, 19)]  # 2^6 to 2^18
 
+    # your implementations
     implementations = {
         "--naive": "Naive",
         "--simd": "SIMD",
@@ -38,36 +34,45 @@ def main():
         "--restore_wmma": "Restored WMMA"
     }
 
-    residuals = {}
-    for flag, name in implementations.items():
-        print(f"🔁 Running {name}")
-        residual = run_cpp_binary(flag, matrix_path)
-        if residual is not None:
-            residuals[name] = residual
-            print(f"✅ {name}: Residual = {residual:.3e}")
-        else:
-            print(f"⚠️  {name} skipped due to error.")
+    results = {name: [] for name in implementations.values()}
 
-    # Visualization
-    if not residuals:
-        print("❌ No results to plot.")
-        return
+    for k in ks:
+        matrix_path = f"../data/matrix_{m}_{n}_{k}.txt"
+        if not os.path.exists(matrix_path):
+            print(f"⚠️ Missing file: {matrix_path}")
+            for res in results.values():
+                res.append(None)
+            continue
 
-    plt.figure(figsize=(9, 5))
-    labels = list(residuals.keys())
-    values = list(residuals.values())
+        print(f"\n📁 Matrix {m}×{n}×{k}")
+        for flag, name in implementations.items():
+            print(f"🔁 Running {name}...")
+            residual = run_cpp_binary(flag, matrix_path)
+            if residual is not None:
+                results[name].append(residual)
+                print(f"✅ {name}: Residual = {residual:.2e}")
+            else:
+                results[name].append(None)
 
-    plt.bar(labels, values, color='mediumslateblue')
-    plt.ylabel("Relative Residual (log scale)")
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    for name, residuals in results.items():
+        valid = [(k, r) for k, r in zip(ks, residuals) if r is not None]
+        if valid:
+            k_vals, res_vals = zip(*valid)
+            plt.plot(k_vals, res_vals, marker="o", label=name)
+
+    plt.xscale("log", base=2)
     plt.yscale("log")
-    plt.xticks(rotation=30)
-    plt.title(f"Accuracy Comparison: Matrix {m}×{n}×{k}")
-    plt.grid(True, linestyle="--", alpha=0.6)
+    plt.xlabel(r"$k$ in $(16, 16, k)$", fontsize=12)
+    plt.ylabel("Relative Residual", fontsize=12)
+    plt.title("Relative Residual vs. k", fontsize=13)
+    plt.grid(True, which='both', linestyle="--", alpha=0.6)
+    plt.legend()
     plt.tight_layout()
-    filename = f"residual_comparison_{m}_{n}_{k}.png"
-    plt.savefig(filename)
+    plt.savefig("residual_vs_k.png")
     plt.show()
-    print(f"📊 Plot saved as {filename}")
+    print("📊 Plot saved as residual_vs_k.png")
 
 if __name__ == "__main__":
     main()

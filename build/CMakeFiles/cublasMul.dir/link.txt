@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/cublasMul.dir/mains/cublasMain.cu.o "CMakeFiles/cublasMul.dir/matrix-multiplication/cublasMM.cu.o" CMakeFiles/cublasMul.dir/src/matrixParser.cu.o CMakeFiles/cublasMul.dir/src/compare.cpp.o -o cublasMul   -L/usr/local/cuda/targets/x86_64-linux/lib  -lcublas -lcudadevrt -lcudart_static -lrt -lpthread -ldl 

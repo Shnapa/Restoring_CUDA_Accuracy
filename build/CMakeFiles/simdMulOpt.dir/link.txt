@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o CMakeFiles/simdMulOpt.dir/src/compare.cpp.o -o simdMulOpt   -L/usr/local/cuda/targets/x86_64-linux/lib  -lcudadevrt -lcudart_static -lrt -lpthread -ldl 
