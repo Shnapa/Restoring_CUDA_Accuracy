@@ -8,8 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy/main.cu" "CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o" "gcc" "CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp" "CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o" "gcc" "CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy/restoreMain.cu" "CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o" "gcc" "CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu" "CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o" "gcc" "CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp" "CMakeFiles/restoringAcc.dir/src/compare.cpp.o" "gcc" "CMakeFiles/restoringAcc.dir/src/compare.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

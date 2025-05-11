@@ -1,10 +1,12 @@
 file(REMOVE_RECURSE
   "CMakeFiles/wmma.dir/mains/wmmaMain.cu.o"
   "CMakeFiles/wmma.dir/mains/wmmaMain.cu.o.d"
-  "CMakeFiles/wmma.dir/src/matrixParser.cpp.o"
-  "CMakeFiles/wmma.dir/src/matrixParser.cpp.o.d"
-  "CMakeFiles/wmma.dir/src/wmmaMM.cu.o"
-  "CMakeFiles/wmma.dir/src/wmmaMM.cu.o.d"
+  "CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o"
+  "CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o.d"
+  "CMakeFiles/wmma.dir/src/compare.cpp.o"
+  "CMakeFiles/wmma.dir/src/compare.cpp.o.d"
+  "CMakeFiles/wmma.dir/src/matrixParser.cu.o"
+  "CMakeFiles/wmma.dir/src/matrixParser.cu.o.d"
   "wmma"
   "wmma.pdb"
 )

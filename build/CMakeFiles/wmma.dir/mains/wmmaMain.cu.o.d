@@ -314,21 +314,10 @@ CMakeFiles/wmma.dir/mains/wmmaMain.cu.o : /workspace/Docs/Restoring_CUDA_Accurac
     /usr/include/c++/13/pstl/execution_defs.h \
     /usr/include/c++/13/sstream \
     /usr/include/c++/13/bits/sstream.tcc \
-    /workspace/Docs/Restoring_CUDA_Accuracy/include/mmul.h \
-    /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cu \
+    /workspace/Docs/Restoring_CUDA_Accuracy/include/mmul.cuh \
     /usr/local/cuda/bin/../targets/x86_64-linux/include/cuda_fp16.h \
     /usr/local/cuda/bin/../targets/x86_64-linux/include/nv/target \
     /usr/local/cuda/bin/../targets/x86_64-linux/include/nv/detail/__target_macros \
     /usr/local/cuda/bin/../targets/x86_64-linux/include/nv/detail/__preprocessor \
     /usr/local/cuda/bin/../targets/x86_64-linux/include/cuda_fp16.hpp \
-    /usr/include/c++/13/iomanip \
-    /usr/include/c++/13/locale \
-    /usr/include/c++/13/bits/locale_facets_nonio.h \
-    /usr/include/c++/13/ctime \
-    /usr/include/x86_64-linux-gnu/c++/13/bits/time_members.h \
-    /usr/include/x86_64-linux-gnu/c++/13/bits/messages_members.h \
-    /usr/include/libintl.h \
-    /usr/include/c++/13/bits/locale_facets_nonio.tcc \
-    /usr/include/c++/13/bits/locale_conv.h \
-    /usr/include/c++/13/bits/quoted_string.h \
-    /workspace/Docs/Restoring_CUDA_Accuracy/src/../include/matrixParser.h
+    /workspace/Docs/Restoring_CUDA_Accuracy/include/compareMM.h

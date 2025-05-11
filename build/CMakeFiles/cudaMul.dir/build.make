@@ -84,50 +84,67 @@ CMakeFiles/cudaMul.dir/mains/cudaMain.cu.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/cudaMul.dir/mains/cudaMain.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
-CMakeFiles/cudaMul.dir/src/cudaMM.cu.o: CMakeFiles/cudaMul.dir/flags.make
-CMakeFiles/cudaMul.dir/src/cudaMM.cu.o: CMakeFiles/cudaMul.dir/includes_CUDA.rsp
-CMakeFiles/cudaMul.dir/src/cudaMM.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/cudaMM.cu
-CMakeFiles/cudaMul.dir/src/cudaMM.cu.o: CMakeFiles/cudaMul.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CUDA object CMakeFiles/cudaMul.dir/src/cudaMM.cu.o"
-	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/cudaMul.dir/src/cudaMM.cu.o -MF CMakeFiles/cudaMul.dir/src/cudaMM.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/src/cudaMM.cu -o CMakeFiles/cudaMul.dir/src/cudaMM.cu.o
+CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o: CMakeFiles/cudaMul.dir/flags.make
+CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o: CMakeFiles/cudaMul.dir/includes_CUDA.rsp
+CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/matrix-multiplication/cudaMM.cu
+CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o: CMakeFiles/cudaMul.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CUDA object CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o"
+	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o -MF CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/matrix-multiplication/cudaMM.cu -o CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o
 
-CMakeFiles/cudaMul.dir/src/cudaMM.cu.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/cudaMul.dir/src/cudaMM.cu.i"
+CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.i"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-CMakeFiles/cudaMul.dir/src/cudaMM.cu.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/cudaMul.dir/src/cudaMM.cu.s"
+CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
-CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o: CMakeFiles/cudaMul.dir/flags.make
-CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
-CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o: CMakeFiles/cudaMul.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o -MF CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o.d -o CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
+CMakeFiles/cudaMul.dir/src/matrixParser.cu.o: CMakeFiles/cudaMul.dir/flags.make
+CMakeFiles/cudaMul.dir/src/matrixParser.cu.o: CMakeFiles/cudaMul.dir/includes_CUDA.rsp
+CMakeFiles/cudaMul.dir/src/matrixParser.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu
+CMakeFiles/cudaMul.dir/src/matrixParser.cu.o: CMakeFiles/cudaMul.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CUDA object CMakeFiles/cudaMul.dir/src/matrixParser.cu.o"
+	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/cudaMul.dir/src/matrixParser.cu.o -MF CMakeFiles/cudaMul.dir/src/matrixParser.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu -o CMakeFiles/cudaMul.dir/src/matrixParser.cu.o
 
-CMakeFiles/cudaMul.dir/src/matrixParser.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cudaMul.dir/src/matrixParser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp > CMakeFiles/cudaMul.dir/src/matrixParser.cpp.i
+CMakeFiles/cudaMul.dir/src/matrixParser.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/cudaMul.dir/src/matrixParser.cu.i"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-CMakeFiles/cudaMul.dir/src/matrixParser.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cudaMul.dir/src/matrixParser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp -o CMakeFiles/cudaMul.dir/src/matrixParser.cpp.s
+CMakeFiles/cudaMul.dir/src/matrixParser.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/cudaMul.dir/src/matrixParser.cu.s"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
+
+CMakeFiles/cudaMul.dir/src/compare.cpp.o: CMakeFiles/cudaMul.dir/flags.make
+CMakeFiles/cudaMul.dir/src/compare.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
+CMakeFiles/cudaMul.dir/src/compare.cpp.o: CMakeFiles/cudaMul.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/cudaMul.dir/src/compare.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/cudaMul.dir/src/compare.cpp.o -MF CMakeFiles/cudaMul.dir/src/compare.cpp.o.d -o CMakeFiles/cudaMul.dir/src/compare.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
+
+CMakeFiles/cudaMul.dir/src/compare.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/cudaMul.dir/src/compare.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp > CMakeFiles/cudaMul.dir/src/compare.cpp.i
+
+CMakeFiles/cudaMul.dir/src/compare.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/cudaMul.dir/src/compare.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp -o CMakeFiles/cudaMul.dir/src/compare.cpp.s
 
 # Object files for target cudaMul
 cudaMul_OBJECTS = \
 "CMakeFiles/cudaMul.dir/mains/cudaMain.cu.o" \
-"CMakeFiles/cudaMul.dir/src/cudaMM.cu.o" \
-"CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o"
+"CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o" \
+"CMakeFiles/cudaMul.dir/src/matrixParser.cu.o" \
+"CMakeFiles/cudaMul.dir/src/compare.cpp.o"
 
 # External object files for target cudaMul
 cudaMul_EXTERNAL_OBJECTS =
 
 cudaMul: CMakeFiles/cudaMul.dir/mains/cudaMain.cu.o
-cudaMul: CMakeFiles/cudaMul.dir/src/cudaMM.cu.o
-cudaMul: CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o
+cudaMul: CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o
+cudaMul: CMakeFiles/cudaMul.dir/src/matrixParser.cu.o
+cudaMul: CMakeFiles/cudaMul.dir/src/compare.cpp.o
 cudaMul: CMakeFiles/cudaMul.dir/build.make
 cudaMul: CMakeFiles/cudaMul.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable cudaMul"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable cudaMul"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cudaMul.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

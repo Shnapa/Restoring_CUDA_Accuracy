@@ -1,7 +1,7 @@
 set(MATMUL_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/main.cu
     ${CMAKE_CURRENT_SOURCE_DIR}/accuracy_comparison.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/matrixParser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/../src/matrixParser.cu
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/cudaMM.cu
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/cublasMM.cu
     ${CMAKE_CURRENT_SOURCE_DIR}/../src/simdMM.cpp

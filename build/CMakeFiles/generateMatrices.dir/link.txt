@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/generateMatrices.dir/src/generateMatrices.cpp.o CMakeFiles/generateMatrices.dir/src/matrixParser.cu.o CMakeFiles/generateMatrices.dir/src/compare.cpp.o -o generateMatrices   -L/usr/local/cuda/targets/x86_64-linux/lib  -lcudadevrt -lcudart_static -lrt -lpthread -ldl 

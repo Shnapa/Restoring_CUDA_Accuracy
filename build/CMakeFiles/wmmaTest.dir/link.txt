@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/wmmaTest.dir/benchmarks/wmmaBM.cu.o CMakeFiles/wmmaTest.dir/src/matrixParser.cu.o CMakeFiles/wmmaTest.dir/src/compare.cpp.o -o wmmaTest   -L/usr/local/cuda/targets/x86_64-linux/lib  /usr/lib/x86_64-linux-gnu/libbenchmark.so.1.8.3 -lcudadevrt -lcudart_static -lrt -lpthread -ldl 

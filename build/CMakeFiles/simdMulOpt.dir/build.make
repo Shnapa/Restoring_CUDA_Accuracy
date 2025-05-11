@@ -69,80 +69,64 @@ include CMakeFiles/simdMulOpt.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/simdMulOpt.dir/flags.make
 
-CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o: CMakeFiles/simdMulOpt.dir/flags.make
-CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/mains/matrix_simd_parallel_mult.cpp
-CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o: CMakeFiles/simdMulOpt.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o -MF CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o.d -o CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/mains/matrix_simd_parallel_mult.cpp
+CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o: CMakeFiles/simdMulOpt.dir/flags.make
+CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/mains/simdMulOptMain.cpp
+CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o: CMakeFiles/simdMulOpt.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o -MF CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o.d -o CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/mains/simdMulOptMain.cpp
 
-CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/mains/matrix_simd_parallel_mult.cpp > CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.i
+CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/mains/simdMulOptMain.cpp > CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.i
 
-CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/mains/matrix_simd_parallel_mult.cpp -o CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.s
+CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/mains/simdMulOptMain.cpp -o CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.s
 
-CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o: CMakeFiles/simdMulOpt.dir/flags.make
-CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/simdMM.cpp
-CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o: CMakeFiles/simdMulOpt.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o -MF CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o.d -o CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/simdMM.cpp
+CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o: CMakeFiles/simdMulOpt.dir/flags.make
+CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o: CMakeFiles/simdMulOpt.dir/includes_CUDA.rsp
+CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu
+CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o: CMakeFiles/simdMulOpt.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CUDA object CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o"
+	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o -MF CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu -o CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o
 
-CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/simdMM.cpp > CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.i
-
-CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/simdMM.cpp -o CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.s
-
-CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o: CMakeFiles/simdMulOpt.dir/flags.make
-CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o: CMakeFiles/simdMulOpt.dir/includes_CUDA.rsp
-CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/cublasMM.cu
-CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o: CMakeFiles/simdMulOpt.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CUDA object CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o"
-	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o -MF CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/src/cublasMM.cu -o CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o
-
-CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.i"
+CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.i"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.s"
+CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
-CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o: CMakeFiles/simdMulOpt.dir/flags.make
-CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
-CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o: CMakeFiles/simdMulOpt.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o -MF CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o.d -o CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
+CMakeFiles/simdMulOpt.dir/src/compare.cpp.o: CMakeFiles/simdMulOpt.dir/flags.make
+CMakeFiles/simdMulOpt.dir/src/compare.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
+CMakeFiles/simdMulOpt.dir/src/compare.cpp.o: CMakeFiles/simdMulOpt.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/simdMulOpt.dir/src/compare.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/simdMulOpt.dir/src/compare.cpp.o -MF CMakeFiles/simdMulOpt.dir/src/compare.cpp.o.d -o CMakeFiles/simdMulOpt.dir/src/compare.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
 
-CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp > CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.i
+CMakeFiles/simdMulOpt.dir/src/compare.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/simdMulOpt.dir/src/compare.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp > CMakeFiles/simdMulOpt.dir/src/compare.cpp.i
 
-CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp -o CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.s
+CMakeFiles/simdMulOpt.dir/src/compare.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/simdMulOpt.dir/src/compare.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp -o CMakeFiles/simdMulOpt.dir/src/compare.cpp.s
 
 # Object files for target simdMulOpt
 simdMulOpt_OBJECTS = \
-"CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o" \
-"CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o" \
-"CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o" \
-"CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o"
+"CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o" \
+"CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o" \
+"CMakeFiles/simdMulOpt.dir/src/compare.cpp.o"
 
 # External object files for target simdMulOpt
 simdMulOpt_EXTERNAL_OBJECTS =
 
-simdMulOpt: CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o
-simdMulOpt: CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o
-simdMulOpt: CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o
-simdMulOpt: CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o
+simdMulOpt: CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o
+simdMulOpt: CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o
+simdMulOpt: CMakeFiles/simdMulOpt.dir/src/compare.cpp.o
 simdMulOpt: CMakeFiles/simdMulOpt.dir/build.make
 simdMulOpt: CMakeFiles/simdMulOpt.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable simdMulOpt"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable simdMulOpt"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/simdMulOpt.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

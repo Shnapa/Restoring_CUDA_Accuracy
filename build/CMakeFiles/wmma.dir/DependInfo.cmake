@@ -9,8 +9,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/Docs/Restoring_CUDA_Accuracy/mains/wmmaMain.cu" "CMakeFiles/wmma.dir/mains/wmmaMain.cu.o" "gcc" "CMakeFiles/wmma.dir/mains/wmmaMain.cu.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/wmmaMM.cu" "CMakeFiles/wmma.dir/src/wmmaMM.cu.o" "gcc" "CMakeFiles/wmma.dir/src/wmmaMM.cu.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp" "CMakeFiles/wmma.dir/src/matrixParser.cpp.o" "gcc" "CMakeFiles/wmma.dir/src/matrixParser.cpp.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/matrix-multiplication/wmmaMM.cu" "CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o" "gcc" "CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu" "CMakeFiles/wmma.dir/src/matrixParser.cu.o" "gcc" "CMakeFiles/wmma.dir/src/matrixParser.cu.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp" "CMakeFiles/wmma.dir/src/compare.cpp.o" "gcc" "CMakeFiles/wmma.dir/src/compare.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

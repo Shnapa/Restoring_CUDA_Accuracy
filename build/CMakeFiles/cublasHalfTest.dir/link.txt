@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/cublasHalfTest.dir/benchmarks/cublasHalfBM.cu.o CMakeFiles/cublasHalfTest.dir/src/matrixParser.cu.o CMakeFiles/cublasHalfTest.dir/src/compare.cpp.o -o cublasHalfTest   -L/usr/local/cuda/targets/x86_64-linux/lib  /usr/lib/x86_64-linux-gnu/libbenchmark.so.1.8.3 -lcublas -lcudadevrt -lcudart_static -lrt -lpthread -ldl 

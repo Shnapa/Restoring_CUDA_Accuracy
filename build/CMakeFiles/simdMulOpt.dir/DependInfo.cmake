@@ -8,10 +8,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/cublasMM.cu" "CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o" "gcc" "CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/mains/matrix_simd_parallel_mult.cpp" "CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o" "gcc" "CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp" "CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o" "gcc" "CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/simdMM.cpp" "CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o" "gcc" "CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu" "CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o" "gcc" "CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/mains/simdMulOptMain.cpp" "CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o" "gcc" "CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp" "CMakeFiles/simdMulOpt.dir/src/compare.cpp.o" "gcc" "CMakeFiles/simdMulOpt.dir/src/compare.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

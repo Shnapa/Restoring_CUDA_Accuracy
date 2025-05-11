@@ -1,5 +1,5 @@
 #include "../include/matrixParser.h"
-#include "../include/mmul.h"
+#include "mmul.cuh"
 #include "accuracy_comparison.h"
 
 #include <iostream>

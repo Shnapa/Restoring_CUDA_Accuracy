@@ -7,11 +7,11 @@ CUDA_DEFINES =
 
 CUDA_INCLUDES = --options-file CMakeFiles/simdMulOpt.dir/includes_CUDA.rsp
 
-CUDA_FLAGS =  --fmad=false --prec-div=true --prec-sqrt=true --ftz=false -std=c++20 "--generate-code=arch=compute_75,code=[compute_75,sm_75]" "--generate-code=arch=compute_89,code=[compute_89,sm_89]" -mavx -mfma -march=native
+CUDA_FLAGS =  --fmad=false --prec-div=true --prec-sqrt=true --ftz=false -std=c++20 -arch=native -mavx -mfma -march=native
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/workspace/Docs/Restoring_CUDA_Accuracy -I/workspace/Docs/Restoring_CUDA_Accuracy/include -I/workspace/Docs/Restoring_CUDA_Accuracy/src -I/workspace/Docs/Restoring_CUDA_Accuracy/data -I/workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy -I/workspace/Docs/Restoring_CUDA_Accuracy/utils
+CXX_INCLUDES = -I/workspace/Docs/Restoring_CUDA_Accuracy/include -I/workspace/Docs/Restoring_CUDA_Accuracy/src -I/workspace/Docs/Restoring_CUDA_Accuracy/data -I/workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy -I/workspace/Docs/Restoring_CUDA_Accuracy/utils -I/workspace/Docs/Restoring_CUDA_Accuracy/matrix-multiplication -I/workspace/Docs/Restoring_CUDA_Accuracy/mains -I/workspace/Docs/Restoring_CUDA_Accuracy/benchmarks
 
 CXX_FLAGS = -std=gnu++20 -mavx -mfma -march=native
 

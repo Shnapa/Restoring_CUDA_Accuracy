@@ -1,8 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o"
-  "CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o.d"
-  "CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o"
-  "CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o.d"
+  "CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o"
+  "CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o.d"
+  "CMakeFiles/restoringAcc.dir/src/compare.cpp.o"
+  "CMakeFiles/restoringAcc.dir/src/compare.cpp.o.d"
+  "CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o"
+  "CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o.d"
   "restoringAcc"
   "restoringAcc.pdb"
 )

@@ -84,50 +84,67 @@ CMakeFiles/wmma.dir/mains/wmmaMain.cu.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/wmma.dir/mains/wmmaMain.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
-CMakeFiles/wmma.dir/src/wmmaMM.cu.o: CMakeFiles/wmma.dir/flags.make
-CMakeFiles/wmma.dir/src/wmmaMM.cu.o: CMakeFiles/wmma.dir/includes_CUDA.rsp
-CMakeFiles/wmma.dir/src/wmmaMM.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/wmmaMM.cu
-CMakeFiles/wmma.dir/src/wmmaMM.cu.o: CMakeFiles/wmma.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CUDA object CMakeFiles/wmma.dir/src/wmmaMM.cu.o"
-	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/wmma.dir/src/wmmaMM.cu.o -MF CMakeFiles/wmma.dir/src/wmmaMM.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/src/wmmaMM.cu -o CMakeFiles/wmma.dir/src/wmmaMM.cu.o
+CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o: CMakeFiles/wmma.dir/flags.make
+CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o: CMakeFiles/wmma.dir/includes_CUDA.rsp
+CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/matrix-multiplication/wmmaMM.cu
+CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o: CMakeFiles/wmma.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CUDA object CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o"
+	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o -MF CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/matrix-multiplication/wmmaMM.cu -o CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o
 
-CMakeFiles/wmma.dir/src/wmmaMM.cu.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/wmma.dir/src/wmmaMM.cu.i"
+CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.i"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-CMakeFiles/wmma.dir/src/wmmaMM.cu.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/wmma.dir/src/wmmaMM.cu.s"
+CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
-CMakeFiles/wmma.dir/src/matrixParser.cpp.o: CMakeFiles/wmma.dir/flags.make
-CMakeFiles/wmma.dir/src/matrixParser.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
-CMakeFiles/wmma.dir/src/matrixParser.cpp.o: CMakeFiles/wmma.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/wmma.dir/src/matrixParser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/wmma.dir/src/matrixParser.cpp.o -MF CMakeFiles/wmma.dir/src/matrixParser.cpp.o.d -o CMakeFiles/wmma.dir/src/matrixParser.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
+CMakeFiles/wmma.dir/src/matrixParser.cu.o: CMakeFiles/wmma.dir/flags.make
+CMakeFiles/wmma.dir/src/matrixParser.cu.o: CMakeFiles/wmma.dir/includes_CUDA.rsp
+CMakeFiles/wmma.dir/src/matrixParser.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu
+CMakeFiles/wmma.dir/src/matrixParser.cu.o: CMakeFiles/wmma.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CUDA object CMakeFiles/wmma.dir/src/matrixParser.cu.o"
+	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/wmma.dir/src/matrixParser.cu.o -MF CMakeFiles/wmma.dir/src/matrixParser.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu -o CMakeFiles/wmma.dir/src/matrixParser.cu.o
 
-CMakeFiles/wmma.dir/src/matrixParser.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/wmma.dir/src/matrixParser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp > CMakeFiles/wmma.dir/src/matrixParser.cpp.i
+CMakeFiles/wmma.dir/src/matrixParser.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/wmma.dir/src/matrixParser.cu.i"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-CMakeFiles/wmma.dir/src/matrixParser.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/wmma.dir/src/matrixParser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp -o CMakeFiles/wmma.dir/src/matrixParser.cpp.s
+CMakeFiles/wmma.dir/src/matrixParser.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/wmma.dir/src/matrixParser.cu.s"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
+
+CMakeFiles/wmma.dir/src/compare.cpp.o: CMakeFiles/wmma.dir/flags.make
+CMakeFiles/wmma.dir/src/compare.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
+CMakeFiles/wmma.dir/src/compare.cpp.o: CMakeFiles/wmma.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/wmma.dir/src/compare.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/wmma.dir/src/compare.cpp.o -MF CMakeFiles/wmma.dir/src/compare.cpp.o.d -o CMakeFiles/wmma.dir/src/compare.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
+
+CMakeFiles/wmma.dir/src/compare.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/wmma.dir/src/compare.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp > CMakeFiles/wmma.dir/src/compare.cpp.i
+
+CMakeFiles/wmma.dir/src/compare.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/wmma.dir/src/compare.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp -o CMakeFiles/wmma.dir/src/compare.cpp.s
 
 # Object files for target wmma
 wmma_OBJECTS = \
 "CMakeFiles/wmma.dir/mains/wmmaMain.cu.o" \
-"CMakeFiles/wmma.dir/src/wmmaMM.cu.o" \
-"CMakeFiles/wmma.dir/src/matrixParser.cpp.o"
+"CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o" \
+"CMakeFiles/wmma.dir/src/matrixParser.cu.o" \
+"CMakeFiles/wmma.dir/src/compare.cpp.o"
 
 # External object files for target wmma
 wmma_EXTERNAL_OBJECTS =
 
 wmma: CMakeFiles/wmma.dir/mains/wmmaMain.cu.o
-wmma: CMakeFiles/wmma.dir/src/wmmaMM.cu.o
-wmma: CMakeFiles/wmma.dir/src/matrixParser.cpp.o
+wmma: CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o
+wmma: CMakeFiles/wmma.dir/src/matrixParser.cu.o
+wmma: CMakeFiles/wmma.dir/src/compare.cpp.o
 wmma: CMakeFiles/wmma.dir/build.make
 wmma: CMakeFiles/wmma.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable wmma"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable wmma"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/wmma.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

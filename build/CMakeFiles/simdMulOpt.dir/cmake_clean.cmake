@@ -1,12 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o"
-  "CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o.d"
-  "CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o"
-  "CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o.d"
-  "CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o"
-  "CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o.d"
-  "CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o"
-  "CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o.d"
+  "CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o"
+  "CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o.d"
+  "CMakeFiles/simdMulOpt.dir/src/compare.cpp.o"
+  "CMakeFiles/simdMulOpt.dir/src/compare.cpp.o.d"
+  "CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o"
+  "CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o.d"
   "simdMulOpt"
   "simdMulOpt.pdb"
 )

@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /workspace/Docs/Restoring_CUDA_Accuracy/build
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "No interactive CMake dialog available..."
@@ -195,17 +205,17 @@ simdMulOpt/fast:
 .PHONY : simdMulOpt/fast
 
 #=============================================================================
-# Target rules for targets named generate_matrices
+# Target rules for targets named generateMatrices
 
 # Build rule for target.
-generate_matrices: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 generate_matrices
-.PHONY : generate_matrices
+generateMatrices: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 generateMatrices
+.PHONY : generateMatrices
 
 # fast build rule for target.
-generate_matrices/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_matrices.dir/build.make CMakeFiles/generate_matrices.dir/build
-.PHONY : generate_matrices/fast
+generateMatrices/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/build
+.PHONY : generateMatrices/fast
 
 #=============================================================================
 # Target rules for targets named matmul_compare
@@ -217,8 +227,230 @@ matmul_compare: cmake_check_build_system
 
 # fast build rule for target.
 matmul_compare/fast:
-	$(MAKE) $(MAKESILENT) -f utils/CMakeFiles/matmul_compare.dir/build.make utils/CMakeFiles/matmul_compare.dir/build
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/build
 .PHONY : matmul_compare/fast
+
+#=============================================================================
+# Target rules for targets named cublasTest
+
+# Build rule for target.
+cublasTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cublasTest
+.PHONY : cublasTest
+
+# fast build rule for target.
+cublasTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/build
+.PHONY : cublasTest/fast
+
+#=============================================================================
+# Target rules for targets named cublasHalfTest
+
+# Build rule for target.
+cublasHalfTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cublasHalfTest
+.PHONY : cublasHalfTest
+
+# fast build rule for target.
+cublasHalfTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/build
+.PHONY : cublasHalfTest/fast
+
+#=============================================================================
+# Target rules for targets named cudaMulTest
+
+# Build rule for target.
+cudaMulTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cudaMulTest
+.PHONY : cudaMulTest
+
+# fast build rule for target.
+cudaMulTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/build
+.PHONY : cudaMulTest/fast
+
+#=============================================================================
+# Target rules for targets named cudaMulOptTest
+
+# Build rule for target.
+cudaMulOptTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 cudaMulOptTest
+.PHONY : cudaMulOptTest
+
+# fast build rule for target.
+cudaMulOptTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/build
+.PHONY : cudaMulOptTest/fast
+
+#=============================================================================
+# Target rules for targets named simdMulOptTest
+
+# Build rule for target.
+simdMulOptTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 simdMulOptTest
+.PHONY : simdMulOptTest
+
+# fast build rule for target.
+simdMulOptTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/build
+.PHONY : simdMulOptTest/fast
+
+#=============================================================================
+# Target rules for targets named wmmaTest
+
+# Build rule for target.
+wmmaTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 wmmaTest
+.PHONY : wmmaTest
+
+# fast build rule for target.
+wmmaTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/build
+.PHONY : wmmaTest/fast
+
+benchmarks/cublasHalfBM.o: benchmarks/cublasHalfBM.cu.o
+.PHONY : benchmarks/cublasHalfBM.o
+
+# target to build an object file
+benchmarks/cublasHalfBM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/benchmarks/cublasHalfBM.cu.o
+.PHONY : benchmarks/cublasHalfBM.cu.o
+
+benchmarks/cublasHalfBM.i: benchmarks/cublasHalfBM.cu.i
+.PHONY : benchmarks/cublasHalfBM.i
+
+# target to preprocess a source file
+benchmarks/cublasHalfBM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/benchmarks/cublasHalfBM.cu.i
+.PHONY : benchmarks/cublasHalfBM.cu.i
+
+benchmarks/cublasHalfBM.s: benchmarks/cublasHalfBM.cu.s
+.PHONY : benchmarks/cublasHalfBM.s
+
+# target to generate assembly for a file
+benchmarks/cublasHalfBM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/benchmarks/cublasHalfBM.cu.s
+.PHONY : benchmarks/cublasHalfBM.cu.s
+
+benchmarks/cublasMulBM.o: benchmarks/cublasMulBM.cu.o
+.PHONY : benchmarks/cublasMulBM.o
+
+# target to build an object file
+benchmarks/cublasMulBM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/benchmarks/cublasMulBM.cu.o
+.PHONY : benchmarks/cublasMulBM.cu.o
+
+benchmarks/cublasMulBM.i: benchmarks/cublasMulBM.cu.i
+.PHONY : benchmarks/cublasMulBM.i
+
+# target to preprocess a source file
+benchmarks/cublasMulBM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/benchmarks/cublasMulBM.cu.i
+.PHONY : benchmarks/cublasMulBM.cu.i
+
+benchmarks/cublasMulBM.s: benchmarks/cublasMulBM.cu.s
+.PHONY : benchmarks/cublasMulBM.s
+
+# target to generate assembly for a file
+benchmarks/cublasMulBM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/benchmarks/cublasMulBM.cu.s
+.PHONY : benchmarks/cublasMulBM.cu.s
+
+benchmarks/cudaMulBM.o: benchmarks/cudaMulBM.cu.o
+.PHONY : benchmarks/cudaMulBM.o
+
+# target to build an object file
+benchmarks/cudaMulBM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/benchmarks/cudaMulBM.cu.o
+.PHONY : benchmarks/cudaMulBM.cu.o
+
+benchmarks/cudaMulBM.i: benchmarks/cudaMulBM.cu.i
+.PHONY : benchmarks/cudaMulBM.i
+
+# target to preprocess a source file
+benchmarks/cudaMulBM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/benchmarks/cudaMulBM.cu.i
+.PHONY : benchmarks/cudaMulBM.cu.i
+
+benchmarks/cudaMulBM.s: benchmarks/cudaMulBM.cu.s
+.PHONY : benchmarks/cudaMulBM.s
+
+# target to generate assembly for a file
+benchmarks/cudaMulBM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/benchmarks/cudaMulBM.cu.s
+.PHONY : benchmarks/cudaMulBM.cu.s
+
+benchmarks/cudaMulOptBM.o: benchmarks/cudaMulOptBM.cu.o
+.PHONY : benchmarks/cudaMulOptBM.o
+
+# target to build an object file
+benchmarks/cudaMulOptBM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/benchmarks/cudaMulOptBM.cu.o
+.PHONY : benchmarks/cudaMulOptBM.cu.o
+
+benchmarks/cudaMulOptBM.i: benchmarks/cudaMulOptBM.cu.i
+.PHONY : benchmarks/cudaMulOptBM.i
+
+# target to preprocess a source file
+benchmarks/cudaMulOptBM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/benchmarks/cudaMulOptBM.cu.i
+.PHONY : benchmarks/cudaMulOptBM.cu.i
+
+benchmarks/cudaMulOptBM.s: benchmarks/cudaMulOptBM.cu.s
+.PHONY : benchmarks/cudaMulOptBM.s
+
+# target to generate assembly for a file
+benchmarks/cudaMulOptBM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/benchmarks/cudaMulOptBM.cu.s
+.PHONY : benchmarks/cudaMulOptBM.cu.s
+
+benchmarks/simdMulOptBM.o: benchmarks/simdMulOptBM.cpp.o
+.PHONY : benchmarks/simdMulOptBM.o
+
+# target to build an object file
+benchmarks/simdMulOptBM.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/benchmarks/simdMulOptBM.cpp.o
+.PHONY : benchmarks/simdMulOptBM.cpp.o
+
+benchmarks/simdMulOptBM.i: benchmarks/simdMulOptBM.cpp.i
+.PHONY : benchmarks/simdMulOptBM.i
+
+# target to preprocess a source file
+benchmarks/simdMulOptBM.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/benchmarks/simdMulOptBM.cpp.i
+.PHONY : benchmarks/simdMulOptBM.cpp.i
+
+benchmarks/simdMulOptBM.s: benchmarks/simdMulOptBM.cpp.s
+.PHONY : benchmarks/simdMulOptBM.s
+
+# target to generate assembly for a file
+benchmarks/simdMulOptBM.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/benchmarks/simdMulOptBM.cpp.s
+.PHONY : benchmarks/simdMulOptBM.cpp.s
+
+benchmarks/wmmaBM.o: benchmarks/wmmaBM.cu.o
+.PHONY : benchmarks/wmmaBM.o
+
+# target to build an object file
+benchmarks/wmmaBM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/benchmarks/wmmaBM.cu.o
+.PHONY : benchmarks/wmmaBM.cu.o
+
+benchmarks/wmmaBM.i: benchmarks/wmmaBM.cu.i
+.PHONY : benchmarks/wmmaBM.i
+
+# target to preprocess a source file
+benchmarks/wmmaBM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/benchmarks/wmmaBM.cu.i
+.PHONY : benchmarks/wmmaBM.cu.i
+
+benchmarks/wmmaBM.s: benchmarks/wmmaBM.cu.s
+.PHONY : benchmarks/wmmaBM.s
+
+# target to generate assembly for a file
+benchmarks/wmmaBM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/benchmarks/wmmaBM.cu.s
+.PHONY : benchmarks/wmmaBM.cu.s
 
 mains/cublasMain.o: mains/cublasMain.cu.o
 .PHONY : mains/cublasMain.o
@@ -292,29 +524,29 @@ mains/cudaMulOptMain.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/mains/cudaMulOptMain.cu.s
 .PHONY : mains/cudaMulOptMain.cu.s
 
-mains/matrix_simd_parallel_mult.o: mains/matrix_simd_parallel_mult.cpp.o
-.PHONY : mains/matrix_simd_parallel_mult.o
+mains/simdMulOptMain.o: mains/simdMulOptMain.cpp.o
+.PHONY : mains/simdMulOptMain.o
 
 # target to build an object file
-mains/matrix_simd_parallel_mult.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.o
-.PHONY : mains/matrix_simd_parallel_mult.cpp.o
+mains/simdMulOptMain.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.o
+.PHONY : mains/simdMulOptMain.cpp.o
 
-mains/matrix_simd_parallel_mult.i: mains/matrix_simd_parallel_mult.cpp.i
-.PHONY : mains/matrix_simd_parallel_mult.i
+mains/simdMulOptMain.i: mains/simdMulOptMain.cpp.i
+.PHONY : mains/simdMulOptMain.i
 
 # target to preprocess a source file
-mains/matrix_simd_parallel_mult.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.i
-.PHONY : mains/matrix_simd_parallel_mult.cpp.i
+mains/simdMulOptMain.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.i
+.PHONY : mains/simdMulOptMain.cpp.i
 
-mains/matrix_simd_parallel_mult.s: mains/matrix_simd_parallel_mult.cpp.s
-.PHONY : mains/matrix_simd_parallel_mult.s
+mains/simdMulOptMain.s: mains/simdMulOptMain.cpp.s
+.PHONY : mains/simdMulOptMain.s
 
 # target to generate assembly for a file
-mains/matrix_simd_parallel_mult.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/mains/matrix_simd_parallel_mult.cpp.s
-.PHONY : mains/matrix_simd_parallel_mult.cpp.s
+mains/simdMulOptMain.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/mains/simdMulOptMain.cpp.s
+.PHONY : mains/simdMulOptMain.cpp.s
 
 mains/wmmaMain.o: mains/wmmaMain.cu.o
 .PHONY : mains/wmmaMain.o
@@ -340,90 +572,207 @@ mains/wmmaMain.cu.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/mains/wmmaMain.cu.s
 .PHONY : mains/wmmaMain.cu.s
 
-restoring_accuracy/main.o: restoring_accuracy/main.cu.o
-.PHONY : restoring_accuracy/main.o
+matrix-multiplication/cublasMM.o: matrix-multiplication/cublasMM.cu.o
+.PHONY : matrix-multiplication/cublasMM.o
 
 # target to build an object file
-restoring_accuracy/main.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o
-.PHONY : restoring_accuracy/main.cu.o
+matrix-multiplication/cublasMM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/matrix-multiplication/cublasMM.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/cublasMM.cu.o
+.PHONY : matrix-multiplication/cublasMM.cu.o
 
-restoring_accuracy/main.i: restoring_accuracy/main.cu.i
-.PHONY : restoring_accuracy/main.i
+matrix-multiplication/cublasMM.i: matrix-multiplication/cublasMM.cu.i
+.PHONY : matrix-multiplication/cublasMM.i
 
 # target to preprocess a source file
-restoring_accuracy/main.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.i
-.PHONY : restoring_accuracy/main.cu.i
+matrix-multiplication/cublasMM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/matrix-multiplication/cublasMM.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/cublasMM.cu.i
+.PHONY : matrix-multiplication/cublasMM.cu.i
 
-restoring_accuracy/main.s: restoring_accuracy/main.cu.s
-.PHONY : restoring_accuracy/main.s
+matrix-multiplication/cublasMM.s: matrix-multiplication/cublasMM.cu.s
+.PHONY : matrix-multiplication/cublasMM.s
 
 # target to generate assembly for a file
-restoring_accuracy/main.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.s
-.PHONY : restoring_accuracy/main.cu.s
+matrix-multiplication/cublasMM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/matrix-multiplication/cublasMM.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/cublasMM.cu.s
+.PHONY : matrix-multiplication/cublasMM.cu.s
 
-src/cublasMM.o: src/cublasMM.cu.o
-.PHONY : src/cublasMM.o
+matrix-multiplication/cudaMM.o: matrix-multiplication/cudaMM.cu.o
+.PHONY : matrix-multiplication/cudaMM.o
 
 # target to build an object file
-src/cublasMM.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/cublasMM.cu.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.o
-.PHONY : src/cublasMM.cu.o
+matrix-multiplication/cudaMM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/matrix-multiplication/cudaMM.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/cudaMM.cu.o
+.PHONY : matrix-multiplication/cudaMM.cu.o
 
-src/cublasMM.i: src/cublasMM.cu.i
-.PHONY : src/cublasMM.i
+matrix-multiplication/cudaMM.i: matrix-multiplication/cudaMM.cu.i
+.PHONY : matrix-multiplication/cudaMM.i
 
 # target to preprocess a source file
-src/cublasMM.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/cublasMM.cu.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.i
-.PHONY : src/cublasMM.cu.i
+matrix-multiplication/cudaMM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/matrix-multiplication/cudaMM.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/cudaMM.cu.i
+.PHONY : matrix-multiplication/cudaMM.cu.i
 
-src/cublasMM.s: src/cublasMM.cu.s
-.PHONY : src/cublasMM.s
+matrix-multiplication/cudaMM.s: matrix-multiplication/cudaMM.cu.s
+.PHONY : matrix-multiplication/cudaMM.s
 
 # target to generate assembly for a file
-src/cublasMM.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/cublasMM.cu.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/cublasMM.cu.s
-.PHONY : src/cublasMM.cu.s
+matrix-multiplication/cudaMM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/matrix-multiplication/cudaMM.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/matrix-multiplication/cudaMM.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/cudaMM.cu.s
+.PHONY : matrix-multiplication/cudaMM.cu.s
 
-src/cudaMM.o: src/cudaMM.cu.o
-.PHONY : src/cudaMM.o
+matrix-multiplication/wmmaMM.o: matrix-multiplication/wmmaMM.cu.o
+.PHONY : matrix-multiplication/wmmaMM.o
 
 # target to build an object file
-src/cudaMM.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/cudaMM.cu.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/cudaMM.cu.o
-.PHONY : src/cudaMM.cu.o
+matrix-multiplication/wmmaMM.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/wmmaMM.cu.o
+.PHONY : matrix-multiplication/wmmaMM.cu.o
 
-src/cudaMM.i: src/cudaMM.cu.i
-.PHONY : src/cudaMM.i
+matrix-multiplication/wmmaMM.i: matrix-multiplication/wmmaMM.cu.i
+.PHONY : matrix-multiplication/wmmaMM.i
 
 # target to preprocess a source file
-src/cudaMM.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/cudaMM.cu.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/cudaMM.cu.i
-.PHONY : src/cudaMM.cu.i
+matrix-multiplication/wmmaMM.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/wmmaMM.cu.i
+.PHONY : matrix-multiplication/wmmaMM.cu.i
 
-src/cudaMM.s: src/cudaMM.cu.s
-.PHONY : src/cudaMM.s
+matrix-multiplication/wmmaMM.s: matrix-multiplication/wmmaMM.cu.s
+.PHONY : matrix-multiplication/wmmaMM.s
 
 # target to generate assembly for a file
-src/cudaMM.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/cudaMM.cu.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/cudaMM.cu.s
-.PHONY : src/cudaMM.cu.s
+matrix-multiplication/wmmaMM.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/matrix-multiplication/wmmaMM.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/matrix-multiplication/wmmaMM.cu.s
+.PHONY : matrix-multiplication/wmmaMM.cu.s
+
+restoring_accuracy/restore.o: restoring_accuracy/restore.cu.o
+.PHONY : restoring_accuracy/restore.o
+
+# target to build an object file
+restoring_accuracy/restore.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/restoring_accuracy/restore.cu.o
+.PHONY : restoring_accuracy/restore.cu.o
+
+restoring_accuracy/restore.i: restoring_accuracy/restore.cu.i
+.PHONY : restoring_accuracy/restore.i
+
+# target to preprocess a source file
+restoring_accuracy/restore.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/restoring_accuracy/restore.cu.i
+.PHONY : restoring_accuracy/restore.cu.i
+
+restoring_accuracy/restore.s: restoring_accuracy/restore.cu.s
+.PHONY : restoring_accuracy/restore.s
+
+# target to generate assembly for a file
+restoring_accuracy/restore.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/restoring_accuracy/restore.cu.s
+.PHONY : restoring_accuracy/restore.cu.s
+
+restoring_accuracy/restoreMain.o: restoring_accuracy/restoreMain.cu.o
+.PHONY : restoring_accuracy/restoreMain.o
+
+# target to build an object file
+restoring_accuracy/restoreMain.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o
+.PHONY : restoring_accuracy/restoreMain.cu.o
+
+restoring_accuracy/restoreMain.i: restoring_accuracy/restoreMain.cu.i
+.PHONY : restoring_accuracy/restoreMain.i
+
+# target to preprocess a source file
+restoring_accuracy/restoreMain.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.i
+.PHONY : restoring_accuracy/restoreMain.cu.i
+
+restoring_accuracy/restoreMain.s: restoring_accuracy/restoreMain.cu.s
+.PHONY : restoring_accuracy/restoreMain.s
+
+# target to generate assembly for a file
+restoring_accuracy/restoreMain.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.s
+.PHONY : restoring_accuracy/restoreMain.cu.s
+
+src/compare.o: src/compare.cpp.o
+.PHONY : src/compare.o
+
+# target to build an object file
+src/compare.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/src/compare.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/src/compare.cpp.o
+.PHONY : src/compare.cpp.o
+
+src/compare.i: src/compare.cpp.i
+.PHONY : src/compare.i
+
+# target to preprocess a source file
+src/compare.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/src/compare.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/src/compare.cpp.i
+.PHONY : src/compare.cpp.i
+
+src/compare.s: src/compare.cpp.s
+.PHONY : src/compare.s
+
+# target to generate assembly for a file
+src/compare.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/src/compare.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/src/compare.cpp.s
+.PHONY : src/compare.cpp.s
 
 src/generateMatrices.o: src/generateMatrices.cpp.o
 .PHONY : src/generateMatrices.o
 
 # target to build an object file
 src/generateMatrices.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_matrices.dir/build.make CMakeFiles/generate_matrices.dir/src/generateMatrices.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/generateMatrices.cpp.o
 .PHONY : src/generateMatrices.cpp.o
 
 src/generateMatrices.i: src/generateMatrices.cpp.i
@@ -431,7 +780,7 @@ src/generateMatrices.i: src/generateMatrices.cpp.i
 
 # target to preprocess a source file
 src/generateMatrices.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_matrices.dir/build.make CMakeFiles/generate_matrices.dir/src/generateMatrices.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/generateMatrices.cpp.i
 .PHONY : src/generateMatrices.cpp.i
 
 src/generateMatrices.s: src/generateMatrices.cpp.s
@@ -439,95 +788,119 @@ src/generateMatrices.s: src/generateMatrices.cpp.s
 
 # target to generate assembly for a file
 src/generateMatrices.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_matrices.dir/build.make CMakeFiles/generate_matrices.dir/src/generateMatrices.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/generateMatrices.cpp.s
 .PHONY : src/generateMatrices.cpp.s
 
-src/matrixParser.o: src/matrixParser.cpp.o
+src/matrixParser.o: src/matrixParser.cu.o
 .PHONY : src/matrixParser.o
 
 # target to build an object file
-src/matrixParser.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/matrixParser.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/matrixParser.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/matrixParser.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/matrixParser.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.o
-.PHONY : src/matrixParser.cpp.o
+src/matrixParser.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/src/matrixParser.cu.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/src/matrixParser.cu.o
+.PHONY : src/matrixParser.cu.o
 
-src/matrixParser.i: src/matrixParser.cpp.i
+src/matrixParser.i: src/matrixParser.cu.i
 .PHONY : src/matrixParser.i
 
 # target to preprocess a source file
-src/matrixParser.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/matrixParser.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/matrixParser.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/matrixParser.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/matrixParser.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.i
-.PHONY : src/matrixParser.cpp.i
+src/matrixParser.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/src/matrixParser.cu.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/src/matrixParser.cu.i
+.PHONY : src/matrixParser.cu.i
 
-src/matrixParser.s: src/matrixParser.cpp.s
+src/matrixParser.s: src/matrixParser.cu.s
 .PHONY : src/matrixParser.s
 
 # target to generate assembly for a file
-src/matrixParser.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/matrixParser.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/matrixParser.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/matrixParser.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/matrixParser.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/matrixParser.cpp.s
-.PHONY : src/matrixParser.cpp.s
+src/matrixParser.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/src/matrixParser.cu.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/src/matrixParser.cu.s
+.PHONY : src/matrixParser.cu.s
 
-src/simdMM.o: src/simdMM.cpp.o
-.PHONY : src/simdMM.o
-
-# target to build an object file
-src/simdMM.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.o
-.PHONY : src/simdMM.cpp.o
-
-src/simdMM.i: src/simdMM.cpp.i
-.PHONY : src/simdMM.i
-
-# target to preprocess a source file
-src/simdMM.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.i
-.PHONY : src/simdMM.cpp.i
-
-src/simdMM.s: src/simdMM.cpp.s
-.PHONY : src/simdMM.s
-
-# target to generate assembly for a file
-src/simdMM.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/src/simdMM.cpp.s
-.PHONY : src/simdMM.cpp.s
-
-src/wmmaMM.o: src/wmmaMM.cu.o
-.PHONY : src/wmmaMM.o
+utils/accuracy_comparison.o: utils/accuracy_comparison.cpp.o
+.PHONY : utils/accuracy_comparison.o
 
 # target to build an object file
-src/wmmaMM.cu.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/wmmaMM.cu.o
-.PHONY : src/wmmaMM.cu.o
+utils/accuracy_comparison.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/utils/accuracy_comparison.cpp.o
+.PHONY : utils/accuracy_comparison.cpp.o
 
-src/wmmaMM.i: src/wmmaMM.cu.i
-.PHONY : src/wmmaMM.i
+utils/accuracy_comparison.i: utils/accuracy_comparison.cpp.i
+.PHONY : utils/accuracy_comparison.i
 
 # target to preprocess a source file
-src/wmmaMM.cu.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/wmmaMM.cu.i
-.PHONY : src/wmmaMM.cu.i
+utils/accuracy_comparison.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/utils/accuracy_comparison.cpp.i
+.PHONY : utils/accuracy_comparison.cpp.i
 
-src/wmmaMM.s: src/wmmaMM.cu.s
-.PHONY : src/wmmaMM.s
+utils/accuracy_comparison.s: utils/accuracy_comparison.cpp.s
+.PHONY : utils/accuracy_comparison.s
 
 # target to generate assembly for a file
-src/wmmaMM.cu.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/src/wmmaMM.cu.s
-.PHONY : src/wmmaMM.cu.s
+utils/accuracy_comparison.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/utils/accuracy_comparison.cpp.s
+.PHONY : utils/accuracy_comparison.cpp.s
+
+utils/main.o: utils/main.cu.o
+.PHONY : utils/main.o
+
+# target to build an object file
+utils/main.cu.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/utils/main.cu.o
+.PHONY : utils/main.cu.o
+
+utils/main.i: utils/main.cu.i
+.PHONY : utils/main.i
+
+# target to preprocess a source file
+utils/main.cu.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/utils/main.cu.i
+.PHONY : utils/main.cu.i
+
+utils/main.s: utils/main.cu.s
+.PHONY : utils/main.s
+
+# target to generate assembly for a file
+utils/main.cu.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/utils/main.cu.s
+.PHONY : utils/main.cu.s
 
 # Help Target
 help:
@@ -537,14 +910,39 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... test"
+	@echo "... cublasHalfTest"
 	@echo "... cublasMul"
+	@echo "... cublasTest"
 	@echo "... cudaMul"
 	@echo "... cudaMulOpt"
-	@echo "... generate_matrices"
+	@echo "... cudaMulOptTest"
+	@echo "... cudaMulTest"
+	@echo "... generateMatrices"
 	@echo "... matmul_compare"
 	@echo "... restoringAcc"
 	@echo "... simdMulOpt"
+	@echo "... simdMulOptTest"
 	@echo "... wmma"
+	@echo "... wmmaTest"
+	@echo "... benchmarks/cublasHalfBM.o"
+	@echo "... benchmarks/cublasHalfBM.i"
+	@echo "... benchmarks/cublasHalfBM.s"
+	@echo "... benchmarks/cublasMulBM.o"
+	@echo "... benchmarks/cublasMulBM.i"
+	@echo "... benchmarks/cublasMulBM.s"
+	@echo "... benchmarks/cudaMulBM.o"
+	@echo "... benchmarks/cudaMulBM.i"
+	@echo "... benchmarks/cudaMulBM.s"
+	@echo "... benchmarks/cudaMulOptBM.o"
+	@echo "... benchmarks/cudaMulOptBM.i"
+	@echo "... benchmarks/cudaMulOptBM.s"
+	@echo "... benchmarks/simdMulOptBM.o"
+	@echo "... benchmarks/simdMulOptBM.i"
+	@echo "... benchmarks/simdMulOptBM.s"
+	@echo "... benchmarks/wmmaBM.o"
+	@echo "... benchmarks/wmmaBM.i"
+	@echo "... benchmarks/wmmaBM.s"
 	@echo "... mains/cublasMain.o"
 	@echo "... mains/cublasMain.i"
 	@echo "... mains/cublasMain.s"
@@ -554,33 +952,42 @@ help:
 	@echo "... mains/cudaMulOptMain.o"
 	@echo "... mains/cudaMulOptMain.i"
 	@echo "... mains/cudaMulOptMain.s"
-	@echo "... mains/matrix_simd_parallel_mult.o"
-	@echo "... mains/matrix_simd_parallel_mult.i"
-	@echo "... mains/matrix_simd_parallel_mult.s"
+	@echo "... mains/simdMulOptMain.o"
+	@echo "... mains/simdMulOptMain.i"
+	@echo "... mains/simdMulOptMain.s"
 	@echo "... mains/wmmaMain.o"
 	@echo "... mains/wmmaMain.i"
 	@echo "... mains/wmmaMain.s"
-	@echo "... restoring_accuracy/main.o"
-	@echo "... restoring_accuracy/main.i"
-	@echo "... restoring_accuracy/main.s"
-	@echo "... src/cublasMM.o"
-	@echo "... src/cublasMM.i"
-	@echo "... src/cublasMM.s"
-	@echo "... src/cudaMM.o"
-	@echo "... src/cudaMM.i"
-	@echo "... src/cudaMM.s"
+	@echo "... matrix-multiplication/cublasMM.o"
+	@echo "... matrix-multiplication/cublasMM.i"
+	@echo "... matrix-multiplication/cublasMM.s"
+	@echo "... matrix-multiplication/cudaMM.o"
+	@echo "... matrix-multiplication/cudaMM.i"
+	@echo "... matrix-multiplication/cudaMM.s"
+	@echo "... matrix-multiplication/wmmaMM.o"
+	@echo "... matrix-multiplication/wmmaMM.i"
+	@echo "... matrix-multiplication/wmmaMM.s"
+	@echo "... restoring_accuracy/restore.o"
+	@echo "... restoring_accuracy/restore.i"
+	@echo "... restoring_accuracy/restore.s"
+	@echo "... restoring_accuracy/restoreMain.o"
+	@echo "... restoring_accuracy/restoreMain.i"
+	@echo "... restoring_accuracy/restoreMain.s"
+	@echo "... src/compare.o"
+	@echo "... src/compare.i"
+	@echo "... src/compare.s"
 	@echo "... src/generateMatrices.o"
 	@echo "... src/generateMatrices.i"
 	@echo "... src/generateMatrices.s"
 	@echo "... src/matrixParser.o"
 	@echo "... src/matrixParser.i"
 	@echo "... src/matrixParser.s"
-	@echo "... src/simdMM.o"
-	@echo "... src/simdMM.i"
-	@echo "... src/simdMM.s"
-	@echo "... src/wmmaMM.o"
-	@echo "... src/wmmaMM.i"
-	@echo "... src/wmmaMM.s"
+	@echo "... utils/accuracy_comparison.o"
+	@echo "... utils/accuracy_comparison.i"
+	@echo "... utils/accuracy_comparison.s"
+	@echo "... utils/main.o"
+	@echo "... utils/main.i"
+	@echo "... utils/main.s"
 .PHONY : help
 
 

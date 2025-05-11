@@ -9,8 +9,9 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/Docs/Restoring_CUDA_Accuracy/mains/cudaMulOptMain.cu" "CMakeFiles/cudaMulOpt.dir/mains/cudaMulOptMain.cu.o" "gcc" "CMakeFiles/cudaMulOpt.dir/mains/cudaMulOptMain.cu.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/cudaMM.cu" "CMakeFiles/cudaMulOpt.dir/src/cudaMM.cu.o" "gcc" "CMakeFiles/cudaMulOpt.dir/src/cudaMM.cu.o.d"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp" "CMakeFiles/cudaMulOpt.dir/src/matrixParser.cpp.o" "gcc" "CMakeFiles/cudaMulOpt.dir/src/matrixParser.cpp.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/matrix-multiplication/cudaMM.cu" "CMakeFiles/cudaMulOpt.dir/matrix-multiplication/cudaMM.cu.o" "gcc" "CMakeFiles/cudaMulOpt.dir/matrix-multiplication/cudaMM.cu.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu" "CMakeFiles/cudaMulOpt.dir/src/matrixParser.cu.o" "gcc" "CMakeFiles/cudaMulOpt.dir/src/matrixParser.cu.o.d"
+  "/workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp" "CMakeFiles/cudaMulOpt.dir/src/compare.cpp.o" "gcc" "CMakeFiles/cudaMulOpt.dir/src/compare.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

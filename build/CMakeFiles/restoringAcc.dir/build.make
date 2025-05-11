@@ -69,48 +69,65 @@ include CMakeFiles/restoringAcc.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/restoringAcc.dir/flags.make
 
-CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o: CMakeFiles/restoringAcc.dir/flags.make
-CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o: CMakeFiles/restoringAcc.dir/includes_CUDA.rsp
-CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy/main.cu
-CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o: CMakeFiles/restoringAcc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CUDA object CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o"
-	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o -MF CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy/main.cu -o CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o
+CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o: CMakeFiles/restoringAcc.dir/flags.make
+CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o: CMakeFiles/restoringAcc.dir/includes_CUDA.rsp
+CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy/restoreMain.cu
+CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o: CMakeFiles/restoringAcc.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CUDA object CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o"
+	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o -MF CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/restoring_accuracy/restoreMain.cu -o CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o
 
-CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.i"
+CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.i"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.s"
+CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.s"
 	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
 
-CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o: CMakeFiles/restoringAcc.dir/flags.make
-CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
-CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o: CMakeFiles/restoringAcc.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o -MF CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o.d -o CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp
+CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o: CMakeFiles/restoringAcc.dir/flags.make
+CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o: CMakeFiles/restoringAcc.dir/includes_CUDA.rsp
+CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu
+CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o: CMakeFiles/restoringAcc.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CUDA object CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o"
+	/usr/local/cuda/bin/nvcc -forward-unknown-to-host-compiler $(CUDA_DEFINES) $(CUDA_INCLUDES) $(CUDA_FLAGS) -MD -MT CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o -MF CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o.d -x cu -c /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cu -o CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o
 
-CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp > CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.i
+CMakeFiles/restoringAcc.dir/src/matrixParser.cu.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CUDA source to CMakeFiles/restoringAcc.dir/src/matrixParser.cu.i"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_PREPROCESSED_SOURCE
 
-CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/matrixParser.cpp -o CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.s
+CMakeFiles/restoringAcc.dir/src/matrixParser.cu.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CUDA source to assembly CMakeFiles/restoringAcc.dir/src/matrixParser.cu.s"
+	$(CMAKE_COMMAND) -E cmake_unimplemented_variable CMAKE_CUDA_CREATE_ASSEMBLY_SOURCE
+
+CMakeFiles/restoringAcc.dir/src/compare.cpp.o: CMakeFiles/restoringAcc.dir/flags.make
+CMakeFiles/restoringAcc.dir/src/compare.cpp.o: /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
+CMakeFiles/restoringAcc.dir/src/compare.cpp.o: CMakeFiles/restoringAcc.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/restoringAcc.dir/src/compare.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/restoringAcc.dir/src/compare.cpp.o -MF CMakeFiles/restoringAcc.dir/src/compare.cpp.o.d -o CMakeFiles/restoringAcc.dir/src/compare.cpp.o -c /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp
+
+CMakeFiles/restoringAcc.dir/src/compare.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/restoringAcc.dir/src/compare.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp > CMakeFiles/restoringAcc.dir/src/compare.cpp.i
+
+CMakeFiles/restoringAcc.dir/src/compare.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/restoringAcc.dir/src/compare.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/Docs/Restoring_CUDA_Accuracy/src/compare.cpp -o CMakeFiles/restoringAcc.dir/src/compare.cpp.s
 
 # Object files for target restoringAcc
 restoringAcc_OBJECTS = \
-"CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o" \
-"CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o"
+"CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o" \
+"CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o" \
+"CMakeFiles/restoringAcc.dir/src/compare.cpp.o"
 
 # External object files for target restoringAcc
 restoringAcc_EXTERNAL_OBJECTS =
 
-restoringAcc: CMakeFiles/restoringAcc.dir/restoring_accuracy/main.cu.o
-restoringAcc: CMakeFiles/restoringAcc.dir/src/matrixParser.cpp.o
+restoringAcc: CMakeFiles/restoringAcc.dir/restoring_accuracy/restoreMain.cu.o
+restoringAcc: CMakeFiles/restoringAcc.dir/src/matrixParser.cu.o
+restoringAcc: CMakeFiles/restoringAcc.dir/src/compare.cpp.o
 restoringAcc: CMakeFiles/restoringAcc.dir/build.make
 restoringAcc: CMakeFiles/restoringAcc.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable restoringAcc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable restoringAcc"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/restoringAcc.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

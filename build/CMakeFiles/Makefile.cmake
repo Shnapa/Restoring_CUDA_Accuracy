@@ -45,7 +45,6 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.28.3/CMakeCUDACompiler.cmake"
   "CMakeFiles/3.28.3/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.28.3/CMakeSystem.cmake"
-  "/workspace/Docs/Restoring_CUDA_Accuracy/utils/CMakeLists.txt"
   )
 
 # The corresponding makefile is:
@@ -57,7 +56,6 @@ set(CMAKE_MAKEFILE_OUTPUTS
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
   "CMakeFiles/CMakeDirectoryInformation.cmake"
-  "utils/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
 # Dependency information for all targets:
@@ -68,6 +66,12 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/cudaMulOpt.dir/DependInfo.cmake"
   "CMakeFiles/wmma.dir/DependInfo.cmake"
   "CMakeFiles/simdMulOpt.dir/DependInfo.cmake"
-  "CMakeFiles/generate_matrices.dir/DependInfo.cmake"
-  "utils/CMakeFiles/matmul_compare.dir/DependInfo.cmake"
+  "CMakeFiles/generateMatrices.dir/DependInfo.cmake"
+  "CMakeFiles/matmul_compare.dir/DependInfo.cmake"
+  "CMakeFiles/cublasTest.dir/DependInfo.cmake"
+  "CMakeFiles/cublasHalfTest.dir/DependInfo.cmake"
+  "CMakeFiles/cudaMulTest.dir/DependInfo.cmake"
+  "CMakeFiles/cudaMulOptTest.dir/DependInfo.cmake"
+  "CMakeFiles/simdMulOptTest.dir/DependInfo.cmake"
+  "CMakeFiles/wmmaTest.dir/DependInfo.cmake"
   )

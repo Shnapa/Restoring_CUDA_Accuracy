@@ -69,12 +69,18 @@ all: CMakeFiles/cudaMul.dir/all
 all: CMakeFiles/cudaMulOpt.dir/all
 all: CMakeFiles/wmma.dir/all
 all: CMakeFiles/simdMulOpt.dir/all
-all: CMakeFiles/generate_matrices.dir/all
-all: utils/all
+all: CMakeFiles/generateMatrices.dir/all
+all: CMakeFiles/matmul_compare.dir/all
+all: CMakeFiles/cublasTest.dir/all
+all: CMakeFiles/cublasHalfTest.dir/all
+all: CMakeFiles/cudaMulTest.dir/all
+all: CMakeFiles/cudaMulOptTest.dir/all
+all: CMakeFiles/simdMulOptTest.dir/all
+all: CMakeFiles/wmmaTest.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
-preinstall: utils/preinstall
+preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
@@ -84,24 +90,15 @@ clean: CMakeFiles/cudaMul.dir/clean
 clean: CMakeFiles/cudaMulOpt.dir/clean
 clean: CMakeFiles/wmma.dir/clean
 clean: CMakeFiles/simdMulOpt.dir/clean
-clean: CMakeFiles/generate_matrices.dir/clean
-clean: utils/clean
+clean: CMakeFiles/generateMatrices.dir/clean
+clean: CMakeFiles/matmul_compare.dir/clean
+clean: CMakeFiles/cublasTest.dir/clean
+clean: CMakeFiles/cublasHalfTest.dir/clean
+clean: CMakeFiles/cudaMulTest.dir/clean
+clean: CMakeFiles/cudaMulOptTest.dir/clean
+clean: CMakeFiles/simdMulOptTest.dir/clean
+clean: CMakeFiles/wmmaTest.dir/clean
 .PHONY : clean
-
-#=============================================================================
-# Directory level rules for directory utils
-
-# Recursive "all" directory target.
-utils/all: utils/CMakeFiles/matmul_compare.dir/all
-.PHONY : utils/all
-
-# Recursive "preinstall" directory target.
-utils/preinstall:
-.PHONY : utils/preinstall
-
-# Recursive "clean" directory target.
-utils/clean: utils/CMakeFiles/matmul_compare.dir/clean
-.PHONY : utils/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/restoringAcc.dir
@@ -110,12 +107,12 @@ utils/clean: utils/CMakeFiles/matmul_compare.dir/clean
 CMakeFiles/restoringAcc.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/restoringAcc.dir/build.make CMakeFiles/restoringAcc.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=24,25,26 "Built target restoringAcc"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=45,46,47,48 "Built target restoringAcc"
 .PHONY : CMakeFiles/restoringAcc.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/restoringAcc.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/restoringAcc.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
 .PHONY : CMakeFiles/restoringAcc.dir/rule
@@ -136,12 +133,12 @@ CMakeFiles/restoringAcc.dir/clean:
 CMakeFiles/cublasMul.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasMul.dir/build.make CMakeFiles/cublasMul.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=1,2,3,4 "Built target cublasMul"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=5,6,7,8,9 "Built target cublasMul"
 .PHONY : CMakeFiles/cublasMul.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/cublasMul.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cublasMul.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
 .PHONY : CMakeFiles/cublasMul.dir/rule
@@ -162,12 +159,12 @@ CMakeFiles/cublasMul.dir/clean:
 CMakeFiles/cudaMul.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMul.dir/build.make CMakeFiles/cudaMul.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=5,6,7,8 "Built target cudaMul"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=14,15,16,17,18 "Built target cudaMul"
 .PHONY : CMakeFiles/cudaMul.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/cudaMul.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cudaMul.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
 .PHONY : CMakeFiles/cudaMul.dir/rule
@@ -188,12 +185,12 @@ CMakeFiles/cudaMul.dir/clean:
 CMakeFiles/cudaMulOpt.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOpt.dir/build.make CMakeFiles/cudaMulOpt.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=9,10,11,12 "Built target cudaMulOpt"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=19,20,21,22,23 "Built target cudaMulOpt"
 .PHONY : CMakeFiles/cudaMulOpt.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/cudaMulOpt.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cudaMulOpt.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
 .PHONY : CMakeFiles/cudaMulOpt.dir/rule
@@ -214,12 +211,12 @@ CMakeFiles/cudaMulOpt.dir/clean:
 CMakeFiles/wmma.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmma.dir/build.make CMakeFiles/wmma.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=32,33,34,35 "Built target wmma"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=57,58,59,60,61 "Built target wmma"
 .PHONY : CMakeFiles/wmma.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/wmma.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/wmma.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
 .PHONY : CMakeFiles/wmma.dir/rule
@@ -240,12 +237,12 @@ CMakeFiles/wmma.dir/clean:
 CMakeFiles/simdMulOpt.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOpt.dir/build.make CMakeFiles/simdMulOpt.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=27,28,29,30,31 "Built target simdMulOpt"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=49,50,51,52 "Built target simdMulOpt"
 .PHONY : CMakeFiles/simdMulOpt.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/simdMulOpt.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 5
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/simdMulOpt.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
 .PHONY : CMakeFiles/simdMulOpt.dir/rule
@@ -260,56 +257,212 @@ CMakeFiles/simdMulOpt.dir/clean:
 .PHONY : CMakeFiles/simdMulOpt.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/generate_matrices.dir
+# Target rules for target CMakeFiles/generateMatrices.dir
 
 # All Build rule for target.
-CMakeFiles/generate_matrices.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_matrices.dir/build.make CMakeFiles/generate_matrices.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_matrices.dir/build.make CMakeFiles/generate_matrices.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=13,14 "Built target generate_matrices"
-.PHONY : CMakeFiles/generate_matrices.dir/all
+CMakeFiles/generateMatrices.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=32,33,34,35 "Built target generateMatrices"
+.PHONY : CMakeFiles/generateMatrices.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/generate_matrices.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/generate_matrices.dir/all
+CMakeFiles/generateMatrices.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/generateMatrices.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
-.PHONY : CMakeFiles/generate_matrices.dir/rule
+.PHONY : CMakeFiles/generateMatrices.dir/rule
 
 # Convenience name for target.
-generate_matrices: CMakeFiles/generate_matrices.dir/rule
-.PHONY : generate_matrices
+generateMatrices: CMakeFiles/generateMatrices.dir/rule
+.PHONY : generateMatrices
 
 # clean rule for target.
-CMakeFiles/generate_matrices.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/generate_matrices.dir/build.make CMakeFiles/generate_matrices.dir/clean
-.PHONY : CMakeFiles/generate_matrices.dir/clean
+CMakeFiles/generateMatrices.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/generateMatrices.dir/build.make CMakeFiles/generateMatrices.dir/clean
+.PHONY : CMakeFiles/generateMatrices.dir/clean
 
 #=============================================================================
-# Target rules for target utils/CMakeFiles/matmul_compare.dir
+# Target rules for target CMakeFiles/matmul_compare.dir
 
 # All Build rule for target.
-utils/CMakeFiles/matmul_compare.dir/all:
-	$(MAKE) $(MAKESILENT) -f utils/CMakeFiles/matmul_compare.dir/build.make utils/CMakeFiles/matmul_compare.dir/depend
-	$(MAKE) $(MAKESILENT) -f utils/CMakeFiles/matmul_compare.dir/build.make utils/CMakeFiles/matmul_compare.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=15,16,17,18,19,20,21,22,23 "Built target matmul_compare"
-.PHONY : utils/CMakeFiles/matmul_compare.dir/all
+CMakeFiles/matmul_compare.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=36,37,38,39,40,41,42,43,44 "Built target matmul_compare"
+.PHONY : CMakeFiles/matmul_compare.dir/all
 
 # Build rule for subdir invocation for target.
-utils/CMakeFiles/matmul_compare.dir/rule: cmake_check_build_system
+CMakeFiles/matmul_compare.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 9
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 utils/CMakeFiles/matmul_compare.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/matmul_compare.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
-.PHONY : utils/CMakeFiles/matmul_compare.dir/rule
+.PHONY : CMakeFiles/matmul_compare.dir/rule
 
 # Convenience name for target.
-matmul_compare: utils/CMakeFiles/matmul_compare.dir/rule
+matmul_compare: CMakeFiles/matmul_compare.dir/rule
 .PHONY : matmul_compare
 
 # clean rule for target.
-utils/CMakeFiles/matmul_compare.dir/clean:
-	$(MAKE) $(MAKESILENT) -f utils/CMakeFiles/matmul_compare.dir/build.make utils/CMakeFiles/matmul_compare.dir/clean
-.PHONY : utils/CMakeFiles/matmul_compare.dir/clean
+CMakeFiles/matmul_compare.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/matmul_compare.dir/build.make CMakeFiles/matmul_compare.dir/clean
+.PHONY : CMakeFiles/matmul_compare.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/cublasTest.dir
+
+# All Build rule for target.
+CMakeFiles/cublasTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=10,11,12,13 "Built target cublasTest"
+.PHONY : CMakeFiles/cublasTest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/cublasTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cublasTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
+.PHONY : CMakeFiles/cublasTest.dir/rule
+
+# Convenience name for target.
+cublasTest: CMakeFiles/cublasTest.dir/rule
+.PHONY : cublasTest
+
+# clean rule for target.
+CMakeFiles/cublasTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasTest.dir/build.make CMakeFiles/cublasTest.dir/clean
+.PHONY : CMakeFiles/cublasTest.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/cublasHalfTest.dir
+
+# All Build rule for target.
+CMakeFiles/cublasHalfTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=1,2,3,4 "Built target cublasHalfTest"
+.PHONY : CMakeFiles/cublasHalfTest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/cublasHalfTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cublasHalfTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
+.PHONY : CMakeFiles/cublasHalfTest.dir/rule
+
+# Convenience name for target.
+cublasHalfTest: CMakeFiles/cublasHalfTest.dir/rule
+.PHONY : cublasHalfTest
+
+# clean rule for target.
+CMakeFiles/cublasHalfTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cublasHalfTest.dir/build.make CMakeFiles/cublasHalfTest.dir/clean
+.PHONY : CMakeFiles/cublasHalfTest.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/cudaMulTest.dir
+
+# All Build rule for target.
+CMakeFiles/cudaMulTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=28,29,30,31 "Built target cudaMulTest"
+.PHONY : CMakeFiles/cudaMulTest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/cudaMulTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cudaMulTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
+.PHONY : CMakeFiles/cudaMulTest.dir/rule
+
+# Convenience name for target.
+cudaMulTest: CMakeFiles/cudaMulTest.dir/rule
+.PHONY : cudaMulTest
+
+# clean rule for target.
+CMakeFiles/cudaMulTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulTest.dir/build.make CMakeFiles/cudaMulTest.dir/clean
+.PHONY : CMakeFiles/cudaMulTest.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/cudaMulOptTest.dir
+
+# All Build rule for target.
+CMakeFiles/cudaMulOptTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=24,25,26,27 "Built target cudaMulOptTest"
+.PHONY : CMakeFiles/cudaMulOptTest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/cudaMulOptTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/cudaMulOptTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
+.PHONY : CMakeFiles/cudaMulOptTest.dir/rule
+
+# Convenience name for target.
+cudaMulOptTest: CMakeFiles/cudaMulOptTest.dir/rule
+.PHONY : cudaMulOptTest
+
+# clean rule for target.
+CMakeFiles/cudaMulOptTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/cudaMulOptTest.dir/build.make CMakeFiles/cudaMulOptTest.dir/clean
+.PHONY : CMakeFiles/cudaMulOptTest.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/simdMulOptTest.dir
+
+# All Build rule for target.
+CMakeFiles/simdMulOptTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=53,54,55,56 "Built target simdMulOptTest"
+.PHONY : CMakeFiles/simdMulOptTest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/simdMulOptTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/simdMulOptTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
+.PHONY : CMakeFiles/simdMulOptTest.dir/rule
+
+# Convenience name for target.
+simdMulOptTest: CMakeFiles/simdMulOptTest.dir/rule
+.PHONY : simdMulOptTest
+
+# clean rule for target.
+CMakeFiles/simdMulOptTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/simdMulOptTest.dir/build.make CMakeFiles/simdMulOptTest.dir/clean
+.PHONY : CMakeFiles/simdMulOptTest.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/wmmaTest.dir
+
+# All Build rule for target.
+CMakeFiles/wmmaTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles --progress-num=62,63,64,65 "Built target wmmaTest"
+.PHONY : CMakeFiles/wmmaTest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/wmmaTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 4
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/wmmaTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/Docs/Restoring_CUDA_Accuracy/build/CMakeFiles 0
+.PHONY : CMakeFiles/wmmaTest.dir/rule
+
+# Convenience name for target.
+wmmaTest: CMakeFiles/wmmaTest.dir/rule
+.PHONY : wmmaTest
+
+# clean rule for target.
+CMakeFiles/wmmaTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/wmmaTest.dir/build.make CMakeFiles/wmmaTest.dir/clean
+.PHONY : CMakeFiles/wmmaTest.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
