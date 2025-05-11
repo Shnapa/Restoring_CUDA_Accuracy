@@ -8,6 +8,35 @@
 #include <sstream>
 #include <stdexcept>
 
+std::vector<std::vector<float>> flattenAndCallCuda(
+    void (*cudaFunc)(const float*, const float*, float*, size_t, size_t, size_t, float&),
+    const std::vector<std::vector<float>>& A,
+    const std::vector<std::vector<float>>& B,
+    size_t m, size_t k, size_t n
+) {
+    std::vector<float> flatA(m * k);
+    std::vector<float> flatB(k * n);
+    std::vector<float> flatC(m * n);
+
+    for (size_t i = 0; i < m; ++i)
+        for (size_t j = 0; j < k; ++j)
+            flatA[i * k + j] = A[i][j];
+
+    for (size_t i = 0; i < k; ++i)
+        for (size_t j = 0; j < n; ++j)
+            flatB[i * n + j] = B[i][j];
+
+    float execTime = 0.0f;
+    cudaFunc(flatA.data(), flatB.data(), flatC.data(), m, k, n, execTime);
+
+    std::vector<std::vector<float>> C(m, std::vector<float>(n));
+    for (size_t i = 0; i < m; ++i)
+        for (size_t j = 0; j < n; ++j)
+            C[i][j] = flatC[i * n + j];
+
+    return C;
+}
+
 double norm(const std::vector<double>& mat) {
     double sum = 0.0;
     for (double val : mat) {
