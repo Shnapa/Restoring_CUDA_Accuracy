@@ -4,9 +4,9 @@
 
 #define TILE_SIZE 16
 
-__global__ void matrixMultiplicationNaiveKernel(const float *A, const float *B, float *C, int m, int k, int n) {
-    const int row = blockIdx.y * blockDim.y + threadIdx.y;
-    const int col = blockIdx.x * blockDim.x + threadIdx.x;
+__global__ void matrixMultiplicationNaiveKernel(const float *A, const float *B, float *C, const size_t m, const size_t k, const size_t n) {
+    const size_t row = blockIdx.y * blockDim.y + threadIdx.y;
+    const size_t col = blockIdx.x * blockDim.x + threadIdx.x;
     if (row < m && col < k) {
         float sum = 0.0f;
         for (int i = 0; i < n; i++) {
@@ -49,7 +49,6 @@ static void BM_cudaMul(benchmark::State &state, const std::string &filePath) {
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
-
 }
 
 int main(int argc, char** argv) {

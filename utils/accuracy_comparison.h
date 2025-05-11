@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "simdMM.h"
 
 std::vector<std::vector<float>> loadMatrix(const std::string& filename);
 std::vector<std::vector<float>> multiplyNaive(const std::vector<std::vector<float>>& A,

@@ -1,11 +1,15 @@
+//
+// Created by gllek-pc on 5/11/25.
+//
+
+#ifndef SIMDMM_H
+#define SIMDMM_H
+
 #include <algorithm>
 #include <immintrin.h>
-
-#include "../include/mmul.h"
-
 #define BLOCK_SIZE 64
 
-void simdMulOpt(const float* A, const float* B, float* C,
+inline void simdMulOpt(const float* A, const float* B, float* C,
                 const size_t m, const size_t n, const size_t k)
 {
 #pragma omp parallel for collapse(2)
@@ -36,3 +40,5 @@ void simdMulOpt(const float* A, const float* B, float* C,
                     }
                 }
 }
+
+#endif //SIMDMM_H

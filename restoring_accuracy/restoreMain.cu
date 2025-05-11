@@ -1,9 +1,9 @@
 #include <cstdio>
 
-#include "compare.cu"
+#include "compareMM.h"
 #include "matrixParser.h"
 #include <string>
-#include "mmul.h"
+#include "mmul.cuh"
 #include "restore.cu"
 
 int main(const int argc, char* argv[])

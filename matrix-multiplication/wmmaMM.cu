@@ -1,7 +1,7 @@
 #include <cuda_fp16.h>
 #include <mma.h>
 
-#include "../include/mmul.h"
+#include "mmul.cuh"
 #define TILE_SIZE 16
 #define WARP_SIZE 32
 

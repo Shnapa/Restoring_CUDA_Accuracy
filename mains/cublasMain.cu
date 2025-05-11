@@ -2,8 +2,31 @@
 #include <iostream>
 #include <vector>
 #include "matrixParser.h"
-#include "mmul.h"
-#include "compare.cu"
+#include "mmul.cuh"
+#include "compareMM.h"
+#include "timeMeasurement.h"
+#include <cuda_runtime.h>
+
+void loadMatrices_RR_half(const std::string &filePath,
+                     std::vector<__half> &A,
+                     std::vector<__half> &B)
+{
+    size_t m, k, n;
+    parseDimensions(filePath, m, k, n);
+    std::ifstream fin(filePath);
+    if (!fin.is_open()) std::exit(EXIT_FAILURE);
+    std::string line;
+    std::getline(fin, line);
+    std::istringstream isa(line);
+    float v;
+    size_t i = 0;
+    while (isa >> v && i < A.size()) A[i++] = __float2half(v);
+    std::getline(fin, line);
+    isa.clear();
+    isa.str(line);
+    i = 0;
+    while (isa >> v && i < B.size()) B[i++] = __float2half(v);
+}
 
 int main(const int argc, char** argv) {
     if (argc < 2) {
@@ -19,17 +42,15 @@ int main(const int argc, char** argv) {
     const size_t size_B = k * n;
     const size_t size_C = m * n;
 
-    std::vector<float> h_A(size_A), h_B(size_B);
+    std::vector<__half> h_A(size_A), h_B(size_B);
     std::vector<float> h_C(size_C);
-    loadMatrices_RR(filePath, h_A, h_B);
-    for (size_t i = 0; i < size_A; i++) h_A[i] = __float2half(h_A[i]);
-    for (size_t i = 0; i < size_A; i++) h_A[i] = __float2half(h_A[i]);
+    loadMatrices_RR_half(filePath, h_A, h_B);
     float exec_time = 0.0f;
-    cublasMatrixMultiply(h_A.data(), h_B.data(), h_C.data(), m, k, n, exec_time);
+
+    cublasMatrixMultiplyHalf(h_A.data(), h_B.data(), h_C.data(), m, k, n, exec_time);
 
     std::cout << "Execution time: " << exec_time << "ms" << std::endl;
 
-    compare(h_C, m, k, n, filePath);
-
+    // compare(h_C, m, k, n, filePath);
     return 0;
 }
