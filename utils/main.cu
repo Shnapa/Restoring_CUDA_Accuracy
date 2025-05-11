@@ -1,4 +1,4 @@
-#include "../include/matrixParser.h"
+#include "matrixParser.h"
 #include "mmul.cuh"
 #include "accuracy_comparison.h"
 
