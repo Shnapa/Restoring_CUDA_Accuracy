@@ -1,9 +1,10 @@
 #include "accuracy_comparison.h"
-#include "../include/mmul.h"
+#include "mmul.cuh"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include "simdMM.h"
 
 std::vector<double> referenceGEMM_FP64(const std::vector<float>& A, const std::vector<float>& B, size_t m, size_t k, size_t n) {
     std::vector<double> C(m * n, 0.0);
@@ -23,7 +24,7 @@ std::vector<std::vector<float>> flattenAndCallCuda(
     void (*cudaFunc)(const float*, const float*, float*, size_t, size_t, size_t, float&),
     const std::vector<std::vector<float>>& A,
     const std::vector<std::vector<float>>& B,
-    size_t m, size_t k, const size_t n
+    const size_t m, size_t k, const size_t n
 ) {
     std::vector<float> flatA(m * k);
     std::vector<float> flatB(k * n);
@@ -100,7 +101,7 @@ int main(const int argc, char** argv) {
         std::vector<std::vector<float>> result_tested;
         if (flag == "--naive") {
             result_tested = result_naive;
-        } else if (flag == "--simd" || flag == "--simd-opt") {
+        } else if (flag == "--simd") {
             result_tested = simdWrapper(A, B, m, k, n);
         } else if (flag == "--cuda") {
             result_tested = flattenAndCallCuda(cudaMatrixMultiply, A, B, m, k, n);

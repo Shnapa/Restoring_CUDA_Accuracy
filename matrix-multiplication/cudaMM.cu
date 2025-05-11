@@ -1,4 +1,4 @@
-#include "../include/mmul.h"
+#include "mmul.cuh"
 #include <cuda_runtime.h>
 
 #define TILE_SIZE 16

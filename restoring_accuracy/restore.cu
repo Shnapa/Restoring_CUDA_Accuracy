@@ -3,9 +3,10 @@
 #define WARP_SIZE 32
 #include <cuda_fp16.h>
 #include <mma.h>
+
 using namespace nvcuda::wmma;
-__global__ void restoreAccuracy(const __half* __restrict__ A,
-                                const __half* __restrict__ B,
+__global__ void restoreAccuracy(const float* __restrict__ A,
+                                const float* __restrict__ B,
                                 float* __restrict__ C,
                                 const size_t padded_M,
                                 const size_t padded_N,
@@ -38,8 +39,8 @@ __global__ void restoreAccuracy(const __half* __restrict__ A,
             const size_t c = idx % TILE_SIZE;
             const size_t aIdx = (warpM * TILE_SIZE + r) * padded_K + (tileK + c);
             const size_t bIdx = (tileK + r) * padded_N + (warpN * TILE_SIZE + c);
-            const float aVal = __half2float(A[aIdx]);
-            const float bVal = __half2float(B[bIdx]);
+            const float aVal = A[aIdx];
+            const float bVal = B[bIdx];
             const __half  a16  = __float2half(aVal);
             const __half  b16  = __float2half(bVal);
             const __half  da   = __float2half((aVal - __half2float(a16)) * SCALE);
@@ -84,16 +85,16 @@ void wmmaRestore(
     const size_t padded_K = (k + TILE_SIZE - 1) / TILE_SIZE * TILE_SIZE;
     const size_t padded_N = (n + TILE_SIZE - 1) / TILE_SIZE * TILE_SIZE;
 
-    const auto h_A_pad = new __half[padded_M * padded_K];
-    const auto h_B_pad = new __half[padded_K * padded_N];
+    const auto h_A_pad = new float[padded_M * padded_K];
+    const auto h_B_pad = new float[padded_K * padded_N];
     const auto h_C_pad = new float[padded_M * padded_N];
 
     for (size_t i = 0; i < padded_M; i++) {
         for (size_t j = 0; j < padded_K; j++) {
             if (i < m && j < k) {
-                h_A_pad[i * padded_K + j] = __float2half(h_A[i * k + j]);
+                h_A_pad[i * padded_K + j] = h_A[i * k + j];
             } else {
-                h_A_pad[i * padded_K + j] = __float2half(0.0f);
+                h_A_pad[i * padded_K + j] = 0.0f;
             }
         }
     }
@@ -101,23 +102,23 @@ void wmmaRestore(
     for (size_t i = 0; i < padded_K; i++) {
         for (size_t j = 0; j < padded_N; j++) {
             if (i < k && j < n) {
-                h_B_pad[i * padded_N + j] = __float2half(h_B[i * n + j]);
+                h_B_pad[i * padded_N + j] = h_B[i * n + j];
             } else {
-                h_B_pad[i * padded_N + j] = __float2half(0.0f);
+                h_B_pad[i * padded_N + j] = 0.0f;
             }
         }
     }
 
     for (size_t i = 0; i < padded_M * padded_N; i++) h_C_pad[i] = 0.0f;
 
-    __half *d_A, *d_B;
+    float *d_A, *d_B;
     float  *d_C;
-    cudaMalloc(&d_A, padded_M * padded_K * sizeof(__half));
-    cudaMalloc(&d_B, padded_K * padded_N * sizeof(__half));
+    cudaMalloc(&d_A, padded_M * padded_K * sizeof(float));
+    cudaMalloc(&d_B, padded_K * padded_N * sizeof(float));
     cudaMalloc(&d_C, padded_M * padded_N * sizeof(float));
 
-    cudaMemcpy(d_A, h_A_pad, padded_M * padded_K * sizeof(__half), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B_pad, padded_K * padded_N * sizeof(__half), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_A, h_A_pad, padded_M * padded_K * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, h_B_pad, padded_K * padded_N * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemset(d_C, 0, padded_M * padded_N * sizeof(float));
 
     cudaEvent_t start, stop;

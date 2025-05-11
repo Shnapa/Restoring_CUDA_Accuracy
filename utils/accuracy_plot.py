@@ -4,7 +4,7 @@ import numpy as np
 
 methods = {
     "--cuda":      ("Cuda", 'red', 'v'),
-    # "--simd-opt":  ("SIMD Opt", 'orange', 'x'),
+    "--simd-opt":  ("SIMD Opt", 'orange', 'x'),
     "--wmma":      ("WMMA method", 'green', '^'),
     "--cuda-opt":  ("Cuda Opt", 'purple', '+'),
     "--cublas":    ("Cublas", 'yellow', 'o'),

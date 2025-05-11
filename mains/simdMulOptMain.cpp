@@ -1,9 +1,9 @@
 #include <vector>
 
 #include "matrixParser.h"
-#include "mmul.h"
 #include "timeMeasurement.h"
-// #include "compare.cu"
+#include "simdMM.h"
+#include "compareMM.h"
 
 int main(const int argc, char** argv) {
     if(argc < 2) {
@@ -27,5 +27,5 @@ int main(const int argc, char** argv) {
     const auto end = get_current_time_fenced();
     std::cout << "Execution time: " << to_ms(end - start) << "ms" << std::endl;
 
-    // compare(h_C, m, k, n, filePath);
+    compare(h_C, m, k, n, filePath);
 }

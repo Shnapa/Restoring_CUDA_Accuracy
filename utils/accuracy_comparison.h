@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include "simdMM.h"
 
 std::vector<std::vector<float>> loadMatrix(const std::string& filename);
 

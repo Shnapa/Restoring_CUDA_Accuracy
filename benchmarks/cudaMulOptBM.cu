@@ -64,7 +64,7 @@ static void BM_cudaMulOpt(benchmark::State& state, const std::string &filePath) 
     dim3 blocksPerGrid((n + TILE_SIZE - 1) / TILE_SIZE,
                        (m + TILE_SIZE - 1) / TILE_SIZE);
     for (auto _ : state) {
-        cudaMulOpt<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, n, k);
+        cudaMulOpt<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, m, k, n);
         cudaDeviceSynchronize();
         benchmark::ClobberMemory();
     }

@@ -9,6 +9,7 @@
 #include <string>
 #include <cstdlib>
 #include "matrixParser.h"
+#include <cuda_fp16.h>
 
 void loadMatrices_RR(const std::string &filePath,
                      std::vector<float> &A,
@@ -84,6 +85,9 @@ void loadMatrices_CC(const std::string &filePath,
       for (size_t row=0; row<k; ++row)
         B[col*k + row] = tmpB[row*n + col];
 }
+
+
+
 
 void parseDimensions(const std::string& filePath, size_t &m, size_t &k, size_t &n) {
     const std::regex pattern(R"(.*_(\d+)_(\d+)_(\d+)\.txt)");

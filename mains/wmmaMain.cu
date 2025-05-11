@@ -3,8 +3,9 @@
 #include <vector>
 #include <cmath>
 #include "matrixParser.h"
-#include "mmul.h"
-#include "compare.cu"
+#include "mmul.cuh"
+#include "compareMM.h"
+
 int main(const int argc, char* argv[])
 {
     if (argc != 2) {
