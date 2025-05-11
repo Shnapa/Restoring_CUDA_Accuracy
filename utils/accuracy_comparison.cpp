@@ -1,106 +1,9 @@
-// Created by yuliana on 22.04.25.
-
 #include "accuracy_comparison.h"
-#include <vector>
 #include <cmath>
-#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
-
-std::vector<std::vector<float>> flattenAndCallCuda(
-    void (*cudaFunc)(const float*, const float*, float*, size_t, size_t, size_t, float&),
-    const std::vector<std::vector<float>>& A,
-    const std::vector<std::vector<float>>& B,
-    size_t m, size_t k, size_t n
-) {
-    std::vector<float> flatA(m * k);
-    std::vector<float> flatB(k * n);
-    std::vector<float> flatC(m * n);
-
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < k; ++j)
-            flatA[i * k + j] = A[i][j];
-
-    for (size_t i = 0; i < k; ++i)
-        for (size_t j = 0; j < n; ++j)
-            flatB[i * n + j] = B[i][j];
-
-    float execTime = 0.0f;
-    cudaFunc(flatA.data(), flatB.data(), flatC.data(), m, k, n, execTime);
-
-    std::vector<std::vector<float>> C(m, std::vector<float>(n));
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < n; ++j)
-            C[i][j] = flatC[i * n + j];
-
-    return C;
-}
-
-std::vector<std::vector<float>> simdWrapper(
-    const std::vector<std::vector<float>>& A,
-    const std::vector<std::vector<float>>& B,
-    size_t m, size_t k, const size_t n
-) {
-    std::vector<float> flatA(m * k), flatB(k * n), flatC(m * n);
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < k; ++j)
-            flatA[i * k + j] = A[i][j];
-
-    for (size_t i = 0; i < k; ++i)
-        for (size_t j = 0; j < n; ++j)
-            flatB[i * n + j] = B[i][j];
-
-    simdMulOpt(flatA.data(), flatB.data(), flatC.data(), m, n, k);
-
-    std::vector<std::vector<float>> C(m, std::vector<float>(n));
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < n; ++j)
-            C[i][j] = flatC[i * n + j];
-
-    return C;
-}
-
-double norm(const std::vector<double>& mat) {
-    double sum = 0.0;
-    for (double val : mat) {
-        sum += val * val;
-    }
-    return std::sqrt(sum);
-}
-
-double relativeResidual(const std::vector<double>& C_ref, const std::vector<float>& C_target) {
-    if (C_ref.size() != C_target.size()) {
-        throw std::runtime_error("Matrix sizes do not match");
-    }
-
-    std::vector<double> diff(C_ref.size());
-    for (size_t i = 0; i < C_ref.size(); ++i) {
-        diff[i] = C_ref[i] - static_cast<double>(C_target[i]);
-    }
-
-    double norm_diff = norm(diff);
-    double norm_ref = norm(C_ref);
-
-    if (norm_ref == 0.0) return 0.0;
-
-    return norm_diff / norm_ref;
-}
-
-std::vector<double> referenceGEMM_FP64(const std::vector<float>& A, const std::vector<float>& B,
-                                       size_t m, size_t k, size_t n) {
-    std::vector<double> C(m * n, 0.0);
-    for (size_t row = 0; row < m; ++row) {
-        for (size_t col = 0; col < n; ++col) {
-            double sum = 0.0;
-            for (size_t i = 0; i < k; ++i) {
-                sum += static_cast<double>(A[row * k + i]) * static_cast<double>(B[i * n + col]);
-            }
-            C[row * n + col] = sum;
-        }
-    }
-    return C;
-}
+#include <vector>
 
 std::vector<std::vector<float>> loadMatrix(const std::string& filename) {
     std::ifstream file(filename);
@@ -109,52 +12,60 @@ std::vector<std::vector<float>> loadMatrix(const std::string& filename) {
     }
     std::vector<std::vector<float>> matrix;
     std::string line;
-
     while (std::getline(file, line)) {
         std::istringstream stream(line);
         std::vector<float> row;
-        float value;
-        while (stream >> value) {
-            row.push_back(value);
+        float val;
+        while (stream >> val) {
+            row.push_back(val);
         }
         if (!row.empty()) matrix.push_back(row);
     }
-
     return matrix;
 }
 
 std::vector<std::vector<float>> multiplyNaive(const std::vector<std::vector<float>>& A,
-                                               const std::vector<std::vector<float>>& B) {
-    size_t m = A.size();
-    size_t k = A[0].size();
-    size_t n = B[0].size();
-
+                                              const std::vector<std::vector<float>>& B) {
+    size_t m = A.size(), k = A[0].size(), n = B[0].size();
     std::vector<std::vector<float>> C(m, std::vector<float>(n, 0.0f));
-
-    for (size_t i = 0; i < m; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            for (size_t l = 0; l < k; ++l) {
+    for (size_t i = 0; i < m; ++i)
+        for (size_t j = 0; j < n; ++j)
+            for (size_t l = 0; l < k; ++l)
                 C[i][j] += A[i][l] * B[l][j];
-            }
-        }
-    }
-
     return C;
 }
 
-float compareMatrices(const std::vector<std::vector<float>>& A,
-                      const std::vector<std::vector<float>>& B) {
-    if (A.size() != B.size() || A[0].size() != B[0].size()) {
-        throw std::runtime_error("Matrix sizes do not match for comparison");
-    }
+double norm(const std::vector<double>& v) {
+    double sum = 0.0;
+    for (double x : v) sum += x * x;
+    return std::sqrt(sum);
+}
 
-    std::vector<float> flat_A, flat_B;
-    for (size_t i = 0; i < A.size(); ++i) {
-        for (size_t j = 0; j < A[0].size(); ++j) {
-            flat_A.push_back(A[i][j]);
-            flat_B.push_back(B[i][j]);
-        }
-    }
+double norm(const std::vector<float>& v) {
+    double sum = 0.0;
+    for (float x : v) sum += static_cast<double>(x) * x;
+    return std::sqrt(sum);
+}
 
-    return static_cast<float>(relativeResidual(flat_A, flat_B));
+double relativeResidual(const std::vector<double>& C_ref, const std::vector<float>& C_target) {
+    if (C_ref.size() != C_target.size()) {
+        throw std::runtime_error("Vector sizes do not match in relativeResidual()");
+    }
+    std::vector<double> diff(C_ref.size());
+    for (size_t i = 0; i < C_ref.size(); ++i)
+        diff[i] = C_ref[i] - static_cast<double>(C_target[i]);
+
+    double norm_diff = norm(diff);
+    double norm_ref = norm(C_ref);
+    return (norm_ref == 0.0) ? 0.0 : norm_diff / norm_ref;
+}
+
+std::vector<double> referenceGEMM_FP64(const std::vector<float>& A, const std::vector<float>& B,
+                                       size_t m, size_t k, size_t n) {
+    std::vector<double> C(m * n, 0.0);
+    for (size_t row = 0; row < m; ++row)
+        for (size_t col = 0; col < n; ++col)
+            for (size_t i = 0; i < k; ++i)
+                C[row * n + col] += static_cast<double>(A[row * k + i]) * static_cast<double>(B[i * n + col]);
+    return C;
 }
