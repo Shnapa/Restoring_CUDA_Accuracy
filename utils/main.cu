@@ -61,10 +61,10 @@ int main(const int argc, char** argv) {
             flatB.insert(flatB.end(), row.begin(), row.end());
 
         std::vector<double> ref_fp64 = referenceGEMM_FP64(flatA, flatB, m, k, n);
-        std::vector<double> flat_result_fp32;
+        std::vector<float> flat_result_fp32;
         for (const auto& row : result_tested)
             for (float val : row)
-                flat_result_fp32.push_back(static_cast<double>(val));
+                flat_result_fp32.push_back(static_cast<float>(val));
 
         const double residual = relativeResidual(ref_fp64, flat_result_fp32);
 

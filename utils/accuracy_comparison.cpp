@@ -37,6 +37,30 @@ std::vector<std::vector<float>> flattenAndCallCuda(
     return C;
 }
 
+std::vector<std::vector<float>> simdWrapper(
+    const std::vector<std::vector<float>>& A,
+    const std::vector<std::vector<float>>& B,
+    size_t m, size_t k, const size_t n
+) {
+    std::vector<float> flatA(m * k), flatB(k * n), flatC(m * n);
+    for (size_t i = 0; i < m; ++i)
+        for (size_t j = 0; j < k; ++j)
+            flatA[i * k + j] = A[i][j];
+
+    for (size_t i = 0; i < k; ++i)
+        for (size_t j = 0; j < n; ++j)
+            flatB[i * n + j] = B[i][j];
+
+    simdMulOpt(flatA.data(), flatB.data(), flatC.data(), m, n, k);
+
+    std::vector<std::vector<float>> C(m, std::vector<float>(n));
+    for (size_t i = 0; i < m; ++i)
+        for (size_t j = 0; j < n; ++j)
+            C[i][j] = flatC[i * n + j];
+
+    return C;
+}
+
 double norm(const std::vector<double>& mat) {
     double sum = 0.0;
     for (double val : mat) {

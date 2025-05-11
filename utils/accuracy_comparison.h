@@ -22,4 +22,10 @@ std::vector<std::vector<float>> flattenAndCallCuda(
     const std::vector<std::vector<float>>& B,
     size_t m, size_t k, size_t n);
 
+std::vector<std::vector<float>> simdWrapper(
+    const std::vector<std::vector<float>>& A,
+    const std::vector<std::vector<float>>& B,
+    size_t m, size_t k, size_t n);
+
+
 #endif // ACCURACY_COMPARISON_H
