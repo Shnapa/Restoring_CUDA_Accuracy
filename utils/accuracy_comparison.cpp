@@ -10,22 +10,22 @@
 #include <sstream>
 #include <stdexcept>
 
-double norm(const std::vector<float>& mat) {
+double norm(const std::vector<double>& mat) {
     double sum = 0.0;
-    for (float val : mat) {
-        sum += static_cast<double>(val) * val;
+    for (double val : mat) {
+        sum += val * val;
     }
     return std::sqrt(sum);
 }
 
-double relativeResidual(const std::vector<float>& C_ref, const std::vector<float>& C_target) {
+double relativeResidual(const std::vector<double>& C_ref, const std::vector<float>& C_target) {
     if (C_ref.size() != C_target.size()) {
         throw std::runtime_error("Matrix sizes do not match");
     }
 
-    std::vector<float> diff(C_ref.size());
+    std::vector<double> diff(C_ref.size());
     for (size_t i = 0; i < C_ref.size(); ++i) {
-        diff[i] = C_ref[i] - C_target[i];
+        diff[i] = C_ref[i] - static_cast<double>(C_target[i]);
     }
 
     double norm_diff = norm(diff);
@@ -35,6 +35,7 @@ double relativeResidual(const std::vector<float>& C_ref, const std::vector<float
 
     return norm_diff / norm_ref;
 }
+
 
 std::vector<std::vector<float>> loadMatrix(const std::string& filename) {
     std::ifstream file(filename);

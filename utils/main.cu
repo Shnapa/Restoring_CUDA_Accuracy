@@ -5,71 +5,14 @@
 #include <vector>
 #include <stdexcept>
 
-std::vector<double> referenceGEMM_FP64(const std::vector<float>& A, const std::vector<float>& B, size_t m, size_t k, size_t n) {
-    std::vector<double> C(m * n, 0.0);
-    for (size_t row = 0; row < m; ++row) {
-        for (size_t col = 0; col < n; ++col) {
-            double sum = 0.0;
-            for (size_t i = 0; i < k; ++i) {
-                sum += static_cast<double>(A[row * k + i]) * static_cast<double>(B[i * n + col]);
-            }
-            C[row * n + col] = sum;
+std::vector<double> flattenMatrix64(const std::vector<std::vector<float>>& mat) {
+    std::vector<double> result;
+    for (const auto& row : mat) {
+        for (float val : row) {
+            result.push_back(static_cast<double>(val));
         }
     }
-    return C;
-}
-
-std::vector<std::vector<float>> flattenAndCallCuda(
-    void (*cudaFunc)(const float*, const float*, float*, size_t, size_t, size_t, float&),
-    const std::vector<std::vector<float>>& A,
-    const std::vector<std::vector<float>>& B,
-    size_t m, size_t k, const size_t n
-) {
-    std::vector<float> flatA(m * k);
-    std::vector<float> flatB(k * n);
-    std::vector<float> flatC(m * n);
-
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < k; ++j)
-            flatA[i * k + j] = A[i][j];
-
-    for (size_t i = 0; i < k; ++i)
-        for (size_t j = 0; j < n; ++j)
-            flatB[i * n + j] = B[i][j];
-
-    float execTime = 0.0f;
-    cudaFunc(flatA.data(), flatB.data(), flatC.data(), m, k, n, execTime);
-
-    std::vector<std::vector<float>> C(m, std::vector<float>(n));
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < n; ++j)
-            C[i][j] = flatC[i * n + j];
-
-    return C;
-}
-
-std::vector<std::vector<float>> simdWrapper(
-    const std::vector<std::vector<float>>& A,
-    const std::vector<std::vector<float>>& B,
-    const size_t m, const size_t k, const size_t n
-) {
-    std::vector<float> flatA(m * k), flatB(k * n), flatC(m * n);
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < k; ++j)
-            flatA[i * k + j] = A[i][j];
-
-    for (size_t i = 0; i < k; ++i)
-        for (size_t j = 0; j < n; ++j)
-            flatB[i * n + j] = B[i][j];
-
-    simdMulOpt(flatA.data(), flatB.data(), flatC.data(), m, n, k);
-
-    std::vector<std::vector<float>> C(m, std::vector<float>(n));
-    for (size_t i = 0; i < m; ++i)
-        for (size_t j = 0; j < n; ++j)
-            C[i][j] = flatC[i * n + j];
-
-    return C;
+    return result;
 }
 
 int main(const int argc, char** argv) {
@@ -86,20 +29,14 @@ int main(const int argc, char** argv) {
     const auto B = loadMatrix(matrixB_path);
 
     const size_t m = A.size();
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < m; j++) {
-            std::cout << A[i][0] << std::endl;
-        }
-    }
     const size_t k = A[0].size();
     const size_t n = B[0].size();
 
-    const auto result_naive = multiplyNaive(A, B);
+    std::vector<std::vector<float>> result_tested;
 
     try {
-        std::vector<std::vector<float>> result_tested;
         if (flag == "--naive") {
-            result_tested = result_naive;
+            result_tested = multiplyNaive(A, B);
         } else if (flag == "--simd" || flag == "--simd-opt") {
             result_tested = simdWrapper(A, B, m, k, n);
         } else if (flag == "--cuda") {
@@ -112,24 +49,30 @@ int main(const int argc, char** argv) {
             result_tested = flattenAndCallCuda(wmmaMatrixMultiply, A, B, m, k, n);
         } else if (flag == "--restore_wmma") {
             result_tested = flattenAndCallCuda(wmmaRestore, A, B, m, k, n);
-        }
-        else {
+        } else {
             std::cerr << "Unknown multiplication type flag: " << flag << std::endl;
             return 1;
         }
 
-        const float error = compareMatrices(result_tested, result_naive);
-        std::cout << "Comparison with naive result: error = " << error << std::endl;
+        std::vector<float> flatA, flatB;
+        for (const auto& row : A)
+            flatA.insert(flatA.end(), row.begin(), row.end());
+        for (const auto& row : B)
+            flatB.insert(flatB.end(), row.begin(), row.end());
 
-        if (error > 1e-12) {
-            std::cerr << "Too large error. Probably incorrect implementation." << std::endl;
-            return 1;
-        }
+        std::vector<double> ref_fp64 = referenceGEMM_FP64(flatA, flatB, m, k, n);
+        std::vector<double> flat_result_fp32;
+        for (const auto& row : result_tested)
+            for (float val : row)
+                flat_result_fp32.push_back(static_cast<double>(val));
 
+        const double residual = relativeResidual(ref_fp64, flat_result_fp32);
+
+        std::cout << "RESIDUAL=" << residual << std::endl;
+
+        return 0;
     } catch (const std::exception& e) {
         std::cerr << "Error during multiplication: " << e.what() << std::endl;
         return 1;
     }
-
-    return 0;
 }
