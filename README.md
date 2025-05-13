@@ -49,3 +49,48 @@ Before restoring accuracy on Tensor cores, we tried to understand the logic by r
 
   On the GPU we load each element as a half-precision value plus a scaled residual also stored in half. We tile the work into 16×16 blocks and use NVIDIA’s WMMA API so each warp fires Tensor-Core MMA instructions on    both the main halves and the residual halves in one kernel. After accumulating the main and residual products (and undoing the scale), we get a full-precision result back on the device. This approach overlaps data    movement and compute in shared memory and squeezes out every Tensor-Core cycle for the extra accuracy.
 
+### Prerequisites
+
+#### Hardware
+- **NVIDIA GPU** with Tensor Core support (compute capability ≥ 7.0, e.g. Volta/Turing/Ampere).  
+- **CPU** with AVX2 support and at least 4 physical cores.  
+- **Host RAM** ≥ 16 GB.
+
+#### Compiler & Build Tools
+- **GCC** ≥ 9.0 or **Clang** ≥ 10.0 with C++17 support.  
+- **CMake** ≥ 3.18.  
+- **Make** (Unix Makefiles).
+
+#### CUDA Toolchain
+- **CUDA Toolkit** ≥ 11.0, including:
+  - `nvcc` compiler  
+  - `cuBLAS` library  
+  - CUDA headers (`cuda_runtime.h`, etc.)  
+- NVIDIA driver compatible with your CUDA Toolkit (e.g. driver 450.x+ for CUDA 11).
+
+#### CPU-side Libraries
+- **Eigen** ≥ 3.3 for matrix baselines.  
+- **OpenMP** (bundled with your compiler).
+
+#### Benchmarks
+- In order to run executables with benchmark you will need to install google benchmarks
+  
+### Building the Project
+
+Once you’ve satisfied the prerequisites, follow these steps in your repo root:
+
+1. **Create & enter a build directory**  
+   ```bash
+   mkdir -p build
+   cd build
+   ```
+   
+2. **Build directory**
+   ```
+   cmake -DCMAKE_BUILD_TYPE=Release ..
+   cmake --build --parallel=8 .
+   ```
+3. **Run executables**
+   ```
+   ./name_of_exec <filepath>
+   ```
