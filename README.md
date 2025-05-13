@@ -38,6 +38,9 @@ We added a Google Benchmark suite that runs each matrix-multiply variant end-to-
 
 
 ### Restoring Accuracy:
+
+Before restoring accuracy on Tensor cores, we tried to understand the logic by restot=ring it on CPU:
+
 - ##### CPU Restore-Precision (`multiply_with_restored_precision`)
 
   On the CPU we split each double-precision value into a “high” float and a tiny “low” float remainder, then do four standard float-only matrix multiplies (high×high, low×high, high×low, low×low). Finally we add        those four results back in double precision. This trick recovers most of the lost bits without needing GPU hardware, but it runs in pure C++ loops and does all the work on your processor cores.
