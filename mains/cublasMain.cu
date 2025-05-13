@@ -33,24 +33,28 @@ int main(const int argc, char** argv) {
         std::cerr << "Usage: " << argv[0] << " <matrix_file_path>" << std::endl;
         return 1;
     }
-    const std::string filePath = argv[1];
+    // const std::string filePath = argv[1];
 
-    size_t m, k, n;
-    parseDimensions(filePath, m, k, n);
+    for (const auto &filepath : filePaths) {
+        std::cout << filepath << std::endl;
+        size_t m, k, n;
+        parseDimensions(filepath, m, k, n);
 
-    const size_t size_A = m * k;
-    const size_t size_B = k * n;
-    const size_t size_C = m * n;
+        const size_t size_A = m * k;
+        const size_t size_B = k * n;
+        const size_t size_C = m * n;
 
-    std::vector<__half> h_A(size_A), h_B(size_B);
-    std::vector<float> h_C(size_C);
-    loadMatrices_RR_half(filePath, h_A, h_B);
-    float exec_time = 0.0f;
+        std::vector<__half> h_A(size_A), h_B(size_B);
+        std::vector<float> h_C(size_C);
+        loadMatrices_RR_half(filepath, h_A, h_B);
+        float exec_time = 0.0f;
 
-    cublasMatrixMultiplyHalf(h_A.data(), h_B.data(), h_C.data(), m, k, n, exec_time);
+        cublasMatrixMultiplyHalf(h_A.data(), h_B.data(), h_C.data(), m, k, n, exec_time);
 
-    std::cout << "Execution time: " << exec_time << "ms" << std::endl;
+        // std::cout << "Execution time: " << exec_time << "ms" << std::endl;
 
-    // compare(h_C, m, k, n, filePath);
+        compare(h_C, m, k, n, filepath);
+
+    }
     return 0;
 }

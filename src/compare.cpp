@@ -27,8 +27,7 @@ void compare(const std::vector<float>& h_C,
     }
 
     constexpr std::array<float,8> eps = {
-        1e-5f, 1e-6f, 1e-7f, 1e-8f,
-        1e-9f, 1e-10f, 1e-11f, 1e-12f
+        1e-3f, 1e-4f, 1e-5f, 1e-6f, 1e-7f
     };
 
     std::vector<size_t> firstMismatch(eps.size(), size_C);

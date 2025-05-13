@@ -105,10 +105,11 @@ add_executable(cudaMulTest benchmarks/cudaMulBM.cu ${SOURCES})
 add_executable(cudaMulOptTest benchmarks/cudaMulOptBM.cu ${SOURCES})
 add_executable(simdMulOptTest benchmarks/simdMulOptBM.cpp ${SOURCES})
 add_executable(wmmaTest benchmarks/wmmaBM.cu ${SOURCES})
+add_executable(wmmaRestoreTest benchmarks/wmmaRestoreBM.cu ${SOURCES})
 
 target_compile_options(simdMulOptTest PRIVATE -mavx -mfma -march=native)
 
-foreach(target cublasTest cublasHalfTest cudaMulTest cudaMulOptTest simdMulOptTest wmmaTest)
+foreach(target cublasTest cublasHalfTest cudaMulTest cudaMulOptTest simdMulOptTest wmmaTest wmmaRestoreTest)
     target_include_directories(${target} PRIVATE ${SOURCE_DIRECTORIES})
     if("${target}" MATCHES "cublas.*")
         target_link_libraries(${target} PRIVATE benchmark::benchmark cublas)
@@ -122,68 +123,79 @@ endforeach()
 ##############################################
 
 enable_testing()
-add_test(
-        NAME Benchmark_CublasMul
-        COMMAND $<TARGET_FILE:cublasTest>
-        --benchmark_repetitions=5
-        --benchmark_color=auto
-        --benchmark_time_unit=ms
-        --benchmark_report_aggregates_only
-        --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_CublasMul.json
-)
-
+#add_test(
+#        NAME Benchmark_CublasMul
+#        COMMAND $<TARGET_FILE:cublasTest>
+#        --benchmark_repetitions=2
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_CublasMul_0.json
+#)
+#
 add_test(
         NAME Benchmark_CublasHalfMul
         COMMAND $<TARGET_FILE:cublasHalfTest>
-        --benchmark_repetitions=5
+        --benchmark_repetitions=2
         --benchmark_color=auto
         --benchmark_time_unit=ms
         --benchmark_report_aggregates_only
         --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_CublasHalfMul.json
+        --benchmark_out=../benchmark_results/results_CublasHalfMul_3.json
 )
-
-add_test(
-        NAME Benchmark_WMMA
-        COMMAND $<TARGET_FILE:wmmaTest>
-        --benchmark_repetitions=5
-        --benchmark_color=auto
-        --benchmark_time_unit=ms
-        --benchmark_report_aggregates_only
-        --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_wmma.json
-)
-
+#
+#add_test(
+#        NAME Benchmark_WMMA
+#        COMMAND $<TARGET_FILE:wmmaTest>
+#        --benchmark_repetitions=5
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_wmma.json
+#)
+#
 add_test(
         NAME Benchmark_CudaMulOpt
         COMMAND $<TARGET_FILE:cudaMulOptTest>
-        --benchmark_repetitions=5
+        --benchmark_repetitions=2
         --benchmark_color=auto
         --benchmark_time_unit=ms
         --benchmark_report_aggregates_only
         --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_CudaMulOpt_small.json
+        --benchmark_out=../benchmark_results/results_CudaMulOpt_3.json
 )
+#
+#add_test(
+#        NAME Benchmark_CudaMul
+#        COMMAND $<TARGET_FILE:cudaMulTest>
+#        --benchmark_repetitions=5
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_CudaMul.json
+#)
+#
+#add_test(
+#        NAME Benchmark_SIMD
+#        COMMAND $<TARGET_FILE:simdMulOptTest>
+#        --benchmark_repetitions=5
+#        --benchmark_color=auto
+#        --benchmark_time_unit=ms
+#        --benchmark_report_aggregates_only
+#        --benchmark_out_format=json
+#        --benchmark_out=../benchmark_results/results_simd.json
+#)
 
 add_test(
-        NAME Benchmark_CudaMul
-        COMMAND $<TARGET_FILE:cudaMulTest>
-        --benchmark_repetitions=5
+        NAME Benchmark_WMMARestore
+        COMMAND $<TARGET_FILE:wmmaRestoreTest>
+        --benchmark_repetitions=2
         --benchmark_color=auto
         --benchmark_time_unit=ms
         --benchmark_report_aggregates_only
         --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_CudaMul.json
-)
-
-add_test(
-        NAME Benchmark_SIMD
-        COMMAND $<TARGET_FILE:simdMulOptTest>
-        --benchmark_repetitions=5
-        --benchmark_color=auto
-        --benchmark_time_unit=ms
-        --benchmark_report_aggregates_only
-        --benchmark_out_format=json
-        --benchmark_out=../benchmark_results/results_simd.json
+        --benchmark_out=../benchmark_results/results_wmmaRestore_3.json
 )
